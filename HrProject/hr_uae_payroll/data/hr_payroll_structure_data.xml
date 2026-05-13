@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="hr_salary_rule_category_basic" model="hr.salary.rule.category">
+        <field name="name">Basic</field>
+        <field name="code">BASIC</field>
+    </record>
+
+    <record id="hr_salary_rule_category_alw" model="hr.salary.rule.category">
+        <field name="name">Allowance</field>
+        <field name="code">ALW</field>
+    </record>
+
+    <record id="hr_salary_rule_category_ded" model="hr.salary.rule.category">
+        <field name="name">Deduction</field>
+        <field name="code">DED</field>
+    </record>
+
+    <record id="hr_salary_rule_category_gross" model="hr.salary.rule.category">
+        <field name="name">Gross</field>
+        <field name="code">GROSS</field>
+    </record>
+
+    <record id="hr_salary_rule_category_net" model="hr.salary.rule.category">
+        <field name="name">Net</field>
+        <field name="code">NET</field>
+    </record>
+
+    <record id="hr_payroll_structure_uae" model="hr.payroll.structure">
+        <field name="name">UAE Standard</field>
+        <field name="code">UAE</field>
+    </record>
+
+</odoo>

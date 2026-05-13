@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_hr_uae_backend_theme" model="ir.ui.view">
+        <field name="name">res.users.form.hr.uae.backend.theme</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='preferences']/group[1]" position="after">
+                <group string="Workspace Theme" groups="base.group_user">
+                    <field name="hr_theme_preset"/>
+                    <field name="hr_theme_density"/>
+                    <field name="hr_theme_chrome"/>
+                    <field name="hr_theme_font_scale"/>
+                    <field name="hr_theme_menu_style"/>
+                    <field name="hr_theme_nav_menu_style"/>
+                    <field name="hr_theme_nav_icon_tone"/>
+                    <field name="hr_theme_apps_menu_glass_blur"/>
+                    <field name="hr_theme_apps_menu_glass_tint"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

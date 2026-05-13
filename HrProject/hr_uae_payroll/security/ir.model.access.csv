@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_uae_payroll_dashboard_user,hr.uae.payroll.dashboard.user,model_hr_uae_payroll_dashboard,hr_uae_base.group_hr_uae_user,1,0,0,0
+access_hr_uae_payroll_dashboard_finance,hr.uae.payroll.dashboard.finance,model_hr_uae_payroll_dashboard,hr_uae_base.group_hr_uae_finance,1,0,0,0
+access_hr_uae_payroll_dashboard_manager,hr.uae.payroll.dashboard.manager,model_hr_uae_payroll_dashboard,hr_uae_base.group_hr_uae_manager,1,0,0,0

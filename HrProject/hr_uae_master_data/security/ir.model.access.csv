@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_uae_rank_user,hr.uae.rank.user,model_hr_uae_rank,hr_uae_base.group_hr_uae_user,1,0,0,0
+access_hr_uae_rank_manager,hr.uae.rank.manager,model_hr_uae_rank,hr_uae_base.group_hr_uae_manager,1,1,1,1
+access_hr_uae_position_user,hr.uae.position.user,model_hr_uae_position,hr_uae_base.group_hr_uae_user,1,0,0,0
+access_hr_uae_position_manager,hr.uae.position.manager,model_hr_uae_position,hr_uae_base.group_hr_uae_manager,1,1,1,1
+access_analytic_account_hr_uae_user,account.analytic.account.hr.uae.user,analytic.model_account_analytic_account,hr_uae_base.group_hr_uae_user,1,0,0,0
+access_analytic_plan_hr_uae_user,account.analytic.plan.hr.uae.user,analytic.model_account_analytic_plan,hr_uae_base.group_hr_uae_user,1,0,0,0
+access_analytic_line_hr_uae_user,account.analytic.line.hr.uae.user,analytic.model_account_analytic_line,hr_uae_base.group_hr_uae_user,1,0,0,0
+access_analytic_account_hr_uae_manager,account.analytic.account.hr.uae.manager,analytic.model_account_analytic_account,hr_uae_base.group_hr_uae_manager,1,1,1,1
+access_analytic_plan_hr_uae_manager,account.analytic.plan.hr.uae.manager,analytic.model_account_analytic_plan,hr_uae_base.group_hr_uae_manager,1,0,0,0

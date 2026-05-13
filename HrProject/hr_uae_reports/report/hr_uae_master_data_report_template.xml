@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_master_data_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>Master Data</h2>
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Rank</th>
+                                <th>Name</th>
+                                <th>Passport</th>
+                                <th>Roster</th>
+                                <th>Position</th>
+                                <th>Project</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Salary</th>
+                                <th>DOB</th>
+                                <th>Age</th>
+                                <th>Nationality</th>
+                                <th>Date of Joining</th>
+                                <th>Time of Service</th>
+                                <th>Visa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="emp">
+                                <tr>
+                                    <td><span t-esc="emp_index + 1"/></td>
+                                    <td><span t-esc="emp.rank_id.name"/></td>
+                                    <td><span t-esc="emp.name"/></td>
+                                    <td><span t-esc="emp.passport_id"/></td>
+                                    <td><span t-esc="emp.roster"/></td>
+                                    <td><span t-esc="emp.position_id.name"/></td>
+                                    <td><span t-esc="emp.project_allocation_id.name"/></td>
+                                    <td><span t-esc="emp.location_id.name"/></td>
+                                    <td><span t-field="emp.hr_uae_status"/></td>
+                                    <td><span t-field="emp.contract_wage" t-options="{'widget': 'monetary', 'display_currency': emp.currency_id}"/></td>
+                                    <td><span t-field="emp.birthday"/></td>
+                                    <td><span t-esc="emp.age"/></td>
+                                    <td><span t-esc="emp.country_id.name"/></td>
+                                    <td><span t-field="emp.first_contract_date"/></td>
+                                    <td><span t-esc="emp.time_of_service"/></td>
+                                    <td><span t-field="emp.visa_status"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

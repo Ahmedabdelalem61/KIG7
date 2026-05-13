@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_hr_uae_employees_list"
+        name="Employees"
+        parent="hr_uae_base.menu_hr_uae_employees"
+        action="action_hr_employee_uae"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_hr_uae_ranks"
+        name="Ranks"
+        parent="hr_uae_base.menu_hr_uae_config"
+        action="action_hr_uae_rank"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_hr_uae_positions"
+        name="Positions"
+        parent="hr_uae_base.menu_hr_uae_config"
+        action="action_hr_uae_position"
+        sequence="20"/>
+
+</odoo>

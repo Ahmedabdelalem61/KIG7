@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Depends on hr_uae_leaves form; method lives in hr_uae_payroll (installed with umbrella app). -->
+
+    <record id="view_hr_leave_form_uae_recompute_payslips" model="ir.ui.view">
+        <field name="name">hr.leave.form.uae.recompute.payslips</field>
+        <field name="model">hr.leave</field>
+        <field name="inherit_id" ref="hr_uae_leaves.view_hr_leave_form_uae"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_set_returned']" position="after">
+                <button
+                    name="action_hr_uae_recompute_overlapping_payslips"
+                    type="object"
+                    string="Recompute overlapping payslips"
+                    class="btn-secondary"
+                    invisible="not employee_id or not date_from or not date_to or state not in ('confirm', 'validate1', 'validate')"
+                    groups="hr_uae_base.group_hr_uae_manager"
+                    title="Runs Compute Sheet on every Draft, Waiting, or On Hold payslip for this employee that overlaps this leave's dates."
+                />
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_uae_rank_tree" model="ir.ui.view">
+        <field name="name">hr.uae.rank.list</field>
+        <field name="model">hr.uae.rank</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hr_uae_rank_form" model="ir.ui.view">
+        <field name="name">hr.uae.rank.form</field>
+        <field name="model">hr.uae.rank</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_uae_rank" model="ir.actions.act_window">
+        <field name="name">Ranks</field>
+        <field name="res_model">hr.uae.rank</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

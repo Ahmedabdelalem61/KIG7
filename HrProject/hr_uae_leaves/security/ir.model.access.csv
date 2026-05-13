@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_uae_movement_user,hr.uae.movement.tracking.user,model_hr_uae_movement_tracking,hr_uae_base.group_hr_uae_user,1,0,0,0
+access_hr_uae_movement_manager,hr.uae.movement.tracking.manager,model_hr_uae_movement_tracking,hr_uae_base.group_hr_uae_manager,1,0,0,0
+access_hr_uae_movement_finance,hr.uae.movement.tracking.finance,model_hr_uae_movement_tracking,hr_uae_base.group_hr_uae_finance,1,0,0,0

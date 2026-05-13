@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="leave_type_annual" model="hr.leave.type">
+        <field name="name">Annual Leave</field>
+        <field name="time_type">leave</field>
+        <field name="leave_validation_type">hr</field>
+        <field name="requires_allocation">yes</field>
+        <field name="allocation_validation_type">hr</field>
+        <field name="hr_uae_status_code">vacations</field>
+        <field name="hr_uae_alert_days">20</field>
+        <field name="hr_uae_unpaid" eval="False"/>
+        <field name="color">1</field>
+    </record>
+
+    <record id="leave_type_special" model="hr.leave.type">
+        <field name="name">Special Leave</field>
+        <field name="time_type">leave</field>
+        <field name="leave_validation_type">hr</field>
+        <field name="requires_allocation">no</field>
+        <field name="hr_uae_status_code">special_permit</field>
+        <field name="hr_uae_alert_days">7</field>
+        <field name="hr_uae_unpaid" eval="False"/>
+        <field name="color">2</field>
+    </record>
+
+    <record id="leave_type_medical" model="hr.leave.type">
+        <field name="name">Medical Leave</field>
+        <field name="time_type">leave</field>
+        <field name="leave_validation_type">hr</field>
+        <field name="requires_allocation">no</field>
+        <field name="hr_uae_status_code">sick_leave</field>
+        <field name="hr_uae_alert_days">0</field>
+        <field name="hr_uae_unpaid" eval="False"/>
+        <field name="color">3</field>
+    </record>
+
+    <record id="leave_type_unpaid" model="hr.leave.type">
+        <field name="name">Unpaid Leave</field>
+        <field name="time_type">leave</field>
+        <field name="leave_validation_type">hr</field>
+        <field name="requires_allocation">no</field>
+        <field name="hr_uae_status_code">vacations</field>
+        <field name="hr_uae_alert_days">0</field>
+        <field name="hr_uae_unpaid" eval="True"/>
+        <field name="color">4</field>
+    </record>
+
+</odoo>

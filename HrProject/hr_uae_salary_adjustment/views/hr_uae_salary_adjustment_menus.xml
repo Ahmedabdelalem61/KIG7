@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_hr_uae_salary_adjustment"
+        name="Salary Adjustments"
+        parent="hr_uae_base.menu_hr_uae_payroll"
+        action="action_hr_uae_salary_adjustment"
+        sequence="20"/>
+
+</odoo>

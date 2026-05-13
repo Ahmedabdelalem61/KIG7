@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="hr_uae_backend_theme.ThemeSwitcher">
+        <div class="o_hr_theme_switcher d-none d-md-flex align-items-center">
+            <DropdownGroup group="'web-navbar-group'">
+                <Dropdown menuClass="'o_hr_theme_switcher_menu'">
+                    <button
+                        type="button"
+                        class="o_hr_theme_switcher_trigger"
+                        title="Theme Studio"
+                        t-att-disabled="state.isSaving"
+                    >
+                        <span class="o_hr_theme_switcher_trigger__swatch"/>
+                        <span class="o_hr_theme_switcher_trigger__label d-none d-xl-inline">
+                            Theme
+                        </span>
+                    </button>
+                    <t t-set-slot="content">
+                        <div class="o_hr_theme_dropdown">
+                            <div class="o_hr_theme_dropdown__header">
+                                <span class="o_hr_theme_dropdown__eyebrow" t-esc="state.brandName"/>
+                                <strong>Theme Studio</strong>
+                                <span class="o_hr_theme_dropdown__hint">
+                                    Refine the HR workspace without leaving the backend.
+                                </span>
+                            </div>
+
+                            <div class="o_hr_theme_dropdown__section">
+                                <label class="o_hr_theme_dropdown__title">Preset</label>
+                                <div class="o_hr_theme_preset_grid">
+                                    <button
+                                        type="button"
+                                        t-foreach="presetOptions"
+                                        t-as="option"
+                                        t-key="option.value"
+                                        t-att-class="presetClass(option.value)"
+                                        t-att-disabled="state.isSaving"
+                                        t-on-click="() => this.updateTheme('preset', option.value)"
+                                    >
+                                        <span
+                                            class="o_hr_theme_preset__preview"
+                                            t-attf-style="background: linear-gradient(135deg, {{ option.preview[0] }}, {{ option.preview[1] }});"
+                                        ></span>
+                                        <span class="o_hr_theme_preset__copy">
+                                            <strong t-esc="option.label"/>
+                                            <small t-esc="option.caption"/>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="o_hr_theme_dropdown__section">
+                                <label class="o_hr_theme_dropdown__title">Density</label>
+                                <div class="o_hr_theme_chip_row">
+                                    <button
+                                        type="button"
+                                        t-foreach="densityOptions"
+                                        t-as="option"
+                                        t-key="option.value"
+                                        t-att-class="chipClass('density', option.value)"
+                                        t-att-disabled="state.isSaving"
+                                        t-on-click="() => this.updateTheme('density', option.value)"
+                                    >
+                                        <t t-esc="option.label"/>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="o_hr_theme_dropdown__section">
+                                <label class="o_hr_theme_dropdown__title">Shell</label>
+                                <div class="o_hr_theme_chip_row">
+                                    <button
+                                        type="button"
+                                        t-foreach="chromeOptions"
+                                        t-as="option"
+                                        t-key="option.value"
+                                        t-att-class="chipClass('chrome', option.value)"
+                                        t-att-disabled="state.isSaving"
+                                        t-on-click="() => this.updateTheme('chrome', option.value)"
+                                    >
+                                        <t t-esc="option.label"/>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="o_hr_theme_dropdown__section">
+                                <label class="o_hr_theme_dropdown__title">Font Scale</label>
+                                <div class="o_hr_theme_chip_row">
+                                    <button
+                                        type="button"
+                                        t-foreach="fontScaleOptions"
+                                        t-as="option"
+                                        t-key="option.value"
+                                        t-att-class="chipClass('font_scale', option.value)"
+                                        t-att-disabled="state.isSaving"
+                                        t-on-click="() => this.updateTheme('font_scale', option.value)"
+                                    >
+                                        <t t-esc="option.label"/>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="o_hr_theme_dropdown__section">
+                                <label class="o_hr_theme_dropdown__title">App Menu</label>
+                                <div class="o_hr_theme_chip_row">
+                                    <button
+                                        type="button"
+                                        t-foreach="menuStyleOptions"
+                                        t-as="option"
+                                        t-key="option.value"
+                                        t-att-class="chipClass('menu_style', option.value)"
+                                        t-att-disabled="state.isSaving"
+                                        t-on-click="() => this.updateTheme('menu_style', option.value)"
+                                    >
+                                        <t t-esc="option.label"/>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="o_hr_theme_dropdown__section">
+                                <label class="o_hr_theme_dropdown__title">Apps grid glass</label>
+                                <span class="o_hr_theme_dropdown__hint text-muted small d-block mb-2">
+                                    Blur strength (0–100%) and tint swatches matched to your color preset.
+                                </span>
+                                <div class="o_hr_theme_glass_blur mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="small text-muted">Blur</span>
+                                        <span class="small fw-semibold"><t t-esc="state.apps_menu_glass_blur"/>%</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        class="form-range o_hr_theme_glass_blur__range"
+                                        min="0"
+                                        max="100"
+                                        step="1"
+                                        t-att-value="state.apps_menu_glass_blur"
+                                        t-att-disabled="state.isSaving"
+                                        t-on-input="onGlassBlurInput"
+                                        t-on-change="onGlassBlurCommit"
+                                    />
+                                </div>
+                                <div class="o_hr_theme_glass_swatches" role="list">
+                                    <button
+                                        type="button"
+                                        t-foreach="glassTintSwatches"
+                                        t-as="sw"
+                                        t-key="sw.value"
+                                        t-att-class="state.apps_menu_glass_tint === sw.value ? 'o_hr_theme_glass_swatch is-selected' : 'o_hr_theme_glass_swatch'"
+                                        t-att-title="sw.value"
+                                        t-att-disabled="state.isSaving"
+                                        t-att-style="sw.styleAttr"
+                                        t-on-click="() => this.updateTheme('apps_menu_glass_tint', sw.value)"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="o_hr_theme_dropdown__section">
+                                <label class="o_hr_theme_dropdown__title">Top Menu</label>
+                                <div class="o_hr_theme_chip_row">
+                                    <button
+                                        type="button"
+                                        t-foreach="navMenuStyleOptions"
+                                        t-as="option"
+                                        t-key="option.value"
+                                        t-att-class="chipClass('nav_menu_style', option.value)"
+                                        t-att-disabled="state.isSaving"
+                                        t-on-click="() => this.updateTheme('nav_menu_style', option.value)"
+                                    >
+                                        <t t-esc="option.label"/>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="o_hr_theme_dropdown__section">
+                                <label class="o_hr_theme_dropdown__title">Navbar Icons</label>
+                                <div class="o_hr_theme_chip_row">
+                                    <button
+                                        type="button"
+                                        t-foreach="navIconToneOptions"
+                                        t-as="option"
+                                        t-key="option.value"
+                                        t-att-class="chipClass('nav_icon_tone', option.value)"
+                                        t-att-disabled="state.isSaving"
+                                        t-on-click="() => this.updateTheme('nav_icon_tone', option.value)"
+                                    >
+                                        <t t-esc="option.label"/>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="o_hr_theme_dropdown__footer">
+                                <button
+                                    type="button"
+                                    class="btn btn-link px-0"
+                                    t-att-disabled="state.isSaving"
+                                    t-on-click="() => this.resetTheme()"
+                                >
+                                    Reset to defaults
+                                </button>
+                                <span t-if="state.isSaving" class="text-muted small">
+                                    Saving...
+                                </span>
+                            </div>
+                        </div>
+                    </t>
+                </Dropdown>
+            </DropdownGroup>
+        </div>
+    </t>
+</templates>

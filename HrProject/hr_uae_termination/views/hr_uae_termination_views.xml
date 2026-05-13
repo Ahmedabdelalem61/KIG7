@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_uae_termination_tree" model="ir.ui.view">
+        <field name="name">hr.uae.termination.list</field>
+        <field name="model">hr.uae.termination</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'closed'"
+                  decoration-warning="state == 'active'">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="roster"/>
+                <field name="project_allocation_id"/>
+                <field name="passport_no"/>
+                <field name="date_of_joining"/>
+                <field name="departure_date"/>
+                <field name="arrival_date"/>
+                <field name="reason"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hr_uae_termination_form" model="ir.ui.view">
+        <field name="name">hr.uae.termination.form</field>
+        <field name="model">hr.uae.termination</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_activate" type="object" string="Activate"
+                            invisible="state != 'draft'" class="btn-danger"/>
+                    <button name="action_close" type="object" string="Close"
+                            invisible="state != 'active'" class="btn-primary"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft"
+                            invisible="state == 'closed' or state == 'active'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="employee_id" readonly="state != 'draft'"/>
+                            <field name="contract_id" readonly="state != 'draft'"/>
+                            <field name="reason" readonly="state != 'draft'"/>
+                            <field name="note"/>
+                        </group>
+                        <group>
+                            <field name="roster"/>
+                            <field name="project_allocation_id"/>
+                            <field name="passport_no"/>
+                            <field name="date_of_joining"/>
+                            <field name="date_of_birth"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="departure_date" readonly="state == 'closed'"/>
+                            <field name="arrival_date" readonly="state == 'closed'"/>
+                        </group>
+                        <group>
+                            <field name="time_of_service"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_uae_termination" model="ir.actions.act_window">
+        <field name="name">Contract Terminations</field>
+        <field name="res_model">hr.uae.termination</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

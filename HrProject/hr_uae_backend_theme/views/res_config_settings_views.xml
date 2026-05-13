@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="res_config_settings_view_form_hr_uae_backend_theme" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.hr.uae.backend.theme</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="95"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="inside">
+                    <app
+                        data-string="HR Theme"
+                        string="HR Theme"
+                        name="hr_uae_backend_theme"
+                        groups="base.group_system"
+                    >
+                        <block title="Brand Experience" name="hr_uae_backend_theme_brand">
+                            <setting
+                                id="hr_uae_backend_theme_brand_name"
+                                string="Workspace Brand Name"
+                                help="Displayed in the theme studio so the backend feels like part of the HR workspace."
+                            >
+                                <field name="hr_theme_brand_name" placeholder="HR UAE Admin"/>
+                            </setting>
+                            <setting
+                                id="hr_uae_backend_theme_default_preset"
+                                string="Default Color Preset"
+                                help="Palette assigned to users by default."
+                            >
+                                <field name="hr_theme_default_preset"/>
+                            </setting>
+                            <setting
+                                id="hr_uae_backend_theme_default_chrome"
+                                string="Default Shell Style"
+                                help="Controls whether the navbar and control panels feel floating or flat."
+                            >
+                                <field name="hr_theme_default_chrome"/>
+                            </setting>
+                        </block>
+                        <block title="Interaction Defaults" name="hr_uae_backend_theme_interaction">
+                            <setting
+                                id="hr_uae_backend_theme_default_density"
+                                string="Default Density"
+                                help="Choose between a roomier layout or a more compact workspace."
+                            >
+                                <field name="hr_theme_default_density"/>
+                            </setting>
+                            <setting
+                                id="hr_uae_backend_theme_default_font_scale"
+                                string="Default Font Scale"
+                                help="Set the reading scale used when new users enter the backend."
+                            >
+                                <field name="hr_theme_default_font_scale"/>
+                            </setting>
+                            <setting
+                                id="hr_uae_backend_theme_default_menu_style"
+                                string="Default App Menu Style"
+                                help="Choose how the home menu should present the HR applications."
+                            >
+                                <field name="hr_theme_default_menu_style"/>
+                            </setting>
+                            <setting
+                                id="hr_uae_backend_theme_default_nav_menu_style"
+                                string="Default Top Menu Style"
+                                help="Controls how primary section links look in the navbar (minimal underline, soft chips, or stronger pills)."
+                            >
+                                <field name="hr_theme_default_nav_menu_style"/>
+                            </setting>
+                            <setting
+                                id="hr_uae_backend_theme_default_nav_icon_tone"
+                                string="Default Navbar Icon Tone"
+                                help="Whether menu and launcher icons follow the color preset, always use the accent, or stay neutral for readability."
+                            >
+                                <field name="hr_theme_default_nav_icon_tone"/>
+                            </setting>
+                            <setting
+                                id="hr_uae_backend_theme_default_apps_menu_glass_blur"
+                                string="Default Apps Grid Glass Blur %"
+                                help="0 = no frosted overlay; 100 = maximum blur behind the apps grid."
+                            >
+                                <field name="hr_theme_default_apps_menu_glass_blur"/>
+                            </setting>
+                            <setting
+                                id="hr_uae_backend_theme_default_apps_menu_glass_tint"
+                                string="Default Apps Grid Glass Tint"
+                                help="Color family for the frosted layer (pairs with the active color preset)."
+                            >
+                                <field name="hr_theme_default_apps_menu_glass_tint"/>
+                            </setting>
+                        </block>
+                    </app>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_hr_uae_backend_theme_settings" model="ir.actions.act_window">
+            <field name="name">Theme Studio</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="context">{'module': 'hr_uae_backend_theme', 'bin_size': False}</field>
+        </record>
+
+        <menuitem
+            id="menu_hr_uae_backend_theme_settings"
+            name="Theme Studio"
+            parent="hr_uae_base.menu_hr_uae_config"
+            action="action_hr_uae_backend_theme_settings"
+            sequence="5"
+            groups="base.group_system"
+        />
+    </data>
+</odoo>

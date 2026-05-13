@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="hr_salary_rule_basic" model="hr.salary.rule">
+        <field name="name">Basic</field>
+        <field name="code">BASIC</field>
+        <field name="sequence">1</field>
+        <field name="category_id" ref="hr_salary_rule_category_basic"/>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = contract.wage</field>
+    </record>
+
+    <record id="hr_salary_rule_housing" model="hr.salary.rule">
+        <field name="name">Housing Allowance</field>
+        <field name="code">HOUSING</field>
+        <field name="sequence">10</field>
+        <field name="category_id" ref="hr_salary_rule_category_alw"/>
+        <field name="condition_select">none</field>
+        <field name="amount_select">fix</field>
+        <field name="amount_fix">0.0</field>
+    </record>
+
+    <record id="hr_salary_rule_transport" model="hr.salary.rule">
+        <field name="name">Transport Allowance</field>
+        <field name="code">TRANSPORT</field>
+        <field name="sequence">15</field>
+        <field name="category_id" ref="hr_salary_rule_category_alw"/>
+        <field name="condition_select">none</field>
+        <field name="amount_select">fix</field>
+        <field name="amount_fix">0.0</field>
+    </record>
+
+    <record id="hr_salary_rule_unpaid_leave" model="hr.salary.rule">
+        <field name="name">Unpaid Leave Deduction</field>
+        <field name="code">UNPAID</field>
+        <field name="sequence">50</field>
+        <field name="category_id" ref="hr_salary_rule_category_ded"/>
+        <field name="condition_select">python</field>
+        <field name="condition_python">result = bool(worked_days.UNPAID)</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute"><![CDATA[
+unpaid = worked_days.UNPAID
+result = -((contract.wage / 30.0) * unpaid.number_of_days) if unpaid else 0.0
+]]></field>
+    </record>
+
+    <record id="hr_salary_rule_flight_ded" model="hr.salary.rule">
+        <field name="name">Flight Ticket Deduction</field>
+        <field name="code">FLIGHT_DED</field>
+        <field name="sequence">55</field>
+        <field name="category_id" ref="hr_salary_rule_category_ded"/>
+        <field name="condition_select">python</field>
+        <field name="condition_python">result = bool(inputs.FLIGHT_DED)</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute"><![CDATA[
+flight = inputs.FLIGHT_DED
+result = -(flight.amount if flight else 0.0)
+]]></field>
+    </record>
+
+    <record id="hr_salary_rule_adjustments" model="hr.salary.rule">
+        <field name="name">Adjustments / Allowances / Deductions</field>
+        <field name="code">ADJUSTMENTS</field>
+        <field name="sequence">60</field>
+        <field name="category_id" ref="hr_salary_rule_category_alw"/>
+        <field name="condition_select">python</field>
+        <field name="condition_python">result = bool(inputs.ADJ_ALW or inputs.ADJ_DED or inputs.ADJ_ADJ)</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute"><![CDATA[
+adj_alw = inputs.ADJ_ALW
+adj_adj = inputs.ADJ_ADJ
+adj_ded = inputs.ADJ_DED
+allowances = adj_alw.amount if adj_alw else 0.0
+adjustments = adj_adj.amount if adj_adj else 0.0
+deductions = adj_ded.amount if adj_ded else 0.0
+result = allowances + adjustments - deductions
+]]></field>
+    </record>
+
+    <record id="hr_salary_rule_net" model="hr.salary.rule">
+        <field name="name">Net Salary</field>
+        <field name="code">NET</field>
+        <field name="sequence">200</field>
+        <field name="category_id" ref="hr_salary_rule_category_net"/>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = categories.BASIC + categories.ALW + categories.DED</field>
+    </record>
+
+    <record id="hr_payroll_structure_uae" model="hr.payroll.structure">
+        <field name="rule_ids" eval="[
+            (4, ref('hr_salary_rule_basic')),
+            (4, ref('hr_salary_rule_housing')),
+            (4, ref('hr_salary_rule_transport')),
+            (4, ref('hr_salary_rule_unpaid_leave')),
+            (4, ref('hr_salary_rule_flight_ded')),
+            (4, ref('hr_salary_rule_adjustments')),
+            (4, ref('hr_salary_rule_net')),
+        ]"/>
+    </record>
+
+</odoo>

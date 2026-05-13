@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_uae_flight_tree" model="ir.ui.view">
+        <field name="name">hr.uae.flight.list</field>
+        <field name="model">hr.uae.flight</field>
+        <field name="arch" type="xml">
+            <list decoration-info="booking_state == 'booked'"
+                  decoration-success="booking_state == 'completed'"
+                  decoration-muted="booking_state == 'cancelled'">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="purpose"/>
+                <field name="from_country_id"/>
+                <field name="to_country_id"/>
+                <field name="departure_date"/>
+                <field name="arrival_date"/>
+                <field name="month"/>
+                <field name="ticket_price"/>
+                <field name="extra_charges" optional="hide"/>
+                <field name="total"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="payment_mode"/>
+                <field name="booking_state"/>
+                <field name="project_allocation_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hr_uae_flight_form" model="ir.ui.view">
+        <field name="name">hr.uae.flight.form</field>
+        <field name="model">hr.uae.flight</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_book" type="object" string="Book"
+                            invisible="booking_state != 'draft'" class="btn-primary"/>
+                    <button name="action_complete" type="object" string="Complete"
+                            invisible="booking_state != 'booked'" class="btn-primary"/>
+                    <button name="action_reschedule" type="object" string="Reschedule"
+                            invisible="booking_state not in ('booked','completed')"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="booking_state in ('cancelled','draft')"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft"
+                            invisible="booking_state == 'draft'"/>
+                    <field name="booking_state" widget="statusbar"
+                           statusbar_visible="draft,booked,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Employee">
+                            <field name="employee_id"/>
+                            <field name="passport_no"/>
+                            <field name="date_of_joining"/>
+                            <field name="time_of_service"/>
+                            <field name="date_of_birth"/>
+                            <field name="project_allocation_id"/>
+                        </group>
+                        <group string="Booking">
+                            <field name="purpose"/>
+                            <field name="ticket_no"/>
+                            <field name="requested_date"/>
+                            <field name="agency"/>
+                            <field name="sent_ticket"/>
+                            <field name="refundable"/>
+                            <field name="updated_master"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Route">
+                            <field name="from_country_id"/>
+                            <field name="to_country_id"/>
+                        </group>
+                        <group string="Schedule">
+                            <field name="departure_date"/>
+                            <field name="departure_time"/>
+                            <field name="arrival_date"/>
+                            <field name="arrival_time"/>
+                            <field name="month"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Cost (AED)">
+                            <field name="ticket_price"/>
+                            <field name="extra_charges"/>
+                            <field name="total"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="payment_mode"/>
+                            <field name="expense_id" readonly="1"/>
+                        </group>
+                        <group string="Files">
+                            <field name="attachment_ids" widget="many2many_binary" nolabel="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_hr_uae_flight_search" model="ir.ui.view">
+        <field name="name">hr.uae.flight.search</field>
+        <field name="model">hr.uae.flight</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="ticket_no"/>
+                <field name="from_country_id"/>
+                <field name="to_country_id"/>
+                <filter name="draft" string="Draft" domain="[('booking_state','=','draft')]"/>
+                <filter name="booked" string="Booked" domain="[('booking_state','=','booked')]"/>
+                <filter name="completed" string="Completed" domain="[('booking_state','=','completed')]"/>
+                <filter name="own" string="Paid by Employee" domain="[('payment_mode','=','own_account')]"/>
+                <filter name="company" string="Paid by Company" domain="[('payment_mode','=','company_account')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_purpose" string="Purpose" context="{'group_by': 'purpose'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'booking_state'}"/>
+                    <filter name="group_project" string="Project" context="{'group_by': 'project_allocation_id'}"/>
+                    <filter name="group_month" string="Month" context="{'group_by': 'departure_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_hr_uae_flight" model="ir.actions.act_window">
+        <field name="name">Flight Tickets</field>
+        <field name="res_model">hr.uae.flight</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

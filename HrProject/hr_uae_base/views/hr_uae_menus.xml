@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_hr_uae_root"
+        name="HR UAE Admin"
+        web_icon="hr_uae_base,static/description/icon.svg"
+        sequence="35"
+        groups="hr_uae_base.group_hr_uae_user"/>
+
+    <menuitem
+        id="menu_hr_uae_dashboard"
+        name="Dashboard"
+        parent="menu_hr_uae_root"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_hr_uae_employees"
+        name="Employees"
+        parent="menu_hr_uae_root"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_hr_uae_leaves"
+        name="Leaves &amp; Movements"
+        parent="menu_hr_uae_root"
+        sequence="30"/>
+
+    <menuitem
+        id="menu_hr_uae_flights"
+        name="Flight Tickets"
+        parent="menu_hr_uae_root"
+        sequence="40"/>
+
+    <menuitem
+        id="menu_hr_uae_payroll"
+        name="Payroll"
+        parent="menu_hr_uae_root"
+        sequence="50"/>
+
+    <menuitem
+        id="menu_hr_uae_termination"
+        name="Termination"
+        parent="menu_hr_uae_root"
+        sequence="60"/>
+
+    <menuitem
+        id="menu_hr_uae_reports"
+        name="Reports"
+        parent="menu_hr_uae_root"
+        sequence="70"/>
+
+    <menuitem
+        id="menu_hr_uae_audit"
+        name="Audit Trail"
+        parent="menu_hr_uae_root"
+        sequence="80"
+        groups="hr_uae_base.group_hr_uae_manager"/>
+
+    <menuitem
+        id="menu_hr_uae_config"
+        name="Configuration"
+        parent="menu_hr_uae_root"
+        sequence="100"
+        groups="hr_uae_base.group_hr_uae_manager"/>
+
+</odoo>

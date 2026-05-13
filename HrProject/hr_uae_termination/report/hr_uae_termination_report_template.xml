@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_termination_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>Contract Termination</h2>
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Roster</th>
+                                <th>Name</th>
+                                <th>Project</th>
+                                <th>Passport No.</th>
+                                <th>DOB</th>
+                                <th>JD</th>
+                                <th>Departure</th>
+                                <th>Arrival</th>
+                                <th>Time of Service</th>
+                                <th>Note</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="doc">
+                                <tr>
+                                    <td><span t-esc="doc.name"/></td>
+                                    <td><span t-esc="doc.roster"/></td>
+                                    <td><span t-esc="doc.employee_id.name"/></td>
+                                    <td><span t-esc="doc.project_allocation_id.name"/></td>
+                                    <td><span t-esc="doc.passport_no"/></td>
+                                    <td><span t-field="doc.date_of_birth"/></td>
+                                    <td><span t-field="doc.date_of_joining"/></td>
+                                    <td><span t-field="doc.departure_date"/></td>
+                                    <td><span t-field="doc.arrival_date"/></td>
+                                    <td><span t-esc="doc.time_of_service"/></td>
+                                    <td><span t-esc="doc.note"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

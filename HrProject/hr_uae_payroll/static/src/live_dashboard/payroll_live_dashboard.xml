@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="hr_uae_payroll.HrUaePayrollLiveDashboard">
+        <div class="o_hr_uae_payroll_live h-100 overflow-auto">
+
+            <div class="o_pdash_topbar d-flex align-items-center justify-content-between flex-wrap gap-3 p-3 mb-3">
+                <div>
+                    <h2 class="mb-0">Payroll — Live Dashboard</h2>
+                    <span class="o_pdash_subtitle">
+                        Last refresh: <t t-esc="state.lastRefresh ? state.lastRefresh.toLocaleTimeString() : '…'"/>
+                        <t t-if="state.data and state.data.last_month_label">
+                            • Last completed period: <strong t-esc="state.data.last_month_label"/>
+                        </t>
+                    </span>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button class="btn btn-outline-light" t-att-class="state.monthsBack === 3 ? 'active' : ''" t-on-click="() => this.setRange(3)">3M</button>
+                        <button class="btn btn-outline-light" t-att-class="state.monthsBack === 6 ? 'active' : ''" t-on-click="() => this.setRange(6)">6M</button>
+                        <button class="btn btn-outline-light" t-att-class="state.monthsBack === 12 ? 'active' : ''" t-on-click="() => this.setRange(12)">12M</button>
+                    </div>
+                    <button class="btn btn-light" t-on-click="refreshNow">
+                        <i class="fa fa-refresh me-1"/> Refresh
+                    </button>
+                    <button class="btn btn-outline-light" t-on-click="openDashboardList">
+                        <i class="fa fa-table me-1"/> Excel-style Table
+                    </button>
+                </div>
+            </div>
+
+            <div t-if="state.loading" class="text-center py-5">
+                <i class="fa fa-spinner fa-spin fa-2x text-muted"/>
+            </div>
+
+            <div t-elif="state.error" class="alert alert-danger m-3">
+                <strong>Error:</strong> <t t-esc="state.error"/>
+            </div>
+
+            <div t-elif="state.data" class="px-3 pb-5">
+
+                <!-- KPI tiles -->
+                <div class="o_pdash_kpi_grid">
+                    <div class="o_pdash_tile o_pdash_blue" t-on-click="openAllPayslips">
+                        <div class="o_pdash_tile_label">Payslips (window)</div>
+                        <div class="o_pdash_tile_value"><t t-esc="state.data.kpis.slips_total"/></div>
+                        <div class="o_pdash_tile_hint">
+                            <span class="text-success"><t t-esc="state.data.kpis.slips_done"/> done</span>
+                            • <span class="text-warning"><t t-esc="state.data.kpis.slips_draft"/> draft</span>
+                        </div>
+                    </div>
+                    <div class="o_pdash_tile o_pdash_amber" t-on-click="openHeldPayslips">
+                        <div class="o_pdash_tile_label">On Hold</div>
+                        <div class="o_pdash_tile_value"><t t-esc="state.data.kpis.slips_on_hold"/></div>
+                        <div class="o_pdash_tile_hint" t-esc="formatCurrency(state.data.kpis.held_amount)"/>
+                    </div>
+                    <div class="o_pdash_tile o_pdash_pink" t-on-click="openPendingAdjustments">
+                        <div class="o_pdash_tile_label">Adjustments to Approve</div>
+                        <div class="o_pdash_tile_value"><t t-esc="state.data.kpis.pending_adjustments"/></div>
+                        <div class="o_pdash_tile_hint">awaiting approval</div>
+                    </div>
+                    <div class="o_pdash_tile o_pdash_green">
+                        <div class="o_pdash_tile_label">Active Employees</div>
+                        <div class="o_pdash_tile_value"><t t-esc="state.data.kpis.active_employees"/></div>
+                        <div class="o_pdash_tile_hint">eligible for payroll</div>
+                    </div>
+                </div>
+
+                <!-- Trend & breakdown -->
+                <div class="row g-3 mt-2">
+                    <div class="col-12 col-xl-7">
+                        <div class="o_pdash_card">
+                            <div class="o_pdash_card_title">
+                                Net Payroll Trend
+                                <span class="o_pdash_card_sub">last 12 months</span>
+                            </div>
+                            <t t-if="!state.data.monthly_trend.length">
+                                <div class="text-muted py-4 text-center">No payslips in range.</div>
+                            </t>
+                            <t t-else="" t-set="chart" t-value="netTrendSvg(state.data.monthly_trend)"/>
+                            <div t-if="chart" class="position-relative">
+                                <svg t-att-viewBox="'0 0 ' + chart.W + ' ' + chart.H" preserveAspectRatio="none" class="o_pdash_line_svg">
+                                    <defs>
+                                        <linearGradient id="o_pdash_grad" x1="0" x2="0" y1="0" y2="1">
+                                            <stop offset="0%" stop-color="var(--hr-accent, #0ea5e9)" stop-opacity="0.38"/>
+                                            <stop offset="100%" stop-color="var(--hr-accent, #0ea5e9)" stop-opacity="0"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- Grid -->
+                                    <t t-foreach="chart.ticks" t-as="tick" t-key="tick_index">
+                                        <line t-att-x1="chart.padL" t-att-x2="chart.W - chart.padR"
+                                              t-att-y1="tick.y" t-att-y2="tick.y"
+                                              stroke="var(--hr-border-strong, #e5e7eb)" stroke-dasharray="3 3"/>
+                                        <text t-att-x="chart.padL - 6" t-att-y="tick.y + 4"
+                                              text-anchor="end" font-size="10" fill="var(--hr-muted, #6b7280)"
+                                              t-esc="formatCurrency(tick.value)"/>
+                                    </t>
+                                    <!-- Area + Line -->
+                                    <path t-att-d="chart.areaD" fill="url(#o_pdash_grad)"/>
+                                    <path t-att-d="chart.pathD" fill="none" stroke="var(--hr-accent, #0ea5e9)" stroke-width="2.5"/>
+                                    <!-- Points + month labels -->
+                                    <t t-foreach="chart.points" t-as="pt" t-key="pt_index">
+                                        <circle t-att-cx="pt.x" t-att-cy="pt.y" r="4" fill="var(--hr-accent, #0ea5e9)" stroke="#fff" stroke-width="1.5">
+                                            <title><t t-esc="pt.label"/>: <t t-esc="formatCurrency(pt.net)"/> (<t t-esc="pt.slips"/> slips)</title>
+                                        </circle>
+                                        <text t-att-x="pt.x" t-att-y="chart.H - 8"
+                                              text-anchor="middle" font-size="10" fill="var(--hr-muted, #6b7280)"
+                                              t-esc="pt.label"/>
+                                    </t>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-xl-5">
+                        <div class="o_pdash_card">
+                            <div class="o_pdash_card_title">
+                                Net Pay by Project
+                                <span class="o_pdash_card_sub">last <t t-esc="state.monthsBack"/> months</span>
+                            </div>
+                            <div t-if="!state.data.net_by_project.length" class="text-muted py-4 text-center">
+                                No project allocation in payroll yet.
+                            </div>
+                            <div t-else="" class="o_pdash_bar_list">
+                                <t t-foreach="barRows(state.data.net_by_project, 'value', formatCurrency.bind(this))"
+                                   t-as="row" t-key="row_index">
+                                    <div class="o_pdash_bar_row" t-on-click="() => this.openProject(row.project_id)">
+                                        <div class="o_pdash_bar_label" t-esc="row.label"/>
+                                        <div class="o_pdash_bar_track">
+                                            <div class="o_pdash_bar_fill" t-attf-style="width: {{ row.widthPct }}%; background-color: {{ row.color }}"/>
+                                        </div>
+                                        <div class="o_pdash_bar_value" t-esc="row.valueLabel"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-xl-7">
+                        <div class="o_pdash_card">
+                            <div class="o_pdash_card_title">
+                                Salary Rule Breakdown
+                                <span class="o_pdash_card_sub">last completed period</span>
+                            </div>
+                            <div t-if="!state.data.rule_breakdown.length" class="text-muted py-4 text-center">
+                                No payslip lines for the latest period.
+                            </div>
+                            <div t-else="" class="o_pdash_diverging">
+                                <t t-foreach="diverging(state.data.rule_breakdown)" t-as="row" t-key="row_index">
+                                    <div class="o_pdash_div_row">
+                                        <div class="o_pdash_div_label" t-esc="row.label"/>
+                                        <div class="o_pdash_div_track">
+                                            <div class="o_pdash_div_axis"/>
+                                            <div t-if="row.isNeg" class="o_pdash_div_neg"
+                                                 t-attf-style="width: {{ row.widthPct }}%; background-color: {{ row.color }}"/>
+                                            <div t-else="" class="o_pdash_div_pos"
+                                                 t-attf-style="width: {{ row.widthPct }}%; background-color: {{ row.color }}"/>
+                                        </div>
+                                        <div class="o_pdash_div_value"
+                                             t-att-class="row.isNeg ? 'text-danger' : 'text-success'"
+                                             t-esc="row.valueLabel"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-xl-5">
+                        <div class="o_pdash_card">
+                            <div class="o_pdash_card_title">
+                                Top Earners
+                                <span class="o_pdash_card_sub">last completed period</span>
+                            </div>
+                            <table class="table table-sm o_pdash_table mb-0">
+                                <thead>
+                                    <tr><th>Employee</th><th class="text-end">Net Pay</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="state.data.top_earners" t-as="row" t-key="row_index"
+                                        class="o_pdash_table_row" t-on-click="() => this.openPayslip(row.payslip_id)">
+                                        <td t-esc="row.employee_name"/>
+                                        <td class="text-end fw-bold" t-esc="formatCurrency(row.total_to_pay)"/>
+                                    </tr>
+                                    <tr t-if="!state.data.top_earners.length">
+                                        <td colspan="2" class="text-muted py-3 text-center">No data.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action queues -->
+                <div class="row g-3 mt-2">
+                    <div class="col-12 col-xl-6">
+                        <div class="o_pdash_card">
+                            <div class="o_pdash_card_title">
+                                Held Payslips Queue
+                                <span class="o_pdash_card_sub">oldest first</span>
+                            </div>
+                            <div class="o_pdash_scroll">
+                                <table class="table table-sm o_pdash_table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Employee</th>
+                                            <th>Period</th>
+                                            <th class="text-end">Held</th>
+                                            <th class="text-end">Payable Now</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="state.data.held_payslips" t-as="row" t-key="row.id"
+                                            class="o_pdash_table_row" t-on-click="() => this.openPayslip(row.id)">
+                                            <td t-esc="row.employee_name"/>
+                                            <td><span class="text-muted small"><t t-esc="row.date_from"/> → <t t-esc="row.date_to"/></span></td>
+                                            <td class="text-end" t-esc="formatCurrency(row.held_amount)"/>
+                                            <td class="text-end fw-bold" t-esc="formatCurrency(row.payable_now)"/>
+                                        </tr>
+                                        <tr t-if="!state.data.held_payslips.length">
+                                            <td colspan="4" class="text-muted py-3 text-center">No held payslips.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-xl-6">
+                        <div class="o_pdash_card">
+                            <div class="o_pdash_card_title">
+                                Adjustments — Awaiting Approval
+                                <span class="o_pdash_card_sub">click to open</span>
+                            </div>
+                            <div class="o_pdash_scroll">
+                                <table class="table table-sm o_pdash_table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Employee</th>
+                                            <th>Type</th>
+                                            <th>Mode</th>
+                                            <th>Period</th>
+                                            <th class="text-end">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="state.data.adjustments" t-as="row" t-key="row.id"
+                                            class="o_pdash_table_row" t-on-click="() => this.openAdjustment(row.id)">
+                                            <td t-esc="row.employee_name"/>
+                                            <td><span class="badge text-bg-light text-capitalize" t-esc="row.kind"/></td>
+                                            <td class="text-capitalize" t-esc="row.mode"/>
+                                            <td>
+                                                <span class="text-muted small">
+                                                    <t t-esc="row.period_from || '—'"/>
+                                                    <t t-if="row.period_to"> → <t t-esc="row.period_to"/></t>
+                                                </span>
+                                            </td>
+                                            <td class="text-end fw-bold"
+                                                t-att-class="row.kind === 'deduction' ? 'text-danger' : 'text-success'"
+                                                t-esc="formatCurrency(row.amount)"/>
+                                        </tr>
+                                        <tr t-if="!state.data.adjustments.length">
+                                            <td colspan="5" class="text-muted py-3 text-center">No pending adjustments.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </t>
+
+</templates>

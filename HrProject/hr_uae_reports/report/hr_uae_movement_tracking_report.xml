@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_hr_uae_movement_tracking" model="ir.actions.report">
+        <field name="name">Movement Tracking</field>
+        <field name="model">hr.uae.movement.tracking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hr_uae_reports.report_movement_tracking_document</field>
+        <field name="report_file">hr_uae_reports.report_movement_tracking_document</field>
+        <field name="binding_model_id" ref="hr_uae_leaves.model_hr_uae_movement_tracking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

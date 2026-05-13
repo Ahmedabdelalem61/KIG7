@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HR UAE — User Guide</title>
+<style>
+  :root {
+    --bg:#0e1726;
+    --panel:#fff;
+    --ink:#1f2937;
+    --muted:#6b7280;
+    --accent:#0ea5e9;
+    --accent-2:#10b981;
+    --warn:#f59e0b;
+    --danger:#ef4444;
+    --border:#e5e7eb;
+    --soft:#f9fafb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin:0; font-family: system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--soft); color:var(--ink); line-height:1.55;
+  }
+  header {
+    background:linear-gradient(135deg,#0ea5e9,#0369a1); color:#fff;
+    padding:32px 24px;
+  }
+  header h1 { margin:0 0 6px; font-size:28px; }
+  header p { margin:0; opacity:.9; }
+  .layout { display:grid; grid-template-columns:260px 1fr; gap:0; }
+  nav {
+    position:sticky; top:0; align-self:start; height:100vh; overflow:auto;
+    background:var(--panel); border-right:1px solid var(--border); padding:20px;
+  }
+  nav h3 { font-size:12px; text-transform:uppercase; color:var(--muted); margin:18px 0 8px; letter-spacing:.06em; }
+  nav a {
+    display:block; padding:6px 8px; margin:2px 0; border-radius:6px;
+    color:var(--ink); text-decoration:none; font-size:14px;
+  }
+  nav a:hover { background:#eff6ff; color:#0369a1; }
+  main { padding:32px 40px; max-width:980px; }
+  section { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:24px 28px; margin:0 0 24px; }
+  section h2 { margin-top:0; color:#0369a1; border-bottom:2px solid #e0f2fe; padding-bottom:10px; }
+  section h3 { color:#0c4a6e; margin-top:24px; }
+  .badges { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 16px; }
+  .badge {
+    background:#e0f2fe; color:#0369a1; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:600;
+  }
+  .badge.ok    { background:#dcfce7; color:#166534; }
+  .badge.warn  { background:#fef3c7; color:#92400e; }
+  .badge.role  { background:#ede9fe; color:#5b21b6; }
+  .role-tag    { font-size:12px; padding:2px 8px; border-radius:4px; background:#ede9fe; color:#5b21b6; margin-left:8px; vertical-align:middle; }
+  ol, ul { padding-left:22px; }
+  ol li, ul li { margin:6px 0; }
+  code, .kbd {
+    background:#f3f4f6; padding:1px 6px; border-radius:4px; font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:13px;
+  }
+  .kbd { border:1px solid #d1d5db; box-shadow:inset 0 -1px 0 #d1d5db; }
+  .tip, .warn, .info {
+    border-left:4px solid; padding:10px 14px; margin:14px 0; border-radius:6px; background:#f9fafb;
+  }
+  .tip { border-color:var(--accent-2); background:#ecfdf5; }
+  .warn { border-color:var(--warn); background:#fffbeb; }
+  .info { border-color:var(--accent); background:#eff6ff; }
+  table { width:100%; border-collapse:collapse; margin:12px 0; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--border); font-size:14px; }
+  th { background:var(--soft); }
+  .step {
+    counter-reset: step; list-style:none; padding-left:0; margin:14px 0;
+  }
+  .step li {
+    counter-increment: step; position:relative; padding:10px 12px 10px 44px;
+    border:1px solid var(--border); border-radius:8px; margin:8px 0; background:#fff;
+  }
+  .step li::before {
+    content: counter(step); position:absolute; left:12px; top:10px;
+    width:24px; height:24px; line-height:24px; border-radius:50%;
+    background:var(--accent); color:#fff; text-align:center; font-weight:700; font-size:13px;
+  }
+  .menu-path {
+    display:inline-block; background:#0e1726; color:#fff; padding:4px 10px; border-radius:6px;
+    font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px;
+  }
+  .menu-path span { color:#fbbf24; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .card {
+    background:#f9fafb; border:1px solid var(--border); border-radius:8px; padding:14px;
+  }
+  footer { padding:24px 40px; color:var(--muted); font-size:13px; text-align:center; }
+  .small { font-size:13px; color:var(--muted); }
+  details { margin:8px 0; }
+  details summary { cursor:pointer; padding:6px; font-weight:600; }
+  @media (max-width:900px){
+    .layout { grid-template-columns:1fr; }
+    nav { position:static; height:auto; border-right:0; border-bottom:1px solid var(--border); }
+    main { padding:20px; }
+    .grid-2 { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>HR UAE — User Guide</h1>
+  <p>Step-by-step playbook for HR, Finance and Project Managers. No Odoo experience needed.</p>
+</header>
+
+<div class="layout">
+  <nav>
+    <h3>Getting started</h3>
+    <a href="#login">Logging in</a>
+    <a href="#roles">Roles &amp; permissions</a>
+    <a href="#layout">Screen layout</a>
+
+    <h3>Daily tasks</h3>
+    <a href="#new-employee">Add a new employee</a>
+    <a href="#documents">Upload documents</a>
+    <a href="#leaves">Request &amp; approve leave</a>
+    <a href="#flights">Book a flight ticket</a>
+    <a href="#adjustments">Salary allowance / deduction</a>
+    <a href="#payroll">Run payroll</a>
+    <a href="#termination">Terminate an employee</a>
+
+    <h3>Reports &amp; dashboard</h3>
+    <a href="#dashboard">HR Dashboard</a>
+    <a href="#reports">Built-in reports</a>
+    <a href="#audit">Audit trail</a>
+
+    <h3>Reference</h3>
+    <a href="#glossary">Glossary</a>
+    <a href="#faq">Troubleshooting / FAQ</a>
+  </nav>
+
+  <main>
+
+    <!-- ===== Login ===== -->
+    <section id="login">
+      <h2>1. Logging in</h2>
+      <ol class="step">
+        <li>Open your browser and go to <code>http://&lt;your-server&gt;:9073</code> (your IT will provide the exact address).</li>
+        <li>Enter your e-mail and password, click <b>Log in</b>.</li>
+        <li>From the apps screen, click the <b>HR UAE</b> tile (anchor icon).</li>
+      </ol>
+      <div class="tip"><b>Tip.</b> Bookmark the page after first login. Use the magnifier icon at the top of any list to search instantly.</div>
+    </section>
+
+    <!-- ===== Roles ===== -->
+    <section id="roles">
+      <h2>2. Roles &amp; permissions</h2>
+      <p>Your menu choices change with the role your administrator assigned to you.</p>
+      <table>
+        <tr><th>Role</th><th>What you can do</th></tr>
+        <tr><td><span class="role-tag">User</span></td><td>See own profile, request leaves, view own payslips.</td></tr>
+        <tr><td><span class="role-tag">Officer</span></td><td>Manage employees, documents, leaves, flight tickets.</td></tr>
+        <tr><td><span class="role-tag">Finance</span></td><td>Approve flight tickets, run payroll, salary adjustments.</td></tr>
+        <tr><td><span class="role-tag">Manager</span></td><td>Everything above + terminations, dashboards, audit reports.</td></tr>
+      </table>
+      <div class="info"><b>Don't see a menu?</b> You may not have the role for it. Ask your administrator.</div>
+    </section>
+
+    <!-- ===== Layout ===== -->
+    <section id="layout">
+      <h2>3. Screen layout (1 minute tour)</h2>
+      <ul>
+        <li><b>Top bar:</b> the breadcrumb shows where you are. Use the search bar (right) to find anything.</li>
+        <li><b>Form vs list:</b> a list shows many records, click any line to open the form view.</li>
+        <li><b>Edit:</b> just start typing in any field; changes are saved when you click <b>Save</b> (cloud icon at the top-left) or move to another record.</li>
+        <li><b>Smart buttons</b> (top-right of a form) jump to related records — e.g. <b>Documents</b>, <b>Audit Trail</b>, <b>Payslips</b> on an employee.</li>
+        <li><b>Action menu</b> (gear icon ⚙) at the top of a list lets you print reports, archive, etc.</li>
+      </ul>
+    </section>
+
+    <!-- ===== New Employee ===== -->
+    <section id="new-employee">
+      <h2>4. Adding a new employee <span class="role-tag">Officer</span></h2>
+      <div class="badges">
+        <span class="badge">Master Data</span>
+        <span class="badge">Auto Cost Center</span>
+        <span class="badge">Audit logged</span>
+      </div>
+      <p class="menu-path"><span>HR UAE ▸</span> Master Data ▸ Employees ▸ <b>New</b></p>
+      <ol class="step">
+        <li>Type the <b>Name</b> exactly as shown in the passport (e.g. <i>Rodriguez Garcia Pedro</i>).</li>
+        <li>Pick a <b>Rank</b> and <b>Position</b> from the drop-downs (these are pre-loaded for UAE).</li>
+        <li>Fill <b>Passport No.</b>, <b>Roster</b> (e.g. <code>A08521</code>), <b>Date of Birth</b> and <b>Visa Expiry</b>.</li>
+        <li>Optionally choose a <b>Project</b> (analytic). The system will auto-create a <b>Cost Center</b> matching the employee.</li>
+        <li>Click <b>Save</b> (cloud icon, top-left).</li>
+        <li>Open the <b>Contract</b> tab to add salary, start date and assign the <b>UAE Standard</b> structure.</li>
+      </ol>
+      <div class="tip"><b>What you get automatically:</b> Age is calculated from DOB, visa status (active / expiring / expired) is computed, an audit-trail entry is created, and a "cost center" analytic account is generated.</div>
+      <details>
+        <summary>Bulk import (50+ employees at once)</summary>
+        <ol>
+          <li>Open the Employees list.</li>
+          <li>Click <span class="kbd">⚙ Actions ▸ Import</span>.</li>
+          <li>Download the template, fill it in Excel, then upload.</li>
+        </ol>
+      </details>
+    </section>
+
+    <!-- ===== Documents ===== -->
+    <section id="documents">
+      <h2>5. Uploading typed documents <span class="role-tag">Officer</span></h2>
+      <p class="menu-path"><span>Employee form ▸</span> <b>Documents</b> smart-button</p>
+      <ol class="step">
+        <li>Open the employee, click the <b>Documents</b> smart button.</li>
+        <li>Click <b>New</b>, choose a <b>Type</b> (Passport, Visa, Medical, License, Other).</li>
+        <li>Set the <b>Expiry date</b>, then drag-and-drop the file in the <b>Attachment</b> field.</li>
+        <li>Save.</li>
+      </ol>
+      <div class="warn"><b>Expiry alerts.</b> A nightly job watches every document. 30 days before expiry the system e-mails the employee, the assigned officer and the line manager. The "Documents" smart button shows a red counter for documents expiring soon.</div>
+    </section>
+
+    <!-- ===== Leaves ===== -->
+    <section id="leaves">
+      <h2>6. Requesting &amp; approving a leave <span class="role-tag">User · Officer</span></h2>
+      <p class="menu-path"><span>HR UAE ▸</span> Time Off ▸ <b>My Leaves</b></p>
+      <ol class="step">
+        <li>Click <b>New</b>. Choose a <b>Leave Type</b> (Annual, Special, Medical, Unpaid).</li>
+        <li>Pick the <b>From</b> and <b>To</b> dates. The system blocks duplicates and checks balances.</li>
+        <li>Click <b>Confirm</b> to submit.</li>
+        <li>An officer opens the <b>To Approve</b> tab and clicks <b>Validate</b>.</li>
+      </ol>
+      <div class="info">
+        <b>What happens automatically when a leave is validated</b>
+        <ul>
+          <li>The employee's <b>Status</b> field switches (e.g. <i>on_annual_leave</i>) — useful in the dashboard.</li>
+          <li>If a payslip exists for the leave period, it is automatically moved to <b>On Hold</b> and shows the held amount and the payable amount.</li>
+          <li>An e-mail goes out 5 days before the return date.</li>
+        </ul>
+      </div>
+      <div class="tip"><b>Mark a return:</b> open the leave and tick <b>Returned</b> — the held payslip is released and goes back to <i>Done</i>.</div>
+    </section>
+
+    <!-- ===== Flights ===== -->
+    <section id="flights">
+      <h2>7. Booking a flight ticket <span class="role-tag">Officer · Finance</span></h2>
+      <p class="menu-path"><span>HR UAE ▸</span> Flights ▸ <b>New</b></p>
+      <ol class="step">
+        <li>Pick the <b>Employee</b>. The form auto-fills passport, DOJ and project.</li>
+        <li>Select <b>From / To Country</b>, departure date, and the purpose (Hire, Annual Leave, Replacement, Termination).</li>
+        <li>Enter the <b>Ticket Price</b> and any extras (luggage / fees). The total updates live.</li>
+        <li>Choose the <b>Agency</b> and tick <b>Refundable</b> if applicable.</li>
+        <li>Click <b>Book</b>. An expense entry is created and linked to the employee + project.</li>
+      </ol>
+      <table>
+        <tr><th>Action button</th><th>When to use</th></tr>
+        <tr><td><b>Mark Completed</b></td><td>Passenger has flown.</td></tr>
+        <tr><td><b>Cancel</b></td><td>Plans changed. Sets the linked expense to <i>refused</i>.</td></tr>
+        <tr><td><b>Reschedule</b></td><td>New date / cost — duplicates the ticket as a draft.</td></tr>
+      </table>
+    </section>
+
+    <!-- ===== Adjustments ===== -->
+    <section id="adjustments">
+      <h2>8. Salary adjustment, allowance or deduction <span class="role-tag">Manager</span></h2>
+      <p class="menu-path"><span>HR UAE ▸</span> Payroll ▸ Salary Adjustments ▸ <b>New</b></p>
+      <ol class="step">
+        <li>Pick the <b>Employee</b>.</li>
+        <li>Choose the <b>Kind</b>: <i>Adjustment</i>, <i>Allowance</i> or <i>Deduction</i>.</li>
+        <li>Pick the <b>Mode</b>:
+          <ul>
+            <li><b>One-shot</b> — applies to a specific payslip.</li>
+            <li><b>Date range</b> — applies to every payslip whose period intersects the range.</li>
+            <li><b>Recurring</b> — re-applied automatically every month by a nightly job.</li>
+          </ul>
+        </li>
+        <li>Enter the <b>Amount</b> in AED, add notes if needed.</li>
+        <li>Click <b>Submit</b> → <b>Approve</b> (HR Manager). The payslip input line is pushed automatically.</li>
+      </ol>
+    </section>
+
+    <!-- ===== Payroll ===== -->
+    <section id="payroll">
+      <h2>9. Running monthly payroll <span class="role-tag">Finance · Manager</span></h2>
+      <p class="menu-path"><span>HR UAE ▸</span> Payroll ▸ <b>Payslips</b></p>
+      <ol class="step">
+        <li>Click <b>Payslip Batches ▸ New</b>, choose a name (e.g. <i>February 2026</i>) and the month.</li>
+        <li>Click <b>Generate Payslips</b>. Pick all employees or a filtered set.</li>
+        <li>Open each payslip, hit <b>Compute Sheet</b> to recalculate.</li>
+        <li>Review the <b>Held / Payable</b> values for employees on leave.</li>
+        <li>When ready, click <b>Confirm</b> and then <b>Make Payment</b>.</li>
+      </ol>
+      <div class="info">
+        <b>Salary structure used:</b> <i>UAE Standard</i> — Basic + Housing + Transport ± Adjustments − Unpaid leave − Flight deductions = <b>Net</b>. Currency is locked to <b>AED</b>.
+      </div>
+      <details>
+        <summary>How are payslips put on hold?</summary>
+        <p>When a leave is validated and overlaps the payslip period, a hold is calculated using <code>(wage / 30) × held days</code>. The payable amount is the rest. When the employee is marked <b>Returned</b>, the hold is released and the payslip returns to <i>Done</i>.</p>
+      </details>
+    </section>
+
+    <!-- ===== Termination ===== -->
+    <section id="termination">
+      <h2>10. Terminating an employee <span class="role-tag">Manager</span></h2>
+      <p class="menu-path"><span>HR UAE ▸</span> Termination ▸ <b>New</b></p>
+      <ol class="step">
+        <li>Pick the <b>Employee</b> — the contract is auto-loaded.</li>
+        <li>Choose <b>Departure date</b> (last day in UAE) and <b>Arrival date</b> in home country.</li>
+        <li>Pick a <b>Reason</b> (resignation, end of contract, dismissal, …) and add notes.</li>
+        <li>Click <b>Activate</b>. The employee is archived, the contract is set to <i>Closed</i>, and any future payslips are cancelled.</li>
+        <li>When all paperwork is done, click <b>Close</b> to lock the record.</li>
+      </ol>
+      <div class="warn">Activation cannot be undone. Use the <b>Reset to Draft</b> button on the same form before activating to roll back changes.</div>
+    </section>
+
+    <!-- ===== Dashboard ===== -->
+    <section id="dashboard">
+      <h2>11. HR Dashboard</h2>
+      <p class="menu-path"><span>HR UAE ▸</span> <b>Dashboard</b></p>
+      <p>One screen with live tiles:</p>
+      <div class="grid-2">
+        <div class="card"><b>Employees</b><br/>Total · active · terminated</div>
+        <div class="card"><b>Visa expiry</b><br/>How many visas expire in the next 30 days</div>
+        <div class="card"><b>Held payslips</b><br/>Currently locked due to leaves</div>
+        <div class="card"><b>Flights open</b><br/>Plus total flight cost (AED)</div>
+      </div>
+      <p class="small">Tiles are clickable — they open the full filtered list behind each number.</p>
+    </section>
+
+    <!-- ===== Reports ===== -->
+    <section id="reports">
+      <h2>12. Built-in reports</h2>
+      <p class="menu-path"><span>HR UAE ▸</span> <b>Reports</b></p>
+      <table>
+        <tr><th>Report</th><th>What it shows</th><th>Format</th></tr>
+        <tr><td>Master Data</td><td>Full employee list with rank, position, project, cost center</td><td>PDF / Excel</td></tr>
+        <tr><td>Movement Tracking</td><td>Leaves, returns, contract ends, project transfers</td><td>PDF / Excel</td></tr>
+        <tr><td>Payroll</td><td>Monthly salary summary mirroring the proposal Excel</td><td>PDF / Excel</td></tr>
+        <tr><td>Tickets</td><td>Flights with totals, status and project</td><td>PDF / Excel</td></tr>
+        <tr><td>Termination</td><td>Past and current terminations</td><td>PDF / Excel</td></tr>
+        <tr><td>Audit</td><td>Per-employee field-by-field history</td><td>PDF</td></tr>
+      </table>
+      <div class="tip"><b>How to export to Excel:</b> open any list, tick the rows you want (or none for all), then <span class="kbd">⚙ Actions ▸ Export</span>.</div>
+    </section>
+
+    <!-- ===== Audit ===== -->
+    <section id="audit">
+      <h2>13. The audit trail</h2>
+      <p>Every change to employees, contracts, documents, leaves, flights, payslips and terminations is recorded automatically.</p>
+      <p class="menu-path"><span>Employee form ▸</span> <b>Audit Trail</b> smart-button</p>
+      <ul>
+        <li>Each entry shows who changed what, when, and from / to values in human-readable form.</li>
+        <li>Use the <b>Audit Report wizard</b> (<span class="menu-path"><span>HR UAE ▸</span> Reports ▸ Audit Report</span>) to print a per-employee history for any date range.</li>
+      </ul>
+      <div class="info">Audit entries cannot be edited or deleted by users — even managers — to keep the trail trustworthy.</div>
+    </section>
+
+    <!-- ===== Glossary ===== -->
+    <section id="glossary">
+      <h2>14. Glossary</h2>
+      <table>
+        <tr><th>Term</th><th>Meaning</th></tr>
+        <tr><td>Cost Center</td><td>Analytic account used to attribute costs (salary, flight…) per employee.</td></tr>
+        <tr><td>Project Allocation</td><td>Analytic account that links an employee to a project — used in reporting.</td></tr>
+        <tr><td>Roster</td><td>The internal employee number printed on company ID badges.</td></tr>
+        <tr><td>Payslip Hold</td><td>A temporary lock on a payslip while an employee is on leave.</td></tr>
+        <tr><td>UAE Standard</td><td>The salary structure used by all employees in this platform.</td></tr>
+        <tr><td>Smart Button</td><td>The big buttons at the top right of a form that jump to related records.</td></tr>
+      </table>
+    </section>
+
+    <!-- ===== FAQ ===== -->
+    <section id="faq">
+      <h2>15. Troubleshooting / FAQ</h2>
+      <details>
+        <summary>I can't see the HR UAE app.</summary>
+        Ask your administrator to assign you a role from the <i>HR UAE</i> security group. After re-login, the app appears.
+      </details>
+      <details>
+        <summary>The "Documents" smart button shows a red number.</summary>
+        That number is documents expiring within 30 days. Click it, renew them and update the expiry date.
+      </details>
+      <details>
+        <summary>Why is a payslip "On Hold"?</summary>
+        Because an active leave overlaps the payslip period. Open the payslip — the held amount and reason are shown. Tick <b>Returned</b> on the leave to release.
+      </details>
+      <details>
+        <summary>I created an employee with the wrong name. Now what?</summary>
+        Open the employee form, edit the field, click Save. Both the employee and the auto-cost-center are renamed and an audit-trail entry is created.
+      </details>
+      <details>
+        <summary>How do I undo a termination?</summary>
+        Open the termination, click <b>Reset to Draft</b>. The employee is unarchived and the contract reopened. Once you click <b>Close</b>, this is no longer possible.
+      </details>
+      <details>
+        <summary>I can't add a salary adjustment.</summary>
+        Salary adjustments require the <b>HR Manager (UAE)</b> role to approve. Submit it and ask a manager to approve.
+      </details>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  HR UAE Platform · Built on Odoo 18 Community · Need help? Contact your administrator.
+</footer>
+
+</body>
+</html>

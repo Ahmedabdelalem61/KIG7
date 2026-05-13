@@ -1,0 +1,119 @@
+{
+  "folders": [
+    {
+      "name": "Odoo-18 Repo",
+      "path": "../../../../Odoo-Repos/Odoo-18"
+    },
+    {
+      "name": "HrProject",
+      "path": ".."
+    },
+    {
+      "name": "Configs",
+      "path": "../../configs"
+    }
+  ],
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "HrProject Odoo-18 Community (18.0)",
+        "type": "debugpy",
+        "request": "launch",
+        "stopOnEntry": false,
+        "python": "${workspaceFolder:Odoo-18 Repo}/venv/bin/python",
+        "program": "${workspaceFolder:Odoo-18 Repo}/odoo-bin",
+        "args": [
+          "--config=${workspaceFolder:Configs}/hr_project.conf"
+        ],
+        "console": "integratedTerminal",
+        "justMyCode": true
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "pylint-HrProject",
+        "type": "shell",
+        "command": "${workspaceFolder:Odoo-18 Repo}/venv/bin/pylint",
+        "args": [
+          "--rcfile=${workspaceFolder:Odoo-18 Repo}/.pylintrc",
+          "${workspaceFolder:HrProject}"
+        ],
+        "group": "build",
+        "problemMatcher": {
+          "owner": "python",
+          "fileLocation": "absolute",
+          "pattern": {
+            "regexp": "^(.*):(\\d+):(\\d+):\\s+([A-Za-z])(\\d+):\\s+(.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "severity": 4,
+            "code": 5,
+            "message": 6
+          }
+        },
+        "detail": "Run pylint on HrProject project"
+      },
+      {
+        "label": "flake8-HrProject",
+        "type": "shell",
+        "command": "${workspaceFolder:Odoo-18 Repo}/venv/bin/flake8",
+        "args": [
+          "--config=${workspaceFolder:Odoo-18 Repo}/.flake8",
+          "${workspaceFolder:HrProject}"
+        ],
+        "group": "build",
+        "problemMatcher": {
+          "owner": "python",
+          "fileLocation": "absolute"
+        },
+        "detail": "Run flake8 on HrProject project"
+      }
+    ]
+  },
+  "settings": {
+    "python.analysis.typeCheckingMode": "standard",
+    "python.languageServer": "None",
+    "python.defaultInterpreterPath": "${workspaceFolder:Odoo-18 Repo}/venv/bin/python",
+    "python.analysis.extraPaths": [
+      "${workspaceFolder:Odoo-18 Repo}/odoo",
+      "${workspaceFolder:Odoo-18 Repo}/odoo/addons"
+    ],
+    "isort.args": ["--profile", "black"],
+    "black-formatter.args": ["--line-length=250"],
+    "pylint.enabled": true,
+    "pylint.interpreter": ["${workspaceFolder:Odoo-18 Repo}/venv/bin/python"],
+    "pylint.args": ["--rcfile=${workspaceFolder:Odoo-18 Repo}/.pylintrc"],
+    "pylint.importStrategy": "fromEnvironment",
+    "flake8.enabled": true,
+    "flake8.interpreter": ["${workspaceFolder:Odoo-18 Repo}/venv/bin/python"],
+    "flake8.args": ["--config=${workspaceFolder:Odoo-18 Repo}/.flake8"],
+    "flake8.importStrategy": "fromEnvironment",
+    "files.associations": {
+      "*.xml": "xml",
+      "*.html": "html",
+      "*.py": "python",
+      "*.js": "javascript"
+    },
+    "[python]": {
+      "editor.defaultFormatter": "ms-python.black-formatter",
+      "editor.formatOnSave": true,
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+      }
+    },
+    "[xml]": {
+      "editor.defaultFormatter": "mikeburgh.xml-format"
+    },
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 300,
+    "editor.formatOnSave": true,
+    "editor.minimap.enabled": false,
+    "workbench.iconTheme": "material-icon-theme",
+    "xml.symbols.enabled": false
+  }
+}

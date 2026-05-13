@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="seq_hr_uae_flight" model="ir.sequence">
+        <field name="name">HR UAE Flight Ticket</field>
+        <field name="code">hr.uae.flight</field>
+        <field name="prefix">FLT/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="implementation">no_gap</field>
+    </record>
+
+</odoo>

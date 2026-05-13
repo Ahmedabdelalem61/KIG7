@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Odoo DB / filestore bundles (export locally; do not commit large binaries)
+deploy/artifacts/*.dump
+deploy/artifacts/*.tgz
+deploy/artifacts/*.sql
+deploy/artifacts/*.zip

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_hr_uae_termination" model="ir.actions.report">
+        <field name="name">Contract Termination</field>
+        <field name="model">hr.uae.termination</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hr_uae_termination.report_termination_document</field>
+        <field name="report_file">hr_uae_termination.report_termination_document</field>
+        <field name="binding_model_id" ref="model_hr_uae_termination"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

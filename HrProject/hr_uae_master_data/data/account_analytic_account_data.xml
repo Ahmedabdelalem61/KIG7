@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+      Project Allocation / Cost Center dropdowns are domain-filtered by plan.
+      Plans are created in account_analytic_plan_data.xml; without analytic
+      accounts under those plans, the Many2one lists stay empty.
+    -->
+    <record id="analytic_project_hq" model="account.analytic.account">
+        <field name="name">Project — HQ / Overhead</field>
+        <field name="code">PRJ-HQ</field>
+        <field name="plan_id" ref="account_analytic_plan_project_allocation"/>
+    </record>
+    <record id="analytic_project_site_a" model="account.analytic.account">
+        <field name="name">Project — Site A</field>
+        <field name="code">PRJ-A</field>
+        <field name="plan_id" ref="account_analytic_plan_project_allocation"/>
+    </record>
+    <record id="analytic_project_site_b" model="account.analytic.account">
+        <field name="name">Project — Site B</field>
+        <field name="code">PRJ-B</field>
+        <field name="plan_id" ref="account_analytic_plan_project_allocation"/>
+    </record>
+</odoo>

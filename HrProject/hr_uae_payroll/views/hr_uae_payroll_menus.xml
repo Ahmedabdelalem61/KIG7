@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_hr_uae_payroll_live_dashboard"
+        name="Payroll Live Dashboard"
+        parent="hr_uae_base.menu_hr_uae_payroll"
+        action="action_hr_uae_payroll_live_dashboard"
+        sequence="5"/>
+
+    <menuitem
+        id="menu_hr_uae_payroll_dashboard"
+        name="Payroll Dashboard"
+        parent="hr_uae_base.menu_hr_uae_payroll"
+        action="action_hr_uae_payroll_dashboard"
+        sequence="10"/>
+
+</odoo>

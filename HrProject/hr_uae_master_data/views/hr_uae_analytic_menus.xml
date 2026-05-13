@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Analytic menus live in Accounting by default; HR-only DBs need this. -->
+
+    <record id="action_hr_uae_project_allocation_accounts" model="ir.actions.act_window">
+        <field name="name">Project allocations</field>
+        <field name="res_model">account.analytic.account</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain" eval="[('plan_id', '=', ref('hr_uae_master_data.account_analytic_plan_project_allocation'))]"/>
+        <field name="context" eval="{'default_plan_id': ref('hr_uae_master_data.account_analytic_plan_project_allocation'), 'search_default_active': 1}"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a project allocation</p>
+            <p>These analytic accounts appear on employees as <strong>Project Allocation</strong>. You do not need the Accounting app.</p>
+        </field>
+    </record>
+
+    <record id="action_hr_uae_cost_center_accounts" model="ir.actions.act_window">
+        <field name="name">Cost centers (analytic)</field>
+        <field name="res_model">account.analytic.account</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain" eval="[('plan_id', '=', ref('hr_uae_master_data.account_analytic_plan_cost_center'))]"/>
+        <field name="context" eval="{'default_plan_id': ref('hr_uae_master_data.account_analytic_plan_cost_center'), 'search_default_active': 1}"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a cost center</p>
+            <p>Employees can also get an auto-created cost center; this list is for extra / shared centers.</p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_hr_uae_project_allocation_accounts"
+        name="Project allocations"
+        parent="hr_uae_base.menu_hr_uae_config"
+        action="action_hr_uae_project_allocation_accounts"
+        sequence="25"
+        groups="hr_uae_base.group_hr_uae_manager"/>
+
+    <menuitem
+        id="menu_hr_uae_cost_center_accounts"
+        name="Cost centers (analytic)"
+        parent="hr_uae_base.menu_hr_uae_config"
+        action="action_hr_uae_cost_center_accounts"
+        sequence="26"
+        groups="hr_uae_base.group_hr_uae_manager"/>
+
+</odoo>

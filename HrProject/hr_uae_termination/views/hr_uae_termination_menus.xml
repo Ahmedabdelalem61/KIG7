@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_hr_uae_termination_list"
+        name="Terminations"
+        parent="hr_uae_base.menu_hr_uae_termination"
+        action="action_hr_uae_termination"
+        sequence="10"/>
+
+</odoo>

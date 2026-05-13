@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_payroll_dashboard_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>Payroll Dashboard</h2>
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Rank</th>
+                                <th>Name</th>
+                                <th>Passport</th>
+                                <th>Roster</th>
+                                <th>Position</th>
+                                <th>Project</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Salary</th>
+                                <th>Period</th>
+                                <th>Total Days</th>
+                                <th>Worked</th>
+                                <th>Deducted</th>
+                                <th>Hold</th>
+                                <th>Total to Pay</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="row" t-key="row.id">
+                                <tr>
+                                    <td><span t-esc="row_index + 1"/></td>
+                                    <td><span t-esc="row.rank_id.name"/></td>
+                                    <td><span t-esc="row.employee_name"/></td>
+                                    <td><span t-esc="row.passport_id"/></td>
+                                    <td><span t-esc="row.roster"/></td>
+                                    <td><span t-esc="row.position_id.name"/></td>
+                                    <td><span t-esc="row.project_allocation_id.name"/></td>
+                                    <td><span t-esc="row.location_id.name"/></td>
+                                    <td><span t-esc="row.hr_uae_status"/></td>
+                                    <td><span t-esc="'%.2f' % (row.salary or 0)"/></td>
+                                    <td><span t-field="row.date_from"/> - <span t-field="row.date_to"/></td>
+                                    <td><span t-esc="row.total_days"/></td>
+                                    <td><span t-esc="row.worked_days"/></td>
+                                    <td><span t-esc="row.deducted_days"/></td>
+                                    <td><span t-esc="'%.2f' % (row.held_amount or 0)"/></td>
+                                    <td><span t-esc="'%.2f' % (row.total_to_pay or 0)"/></td>
+                                    <td><span t-esc="row.notes"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

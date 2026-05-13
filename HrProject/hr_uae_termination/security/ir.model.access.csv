@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_uae_termination_user,hr.uae.termination.user,model_hr_uae_termination,hr_uae_base.group_hr_uae_user,1,0,0,0
+access_hr_uae_termination_finance,hr.uae.termination.finance,model_hr_uae_termination,hr_uae_base.group_hr_uae_finance,1,0,0,0
+access_hr_uae_termination_manager,hr.uae.termination.manager,model_hr_uae_termination,hr_uae_base.group_hr_uae_manager,1,1,1,1

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_employee_form_audit" model="ir.ui.view">
+        <field name="name">hr.employee.form.audit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_open_audit_log"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-history"
+                        groups="hr_uae_base.group_hr_uae_manager">
+                    <field name="audit_log_count" widget="statinfo" string="Audit"/>
+                </button>
+            </xpath>
+
+            <xpath expr="//page[@name='hr_uae_master_data']" position="after">
+                <page string="Audit Trail" name="hr_uae_audit_trail" groups="hr_uae_base.group_hr_uae_manager">
+                    <field name="audit_log_ids" nolabel="1" readonly="1">
+                        <list>
+                            <field name="change_date"/>
+                            <field name="model"/>
+                            <field name="field_label"/>
+                            <field name="old_display"/>
+                            <field name="new_display"/>
+                            <field name="change_type"/>
+                            <field name="user_id"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

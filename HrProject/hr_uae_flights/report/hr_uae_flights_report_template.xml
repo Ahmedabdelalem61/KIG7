@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_flight_ticket_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>Flight Tickets</h2>
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Name</th>
+                                <th>Passport</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Departure</th>
+                                <th>Arrival</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Paid By</th>
+                                <th>Project</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="doc">
+                                <tr>
+                                    <td><span t-esc="doc.name"/></td>
+                                    <td><span t-esc="doc.employee_id.name"/></td>
+                                    <td><span t-esc="doc.passport_no"/></td>
+                                    <td><span t-esc="doc.from_country_id.name"/></td>
+                                    <td><span t-esc="doc.to_country_id.name"/></td>
+                                    <td><span t-field="doc.departure_date"/></td>
+                                    <td><span t-field="doc.arrival_date"/></td>
+                                    <td><span t-field="doc.total" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                    <td><span t-field="doc.booking_state"/></td>
+                                    <td><span t-field="doc.payment_mode"/></td>
+                                    <td><span t-esc="doc.project_allocation_id.name"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

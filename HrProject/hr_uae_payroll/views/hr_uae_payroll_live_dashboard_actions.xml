@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_hr_uae_payroll_live_dashboard" model="ir.actions.client">
+        <field name="name">Payroll Live Dashboard</field>
+        <field name="tag">hr_uae_payroll_live_dashboard</field>
+    </record>
+
+</odoo>

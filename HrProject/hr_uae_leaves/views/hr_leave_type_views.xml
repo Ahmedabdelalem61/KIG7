@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_leave_type_form_uae" model="ir.ui.view">
+        <field name="name">hr.leave.type.form.uae</field>
+        <field name="model">hr.leave.type</field>
+        <field name="inherit_id" ref="hr_holidays.edit_holiday_status_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="UAE Settings">
+                    <field name="hr_uae_status_code"/>
+                    <field name="hr_uae_alert_days"/>
+                    <field name="hr_uae_unpaid"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="ir_rule_hr_uae_audit_log_company" model="ir.rule">
+        <field name="name">Audit Log: company</field>
+        <field name="model_id" ref="model_hr_uae_audit_log"/>
+        <field name="domain_force">[
+            '|',
+            ('employee_id', '=', False),
+            ('employee_id.company_id', 'in', company_ids)
+        ]</field>
+        <field name="groups" eval="[(4, ref('hr_uae_base.group_hr_uae_user'))]"/>
+    </record>
+
+</odoo>

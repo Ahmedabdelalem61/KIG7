@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="email_template_leave_alert" model="mail.template">
+        <field name="name">HR UAE: Leave Alert</field>
+        <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+        <field name="subject">Leave alert: {{ object.holiday_status_id.name }} for {{ object.employee_id.name }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family:Arial,sans-serif">
+                <p>Hello,</p>
+                <p>An employee has reached the alert threshold for their leave:</p>
+                <ul>
+                    <li><strong>Employee:</strong> <span t-out="object.employee_id.name"/></li>
+                    <li><strong>Leave Type:</strong> <span t-out="object.holiday_status_id.name"/></li>
+                    <li><strong>Started On:</strong> <span t-out="object.date_from"/></li>
+                    <li><strong>Ends On:</strong> <span t-out="object.date_to"/></li>
+                </ul>
+                <p>Please coordinate the return ticket / next steps as per HR procedure.</p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+</odoo>

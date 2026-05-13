@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Grant Administrator full HR UAE roles so the home-screen app icon appears. -->
+<odoo>
+    <function model="res.users" name="write">
+        <value eval="[ref('base.user_admin')]"/>
+        <value
+            eval="{'groups_id': [(4, ref('hr_uae_base.group_hr_uae_management'))]}"
+        />
+    </function>
+</odoo>

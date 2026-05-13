@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="HR UAE Admin">
+  <defs>
+    <linearGradient id="hrUaeBg" x1="36" x2="220" y1="28" y2="228" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0F766E"/>
+      <stop offset="0.55" stop-color="#0A5C57"/>
+      <stop offset="1" stop-color="#103746"/>
+    </linearGradient>
+    <linearGradient id="hrUaeGlow" x1="78" x2="180" y1="78" y2="192" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFF6E8" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#F3DFC0" stop-opacity="0.98"/>
+    </linearGradient>
+    <filter id="hrUaeShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#0A2330" flood-opacity="0.24"/>
+    </filter>
+  </defs>
+
+  <rect x="20" y="20" width="216" height="216" rx="56" fill="url(#hrUaeBg)"/>
+  <path d="M64 20h124c26.51 0 48 21.49 48 48v60C198 96 154 78 104 74 89 73 75 74 64 78Z" fill="#FFFFFF" opacity="0.08"/>
+  <rect x="34" y="34" width="26" height="188" rx="13" fill="#D64045"/>
+
+  <g filter="url(#hrUaeShadow)">
+    <rect x="136" y="42" width="72" height="16" rx="8" fill="#FFFFFF" fill-opacity="0.18"/>
+    <rect x="136" y="42" width="72" height="5.2" rx="2.6" fill="#179C58"/>
+    <rect x="136" y="47.4" width="72" height="5.2" rx="2.6" fill="#F5F1EB"/>
+    <rect x="136" y="52.8" width="72" height="5.2" rx="2.6" fill="#101418"/>
+  </g>
+
+  <circle cx="128" cy="140" r="62" fill="url(#hrUaeGlow)"/>
+  <circle cx="128" cy="140" r="61" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2"/>
+
+  <path d="M88 188v-49c0-41 17-65 40-65s40 24 40 65v49h-19v-47c0-26-9-41-21-41s-21 15-21 41v47Z" fill="#0C5F5A"/>
+  <path d="M105 188c6-19 18-30 23-30s17 11 23 30Z" fill="#D64045"/>
+  <circle cx="115" cy="123" r="10.5" fill="#F2BC5D"/>
+  <circle cx="141" cy="123" r="10.5" fill="#FFF8EA"/>
+  <path d="M127.5 61l6.2 12.7 14 2-10.1 9.7 2.4 13.8-12.5-6.6-12.5 6.6 2.4-13.8-10.1-9.7 14-2Z" fill="#F1C86E"/>
+  <path d="M92 203h73" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-linecap="round" stroke-width="4"/>
+</svg>

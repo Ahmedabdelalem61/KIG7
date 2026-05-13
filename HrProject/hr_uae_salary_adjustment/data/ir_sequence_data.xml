@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="seq_hr_uae_salary_adjustment" model="ir.sequence">
+        <field name="name">HR UAE Salary Adjustment</field>
+        <field name="code">hr.uae.salary.adjustment</field>
+        <field name="prefix">ADJ/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="implementation">no_gap</field>
+    </record>
+
+</odoo>

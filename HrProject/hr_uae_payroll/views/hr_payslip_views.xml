@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_payslip_form_uae" model="ir.ui.view">
+        <field name="name">hr.payslip.form.uae</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="payroll.hr_payslip_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_hr_uae_release_hold"
+                        type="object"
+                        string="Release Hold"
+                        class="btn-warning"
+                        invisible="not hr_uae_hold_active"
+                        groups="hr_uae_base.group_hr_uae_manager"/>
+            </xpath>
+            <xpath expr="//header/button[@name='compute_sheet']" position="after">
+                <button
+                    name="action_hr_uae_recompute_slips_same_period"
+                    type="object"
+                    string="Recompute overlapping payslips"
+                    invisible="state not in ('draft', 'verify', 'on_hold')"
+                    groups="hr_uae_base.group_hr_uae_manager"
+                    title="Runs Compute Sheet on this payslip and any other Draft, Waiting, or On Hold payslips for the same employee that overlap this period."
+                />
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <group string="UAE Hold" invisible="not hr_uae_hold_active">
+                    <field name="hr_uae_hold_active"/>
+                    <field name="hr_uae_held_leave_id"/>
+                    <field name="hr_uae_payable_now"/>
+                    <field name="hr_uae_held_amount"/>
+                    <field name="currency_id" invisible="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

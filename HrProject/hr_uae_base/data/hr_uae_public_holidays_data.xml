@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!--
+        UAE public holidays modelled as global time-off on the UAE calendar.
+        Dates here are static placeholders for the current Gregorian year and
+        are intended to be reviewed/extended yearly by HR (Islamic holidays
+        shift each year). This avoids depending on OCA calendar_public_holiday.
+    -->
+
+    <record id="resource_calendar_leave_uae_new_year" model="resource.calendar.leaves">
+        <field name="name">New Year's Day</field>
+        <field name="calendar_id" ref="resource_calendar_uae"/>
+        <field name="date_from">2026-01-01 00:00:00</field>
+        <field name="date_to">2026-01-01 23:59:59</field>
+        <field name="time_type">leave</field>
+    </record>
+
+    <record id="resource_calendar_leave_uae_eid_fitr" model="resource.calendar.leaves">
+        <field name="name">Eid Al Fitr</field>
+        <field name="calendar_id" ref="resource_calendar_uae"/>
+        <field name="date_from">2026-03-20 00:00:00</field>
+        <field name="date_to">2026-03-22 23:59:59</field>
+        <field name="time_type">leave</field>
+    </record>
+
+    <record id="resource_calendar_leave_uae_arafat" model="resource.calendar.leaves">
+        <field name="name">Arafat Day</field>
+        <field name="calendar_id" ref="resource_calendar_uae"/>
+        <field name="date_from">2026-05-26 00:00:00</field>
+        <field name="date_to">2026-05-26 23:59:59</field>
+        <field name="time_type">leave</field>
+    </record>
+
+    <record id="resource_calendar_leave_uae_eid_adha" model="resource.calendar.leaves">
+        <field name="name">Eid Al Adha</field>
+        <field name="calendar_id" ref="resource_calendar_uae"/>
+        <field name="date_from">2026-05-27 00:00:00</field>
+        <field name="date_to">2026-05-29 23:59:59</field>
+        <field name="time_type">leave</field>
+    </record>
+
+    <record id="resource_calendar_leave_uae_islamic_new_year" model="resource.calendar.leaves">
+        <field name="name">Islamic New Year</field>
+        <field name="calendar_id" ref="resource_calendar_uae"/>
+        <field name="date_from">2026-06-16 00:00:00</field>
+        <field name="date_to">2026-06-16 23:59:59</field>
+        <field name="time_type">leave</field>
+    </record>
+
+    <record id="resource_calendar_leave_uae_prophet_birthday" model="resource.calendar.leaves">
+        <field name="name">Prophet's Birthday</field>
+        <field name="calendar_id" ref="resource_calendar_uae"/>
+        <field name="date_from">2026-08-25 00:00:00</field>
+        <field name="date_to">2026-08-25 23:59:59</field>
+        <field name="time_type">leave</field>
+    </record>
+
+    <record id="resource_calendar_leave_uae_commemoration_day" model="resource.calendar.leaves">
+        <field name="name">Commemoration Day</field>
+        <field name="calendar_id" ref="resource_calendar_uae"/>
+        <field name="date_from">2026-12-01 00:00:00</field>
+        <field name="date_to">2026-12-01 23:59:59</field>
+        <field name="time_type">leave</field>
+    </record>
+
+    <record id="resource_calendar_leave_uae_national_day" model="resource.calendar.leaves">
+        <field name="name">UAE National Day</field>
+        <field name="calendar_id" ref="resource_calendar_uae"/>
+        <field name="date_from">2026-12-02 00:00:00</field>
+        <field name="date_to">2026-12-03 23:59:59</field>
+        <field name="time_type">leave</field>
+    </record>
+
+</odoo>

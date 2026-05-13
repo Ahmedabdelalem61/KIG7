@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_uae_payroll_dashboard_tree" model="ir.ui.view">
+        <field name="name">hr.uae.payroll.dashboard.list</field>
+        <field name="model">hr.uae.payroll.dashboard</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0"
+                  decoration-warning="state == 'on_hold'"
+                  decoration-success="state == 'done'"
+                  decoration-muted="state == 'cancel'">
+                <field name="employee_name"/>
+                <field name="rank_id"/>
+                <field name="passport_id"/>
+                <field name="roster"/>
+                <field name="position_id"/>
+                <field name="project_allocation_id"/>
+                <field name="location_id"/>
+                <field name="hr_uae_status"/>
+                <field name="salary"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="total_days"/>
+                <field name="worked_days"/>
+                <field name="deducted_days"/>
+                <field name="extra_payment" optional="hide"/>
+                <field name="bonus" optional="hide"/>
+                <field name="held_amount"/>
+                <field name="deduction" optional="hide"/>
+                <field name="total_to_pay" sum="Total"/>
+                <field name="state"/>
+                <field name="notes" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hr_uae_payroll_dashboard_search" model="ir.ui.view">
+        <field name="name">hr.uae.payroll.dashboard.search</field>
+        <field name="model">hr.uae.payroll.dashboard</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="employee_name"/>
+                <field name="passport_id"/>
+                <field name="project_allocation_id"/>
+                <field name="rank_id"/>
+                <filter name="held" string="On Hold" domain="[('state','=','on_hold')]"/>
+                <filter name="done" string="Done" domain="[('state','=','done')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="g_proj" string="Project" context="{'group_by': 'project_allocation_id'}"/>
+                    <filter name="g_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="g_month" string="Month" context="{'group_by': 'date_from:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_hr_uae_payroll_dashboard" model="ir.actions.act_window">
+        <field name="name">Payroll Dashboard</field>
+        <field name="res_model">hr.uae.payroll.dashboard</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

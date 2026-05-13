@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="position_cleaner" model="hr.uae.position">
+        <field name="name">Cleaner</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="position_driver" model="hr.uae.position">
+        <field name="name">Driver</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="position_logistic" model="hr.uae.position">
+        <field name="name">Logistic</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="position_administrative" model="hr.uae.position">
+        <field name="name">Administrative</field>
+        <field name="sequence">40</field>
+    </record>
+
+    <record id="position_operations" model="hr.uae.position">
+        <field name="name">Operations</field>
+        <field name="sequence">50</field>
+    </record>
+
+</odoo>

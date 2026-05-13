@@ -1,0 +1,13 @@
+[options]
+http_port = 9073
+addons_path = /home/ahmed/odoo-community-setup/Odoo-Repos/Odoo-18/odoo/addons,/home/ahmed/odoo-community-setup/Odoo-Repos/Odoo-18/addons,/home/ahmed/odoo-community-setup/Custom-Projects/Odoo-18/HrProject,/home/ahmed/odoo-community-setup/Custom-Projects/Odoo-18/HrProject/thirdparty,/home/ahmed/odoo-community-setup/Custom-Projects/Odoo-18/HrProject/thirdparty/design-themes
+admin_passwd = admin
+db_host = localhost
+db_port = 5432
+db_user = ahmed
+db_password = 1234
+db_name = 18c_hr_project_test
+# db_name = 18c_hr_project_test_2
+
+
+data_dir = /home/ahmed/.local/share/Odoo-Community

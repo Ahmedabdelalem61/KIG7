@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_hr_uae_documents"
+        name="Documents"
+        parent="hr_uae_base.menu_hr_uae_employees"
+        action="action_hr_uae_document"
+        sequence="20"/>
+
+</odoo>

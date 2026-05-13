@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="hr_uae_reports.HrUaeLiveDashboard">
+        <div class="o_hr_uae_live_dashboard h-100 overflow-auto">
+            <div class="o_hud_topbar d-flex align-items-center justify-content-between flex-wrap gap-3 p-3 mb-3">
+                <div class="o_hud_topbar__brand">
+                    <h2 class="mb-0">HR UAE — Live Dashboard</h2>
+                    <span class="o_hud_topbar__meta small">
+                        Updated: <t t-esc="state.lastRefresh ? state.lastRefresh.toLocaleTimeString() : '…'"/>
+                    </span>
+                </div>
+                <button type="button" class="btn btn-sm o_hud_refresh" t-on-click="refreshNow">
+                    <i class="fa fa-refresh me-1"/> Refresh
+                </button>
+            </div>
+
+            <div t-if="state.loading" class="text-center py-5">
+                <i class="fa fa-spinner fa-spin fa-2x text-muted"/>
+            </div>
+
+            <div t-elif="state.error" class="alert alert-danger m-3">
+                <strong>Error:</strong> <t t-esc="state.error"/>
+            </div>
+
+            <div t-elif="state.data" class="px-3 pb-5">
+
+                <!-- KPI tiles -->
+                <div class="o_hud_kpi_grid">
+                    <div class="o_hud_tile o_hud_tile_blue" t-on-click="() => this.openEmployees([['active','=',true]])">
+                        <div class="o_hud_tile_label">Active Employees</div>
+                        <div class="o_hud_tile_value"><t t-esc="state.data.kpis.employees_total"/></div>
+                    </div>
+                    <div class="o_hud_tile o_hud_tile_green" t-on-click="() => this.openEmployees([['hr_uae_status','=','active']])">
+                        <div class="o_hud_tile_label">Status: Active</div>
+                        <div class="o_hud_tile_value"><t t-esc="state.data.kpis.employees_active"/></div>
+                    </div>
+                    <div class="o_hud_tile o_hud_tile_amber" t-on-click="() => this.openEmployees([['hr_uae_status','in',['vacations','special_permit','sick_leave']]])">
+                        <div class="o_hud_tile_label">On Leave</div>
+                        <div class="o_hud_tile_value"><t t-esc="state.data.kpis.employees_on_leave"/></div>
+                    </div>
+                    <div class="o_hud_tile o_hud_tile_red" t-on-click="() => this.openEmployees([['hr_uae_status','=','terminated'],['active','=',false]])">
+                        <div class="o_hud_tile_label">Terminated</div>
+                        <div class="o_hud_tile_value"><t t-esc="state.data.kpis.employees_terminated"/></div>
+                    </div>
+                    <div class="o_hud_tile o_hud_tile_purple" t-on-click="() => this.openEmployees([['visa_expire','&gt;=',state.data.today],['visa_expire','&lt;=',state.data.today]])">
+                        <div class="o_hud_tile_label">Visa &lt; 30d</div>
+                        <div class="o_hud_tile_value"><t t-esc="state.data.kpis.visas_expiring_30"/></div>
+                    </div>
+                    <div class="o_hud_tile o_hud_tile_pink" t-on-click="openHeldPayslips">
+                        <div class="o_hud_tile_label">Held Payslips</div>
+                        <div class="o_hud_tile_value"><t t-esc="state.data.kpis.held_payslips"/></div>
+                    </div>
+                    <div class="o_hud_tile o_hud_tile_teal" t-on-click="openPendingAdjustments">
+                        <div class="o_hud_tile_label">Adj. to Approve</div>
+                        <div class="o_hud_tile_value"><t t-esc="state.data.kpis.pending_adjustments"/></div>
+                    </div>
+                    <div class="o_hud_tile o_hud_tile_orange" t-on-click="openOpenFlights">
+                        <div class="o_hud_tile_label">Open Flights</div>
+                        <div class="o_hud_tile_value"><t t-esc="state.data.kpis.flights_open"/></div>
+                    </div>
+                    <div class="o_hud_tile o_hud_tile_indigo" t-on-click="openDocsAlerts">
+                        <div class="o_hud_tile_label">Doc Alerts</div>
+                        <div class="o_hud_tile_value"><t t-esc="state.data.kpis.documents_alerts"/></div>
+                    </div>
+                </div>
+
+                <!-- Charts row -->
+                <div class="row g-3 mt-2">
+                    <div class="col-12 col-lg-6">
+                        <div class="o_hud_card">
+                            <div class="o_hud_card_title">Employees by Status</div>
+                            <div class="d-flex align-items-center gap-3">
+                                <svg viewBox="0 0 200 200" width="200" height="200" t-if="state.data.status_breakdown.length">
+                                    <t t-foreach="pieSegments(state.data.status_breakdown)" t-as="seg" t-key="seg_index">
+                                        <path t-att-d="seg.path" t-att-fill="seg.color" stroke="#fff" stroke-width="2"/>
+                                    </t>
+                                </svg>
+                                <div t-if="!state.data.status_breakdown.length" class="text-muted">No data.</div>
+                                <div class="flex-grow-1">
+                                    <t t-foreach="pieSegments(state.data.status_breakdown)" t-as="seg" t-key="seg_index">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <span class="o_hud_legend_dot" t-attf-style="background-color: {{ seg.color }}"/>
+                                            <span class="flex-grow-1"><t t-esc="seg.label"/></span>
+                                            <span class="fw-bold me-2"><t t-esc="seg.value"/></span>
+                                            <span class="text-muted small"><t t-esc="seg.percent"/>%</span>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                        <div class="o_hud_card">
+                            <div class="o_hud_card_title">Headcount by Project Allocation</div>
+                            <div t-if="!state.data.per_project.length" class="text-muted">No project allocations yet.</div>
+                            <div t-else="" class="o_hud_bar_list">
+                                <t t-foreach="barRows(state.data.per_project)" t-as="row" t-key="row_index">
+                                    <div class="o_hud_bar_row">
+                                        <div class="o_hud_bar_label" t-esc="row.label"/>
+                                        <div class="o_hud_bar_track">
+                                            <div class="o_hud_bar_fill" t-attf-style="width: {{ row.widthPct }}%; background-color: {{ row.color }}"/>
+                                        </div>
+                                        <div class="o_hud_bar_value" t-esc="row.value"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                        <div class="o_hud_card">
+                            <div class="o_hud_card_title">Flight Cost by Project (last 12 months)</div>
+                            <div t-if="!state.data.flight_per_project.length" class="text-muted">No flight bookings yet.</div>
+                            <div t-else="" class="o_hud_bar_list">
+                                <t t-foreach="barRows(state.data.flight_per_project, formatCurrency.bind(this))" t-as="row" t-key="row_index">
+                                    <div class="o_hud_bar_row">
+                                        <div class="o_hud_bar_label" t-esc="row.label"/>
+                                        <div class="o_hud_bar_track">
+                                            <div class="o_hud_bar_fill" t-attf-style="width: {{ row.widthPct }}%; background-color: {{ row.color }}"/>
+                                        </div>
+                                        <div class="o_hud_bar_value" t-esc="row.valueLabel"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                        <div class="o_hud_card">
+                            <div class="o_hud_card_title">Payroll Total (last 6 months)</div>
+                            <div t-if="!state.data.payroll_trend.length" class="text-muted">No payslips yet.</div>
+                            <div t-else="" class="o_hud_bar_list">
+                                <t t-foreach="barRows(state.data.payroll_trend, formatCurrency.bind(this))" t-as="row" t-key="row_index">
+                                    <div class="o_hud_bar_row">
+                                        <div class="o_hud_bar_label" t-esc="row.label"/>
+                                        <div class="o_hud_bar_track">
+                                            <div class="o_hud_bar_fill" t-attf-style="width: {{ row.widthPct }}%; background-color: {{ row.color }}"/>
+                                        </div>
+                                        <div class="o_hud_bar_value" t-esc="row.valueLabel"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live activity tables -->
+                <div class="row g-3 mt-2">
+                    <div class="col-12 col-xl-4">
+                        <div class="o_hud_card">
+                            <div class="o_hud_card_title">Upcoming Visa Expiries</div>
+                            <table class="table table-sm o_hud_table mb-0">
+                                <thead>
+                                    <tr><th>Employee</th><th>Passport</th><th>Expiry</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="state.data.upcoming_visas" t-as="emp" t-key="emp.id"
+                                        class="o_hud_table_row" t-on-click="() => this.openEmployee(emp.id)">
+                                        <td t-esc="emp.name"/>
+                                        <td t-esc="emp.passport_id"/>
+                                        <td><span class="badge text-bg-warning"><t t-esc="emp.visa_expire"/></span></td>
+                                    </tr>
+                                    <tr t-if="!state.data.upcoming_visas.length"><td colspan="3" class="text-muted">No expiries in 60 days.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-xl-4">
+                        <div class="o_hud_card">
+                            <div class="o_hud_card_title">Upcoming Returns from Leave</div>
+                            <table class="table table-sm o_hud_table mb-0">
+                                <thead>
+                                    <tr><th>Employee</th><th>Type</th><th>Return</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="state.data.upcoming_returns" t-as="lv" t-key="lv.id"
+                                        class="o_hud_table_row" t-on-click="() => this.openLeave(lv.id)">
+                                        <td t-esc="lv.employee_id and lv.employee_id[1]"/>
+                                        <td t-esc="lv.holiday_status_id and lv.holiday_status_id[1]"/>
+                                        <td><span class="badge text-bg-info"><t t-esc="lv.date_to"/></span></td>
+                                    </tr>
+                                    <tr t-if="!state.data.upcoming_returns.length"><td colspan="3" class="text-muted">No active leaves.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-xl-4">
+                        <div class="o_hud_card">
+                            <div class="o_hud_card_title">Recent Terminations</div>
+                            <table class="table table-sm o_hud_table mb-0">
+                                <thead>
+                                    <tr><th>Employee</th><th>Reason</th><th>Departure</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="state.data.recent_terminations" t-as="tr" t-key="tr.id"
+                                        class="o_hud_table_row" t-on-click="() => this.openTermination(tr.id)">
+                                        <td t-esc="tr.employee_id and tr.employee_id[1]"/>
+                                        <td t-esc="tr.reason"/>
+                                        <td t-esc="tr.departure_date"/>
+                                    </tr>
+                                    <tr t-if="!state.data.recent_terminations.length"><td colspan="3" class="text-muted">No terminations yet.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </t>
+
+</templates>
