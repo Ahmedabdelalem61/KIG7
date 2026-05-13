@@ -16,7 +16,7 @@ USER="${KIG7_SSH_USER:-root}"
 KEY="${KIG7_SSH_KEY:-$HOME/.ssh/id_ed25519_kig7_deploy}"
 INSTALL="${KIG7_INSTALL_DIR:-/opt/kig7-odoo18}"
 BRANCH="${KIG7_GIT_BRANCH:-staging}"
-REPO_URL="${KIG7_REPO_URL:-https://github.com/Amrorg26/KIG7.git}"
+REPO_URL="${KIG7_REPO_URL:-https://github.com/Ahmedabdelalem61/KIG7-odoo18-staging.git}"
 
 SSH=(ssh -i "$KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 "${USER}@${HOST}")
 SCP=(scp -i "$KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15)

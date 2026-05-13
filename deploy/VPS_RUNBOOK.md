@@ -1,5 +1,7 @@
 # VPS runbook (185.196.21.19 or any host)
 
+**Public clone URL (no GitHub login):** `https://github.com/Ahmedabdelalem61/KIG7-odoo18-staging.git` — branch `staging`.
+
 These steps assume **SSH access** with keys (see `SECURITY.md`). Do **not** store root passwords in repositories.
 
 ## 0. One-shot from your workstation (optional)
@@ -71,12 +73,12 @@ If you use **git** with credentials (public repo, deploy key, or PAT), either cl
 
 ```bash
 cd /opt/kig7-odoo18
-git clone --branch staging https://github.com/Amrorg26/KIG7.git src
+git clone --branch staging https://github.com/Ahmedabdelalem61/KIG7-odoo18-staging.git src
 cd src
-# or: git clone --branch phase-one-branch https://github.com/Amrorg26/KIG7.git src
+# or: git clone --branch phase-one-branch https://github.com/Ahmedabdelalem61/KIG7-odoo18-staging.git src
 ```
 
-For a **private** repo over HTTPS without embedding the token in the URL, configure Git credentials on the server once, then use the same `git clone` line with the normal `https://github.com/Amrorg26/KIG7.git` URL.
+For a **private** org repo (e.g. `Amrorg26/KIG7`) over HTTPS without embedding the token in the URL, configure Git credentials on the server once, then use that repository URL instead.
 
 ## 4. Artifacts (dump + filestore)
 

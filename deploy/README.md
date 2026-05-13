@@ -8,6 +8,17 @@
 - **`docker-compose.yml`** — Postgres 16 + Odoo 18.
 - **`deploy/artifacts/`** — place `*.dump` + `*.tgz` here before restore (files are gitignored once present).
 
+## Restore from Odoo UI backup (`.zip` with `dump.sql` + `filestore/`)
+
+Place the zip under `deploy/artifacts/` (default name `18c_hr_project_test_2026-05-13_03-21-27.zip`) or set `ODOO_BACKUP_ZIP` to its path, then from repo root:
+
+```bash
+docker compose pull
+bash deploy/restore_from_odoo_zip.sh
+```
+
+Use `ODOO_DB_NAME` if the database name inside the zip differs from `18c_hr_project_test`. For `pg_dump -Fc` + `.tgz` filestore instead, use `deploy/restore.sh`.
+
 ## Local backup export (already done once for this bundle)
 
 From a machine that has the dev DB and filestore:
@@ -27,11 +38,13 @@ tar -czf deploy/artifacts/kig7_filestore_18c_hr_project_test.tgz -C ~/.local/sha
    ```bash
    sudo mkdir -p /opt/kig7-odoo18 && sudo chown "$USER:$USER" /opt/kig7-odoo18
    cd /opt/kig7-odoo18
-   git clone --branch staging https://github.com/Amrorg26/KIG7.git .
-   # or: git clone --branch phase-one-branch https://github.com/Amrorg26/KIG7.git .
+   git clone --branch staging https://github.com/Ahmedabdelalem61/KIG7-odoo18-staging.git .
+   # or: git clone --branch phase-one-branch https://github.com/Ahmedabdelalem61/KIG7-odoo18-staging.git .
    ```
 
-4. Copy **artifacts** if they are not in the clone (gitignored): use `scp`/`rsync` of `kig7_*.dump` and `kig7_*.tgz` into `deploy/artifacts/`.
+4. Copy **backup** onto the server (not in git):
+   - **Odoo `.zip`** (e.g. `18c_hr_project_test_2026-05-13_03-21-27.zip`) → `deploy/artifacts/` then use `deploy/restore_from_odoo_zip.sh`, **or**
+   - **`pg_dump -Fc` + filestore `.tgz`** → `deploy/artifacts/` then use `deploy/restore.sh`.
 
 5. Environment:
 
@@ -40,7 +53,16 @@ tar -czf deploy/artifacts/kig7_filestore_18c_hr_project_test.tgz -C ~/.local/sha
    # edit .env: set a strong POSTGRES_PASSWORD, then mirror it in configs/docker.odoo.conf (db_password)
    ```
 
-6. **First-time**: build/pull images and restore:
+6. **First-time**: pull images and restore (pick one):
+
+   **From Odoo `.zip`** (`dump.sql` + `filestore/` in `deploy/artifacts/`):
+
+   ```bash
+   docker compose pull
+   bash deploy/restore_from_odoo_zip.sh
+   ```
+
+   **From `pg_dump -Fc` + filestore `.tgz`:**
 
    ```bash
    docker compose pull
@@ -56,7 +78,8 @@ tar -czf deploy/artifacts/kig7_filestore_18c_hr_project_test.tgz -C ~/.local/sha
 ```bash
 docker compose down -v
 docker compose pull
-bash deploy/restore.sh
+bash deploy/restore_from_odoo_zip.sh
+# or: bash deploy/restore.sh
 ```
 
 ## Branches
