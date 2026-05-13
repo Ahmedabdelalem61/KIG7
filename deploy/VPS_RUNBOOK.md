@@ -2,6 +2,18 @@
 
 These steps assume **SSH access** with keys (see `SECURITY.md`). Do **not** store root passwords in repositories.
 
+## 0. One-shot from your workstation (optional)
+
+If your laptop has SSH key access to the server, generate a deploy key (once), add the **public** key to the server’s `authorized_keys`, then from the repo root:
+
+```bash
+export KIG7_SSH_HOST=185.196.21.19 KIG7_SSH_USER=root
+export KIG7_SSH_KEY="$HOME/.ssh/id_ed25519_kig7_deploy"
+bash deploy/vps-remote-up.sh
+```
+
+See `deploy/vps-remote-up.sh` for variables (`KIG7_INSTALL_DIR`, `KIG7_GIT_BRANCH`, etc.).
+
 ## 1. Install Docker (if missing)
 
 Use your distribution’s Docker Engine + Compose v2 guide (Ubuntu/Debian: `docker.io` + `docker-compose-plugin` or Docker’s official repo).
