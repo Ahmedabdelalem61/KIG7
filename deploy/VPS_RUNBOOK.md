@@ -25,20 +25,69 @@ sudo install -d -o "$USER" -g "$USER" /opt/kig7-odoo18
 cd /opt/kig7-odoo18
 ```
 
+## 2a. Private GitHub — why `git clone` says “Repository not found”
+
+If **anonymous** `git clone https://github.com/Amrorg26/KIG7.git` or `GET https://api.github.com/repos/Amrorg26/KIG7` returns **404**, the repo is almost certainly **private**. GitHub hides private repos from unauthenticated clients. Your laptop can still clone because **GitHub credentials** are stored there (credential helper, SSH agent, or `gh auth`), while the VPS has **none**.
+
+Pick **one** approach:
+
+1. **Deploy key (recommended on servers)**  
+   - On the VPS: `ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519_kig7_readonly`  
+   - Repo **Settings → Deploy keys → Add deploy key**: paste `~/.ssh/id_ed25519_kig7_readonly.pub`, enable **read-only**.  
+   - Clone (example: code directly under `/opt/kig7-odoo18`):
+
+     ```bash
+     cd /opt/kig7-odoo18
+     GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_kig7_readonly -o IdentitiesOnly=yes' \
+       git clone --branch staging git@github.com:Amrorg26/KIG7.git .
+     ```
+
+2. **HTTPS + personal access token (classic or fine‑grained with repo read)**  
+   Do **not** commit the token. Avoid leaving it in shell history (e.g. use `read -s` into a variable, clone, then `unset`, or configure a one-off credential helper). Example pattern:
+
+   `git clone --branch staging "https://x-access-token:${TOKEN}@github.com/Amrorg26/KIG7.git" .`
+
+3. **Tarball from a machine that already has the repo** (no GitHub from VPS):
+
+   On the laptop (inside a clone of `KIG7`):
+
+   ```bash
+   git archive --format=tar.gz --output=kig7-staging.tar.gz staging
+   ```
+
+   Copy `kig7-staging.tar.gz` to the server, then:
+
+   ```bash
+   cd /opt/kig7-odoo18 && tar -xzf /path/to/kig7-staging.tar.gz
+   ```
+
+   (This unpacks tracked files only — no `.git`; you can still run Docker; for `git pull` updates you would re‑ship a new archive or fix GitHub access.)
+
+4. **Make the repository public** (Settings → Danger zone) if that is acceptable for this project.
+
 ## 3. Clone the branch you want
 
+If you use **git** with credentials (public repo, deploy key, or PAT), either clone into a **`src` subfolder** (below) **or** into `.` as in §2a — in both cases, **run `docker compose` from the directory that contains `docker-compose.yml`**.
+
 ```bash
+cd /opt/kig7-odoo18
 git clone --branch staging https://github.com/Amrorg26/KIG7.git src
 cd src
 # or: git clone --branch phase-one-branch https://github.com/Amrorg26/KIG7.git src
 ```
+
+For a **private** repo over HTTPS without embedding the token in the URL, configure Git credentials on the server once, then use the same `git clone` line with the normal `https://github.com/Amrorg26/KIG7.git` URL.
 
 ## 4. Artifacts (dump + filestore)
 
 If `deploy/artifacts/*.dump` and `*.tgz` are **not** in the clone (gitignored), copy them from your workstation:
 
 ```bash
+# If docker-compose.yml lives under .../src (default runbook layout):
 scp deploy/artifacts/kig7_18c_hr_project_test.dump deploy/artifacts/kig7_filestore_18c_hr_project_test.tgz user@server:/opt/kig7-odoo18/src/deploy/artifacts/
+
+# If you cloned into /opt/kig7-odoo18 directly (no src/):
+scp deploy/artifacts/kig7_18c_hr_project_test.dump deploy/artifacts/kig7_filestore_18c_hr_project_test.tgz user@server:/opt/kig7-odoo18/deploy/artifacts/
 ```
 
 ## 5. Configure secrets
