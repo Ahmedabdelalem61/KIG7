@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HR UAE Admin — Implementor Guide (Business View)</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --text: #1a2332;
+      --muted: #4a5568;
+      --card: #ffffff;
+      --border: #cbd5e1;
+      --accent: #0f766e;
+      --c0: #0e7490;
+      --c1: #1d4ed8;
+      --c2: #6d28d9;
+      --c3: #b45309;
+      --c4: #047857;
+      --c5: #be123c;
+      --c6: #0f766e;
+      --c7: #4338ca;
+      --c8: #a16207;
+      --c9: #0f172a;
+      --c10: #115e59;
+      --tip-bg: #ecfdf5;
+      --tip-border: #10b981;
+      --note-bg: #fffbeb;
+      --note-border: #f59e0b;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --maxw: 52rem;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-size: 1.0625rem;
+      line-height: 1.65;
+      color: var(--text);
+      background: var(--bg);
+    }
+    .skip {
+      position: absolute;
+      left: -9999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+    .skip:focus {
+      left: 1rem;
+      top: 1rem;
+      width: auto;
+      height: auto;
+      padding: 0.5rem 1rem;
+      background: #000;
+      color: #fff;
+      z-index: 100;
+    }
+    header.hero {
+      background: linear-gradient(135deg, #0f766e 0%, #115e59 45%, #134e4a 100%);
+      color: #ecfeff;
+      padding: 2.5rem 1.25rem 2rem;
+    }
+    header.hero .inner {
+      max-width: var(--maxw);
+      margin: 0 auto;
+    }
+    header.hero h1 {
+      margin: 0 0 0.5rem;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    header.hero p.lead {
+      margin: 0;
+      font-size: 1.1rem;
+      opacity: 0.95;
+      max-width: 42rem;
+    }
+    .wrap {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 1.25rem 1.25rem 3rem;
+    }
+    nav.toc {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    nav.toc h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.1rem;
+      color: var(--accent);
+    }
+    nav.toc ol {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+    nav.toc a { color: var(--c1); text-decoration: none; }
+    nav.toc a:hover { text-decoration: underline; }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem 1.5rem 1.75rem;
+      margin-bottom: 1.5rem;
+      border-left: 6px solid var(--phase-color, var(--accent));
+    }
+    section h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.35rem;
+      color: var(--phase-color, var(--text));
+    }
+    section h3 {
+      margin: 1.25rem 0 0.5rem;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+    section p { margin: 0.5rem 0; color: var(--text); }
+    section ul { margin: 0.35rem 0 0.5rem; padding-left: 1.35rem; color: var(--text); }
+    section li { margin: 0.35rem 0; }
+    .module-tag {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      background: #f1f5f9;
+      color: var(--muted);
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
+    }
+    aside.tip, aside.note {
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin: 1rem 0;
+      font-size: 0.98rem;
+    }
+    aside.tip {
+      background: var(--tip-bg);
+      border: 1px solid var(--tip-border);
+    }
+    aside.note {
+      background: var(--note-bg);
+      border: 1px solid var(--note-border);
+    }
+    aside strong { display: block; margin-bottom: 0.25rem; }
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+    .flow span {
+      background: #e0f2fe;
+      border: 1px solid #7dd3fc;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+    }
+    .flow .arrow { background: none; border: none; padding: 0 0.15rem; color: var(--muted); }
+    table.simple {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.75rem 0;
+      font-size: 0.95rem;
+    }
+    table.simple th, table.simple td {
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.65rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    table.simple th { background: #f8fafc; }
+    footer {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 1.25rem 2rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    @media print {
+      body { background: #fff; }
+      nav.toc { break-inside: avoid; }
+      section { break-inside: avoid; box-shadow: none; }
+    }
+    @media (max-width: 520px) {
+      body { font-size: 1rem; }
+      .flow { flex-direction: column; align-items: flex-start; }
+      .flow .arrow { display: none; }
+    }
+    #start { --phase-color: var(--c0); }
+    #base { --phase-color: var(--c1); }
+    #master { --phase-color: var(--c2); }
+    #documents { --phase-color: var(--c3); }
+    #audit { --phase-color: var(--c4); }
+    #leaves { --phase-color: var(--c5); }
+    #flights { --phase-color: var(--c6); }
+    #payroll { --phase-color: var(--c7); }
+    #adjust { --phase-color: var(--c8); }
+    #termination { --phase-color: var(--c9); }
+    #reports { --phase-color: var(--c10); }
+    #theme { --phase-color: var(--c0); }
+    #story { --phase-color: var(--accent); }
+    #appendix { --phase-color: #64748b; }
+    #glossary { --phase-color: #475569; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="hero">
+    <div class="inner">
+      <h1>HR UAE Admin — Implementor Guide</h1>
+      <p class="lead">This page is for <strong>you</strong> if you install or explain the system. It uses simple English. It follows the <strong>business order</strong> from first setup to payroll and employee exit.</p>
+    </div>
+  </header>
+
+  <div class="wrap" id="main">
+    <nav class="toc" aria-label="Table of contents">
+      <h2>On this page</h2>
+      <ol>
+        <li><a href="#glossary">Small glossary</a></li>
+        <li><a href="#start">Start: install the application</a></li>
+        <li><a href="#base">Phase 1 — UAE base (foundation)</a></li>
+        <li><a href="#master">Phase 2 — Employee master data</a></li>
+        <li><a href="#documents">Phase 3 — Employee documents</a></li>
+        <li><a href="#audit">Phase 4 — Audit trail</a></li>
+        <li><a href="#leaves">Phase 5 — Leaves and movements</a></li>
+        <li><a href="#flights">Phase 6 — Flight tickets</a></li>
+        <li><a href="#payroll">Phase 7 — Payroll</a></li>
+        <li><a href="#adjust">Phase 8 — Salary adjustments</a></li>
+        <li><a href="#termination">Phase 9 — Contract termination</a></li>
+        <li><a href="#reports">Phase 10 — Reports and dashboards</a></li>
+        <li><a href="#theme">Phase 11 — Screen look (theme)</a></li>
+        <li><a href="#story">End-to-end story (one path)</a></li>
+        <li><a href="#appendix">Appendix: staging server (Docker)</a></li>
+      </ol>
+    </nav>
+
+    <section id="glossary">
+      <h2>Small glossary</h2>
+      <p>These words appear often in Odoo HR and in this project.</p>
+      <table class="simple">
+        <thead>
+          <tr><th>Word</th><th>Simple meaning</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Employee</strong></td><td>A person who works for the company. They have a file in the system.</td></tr>
+          <tr><td><strong>Contract</strong></td><td>The legal agreement for work: dates, wage, job.</td></tr>
+          <tr><td><strong>Master data</strong></td><td>Important fixed lists and fields you use everywhere (for example: rank, visa type, project).</td></tr>
+          <tr><td><strong>Payslip</strong></td><td>A paper or PDF that shows pay for one period.</td></tr>
+          <tr><td><strong>Salary structure</strong></td><td>The rules that build the payslip (base pay, allowances, deductions).</td></tr>
+          <tr><td><strong>Expense</strong></td><td>Money the employee or company spent (here used for flight tickets).</td></tr>
+          <tr><td><strong>Module</strong></td><td>A package of features you install in Odoo.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="start">
+      <h2>Start: install the application</h2>
+      <span class="module-tag">Odoo module: hr_uae_app — “HR UAE Admin”</span>
+      <h3>Purpose</h3>
+      <p>You install <strong>one application</strong>. It pulls in the full UAE HR platform. You do not need to install each small module by hand.</p>
+      <h3>What you do</h3>
+      <ul>
+        <li>Open Odoo <strong>Apps</strong>.</li>
+        <li>Search for <strong>HR UAE Admin</strong>.</li>
+        <li>Click <strong>Install</strong>.</li>
+      </ul>
+      <h3>What you get</h3>
+      <p>After install, the menu tree includes: Master Data, Documents, Audit, Leaves, Flights, Payroll, Adjustments, Termination, Reports, and the backend theme stack (see Phase 11).</p>
+      <aside class="tip"><strong>Tip.</strong> Use a test database first. Train HR users there before you use production data.</aside>
+    </section>
+
+    <section id="base">
+      <h2>Phase 1 — UAE base (foundation)</h2>
+      <span class="module-tag">hr_uae_base — “HR UAE - Base”</span>
+      <h3>Purpose</h3>
+      <p>This layer sets the <strong>country context</strong> for UAE HR: money type (currency), working time rules, public holidays, and who can see which menus.</p>
+      <h3>What you set up</h3>
+      <ul>
+        <li>Check that <strong>currency</strong> and <strong>working calendar</strong> match your company policy.</li>
+        <li>Review <strong>public holidays</strong> data for the year you operate.</li>
+        <li>Assign <strong>security groups</strong> to users (who is HR officer, who is manager, etc.).</li>
+      </ul>
+      <h3>What HR does later</h3>
+      <p>HR uses the root menu to open other phases. Users only see what their group allows.</p>
+      <h3>Link to next phase</h3>
+      <p>When base data is correct, you continue to <strong>employee master data</strong>. That is where each person gets UAE-specific fields.</p>
+    </section>
+
+    <section id="master">
+      <h2>Phase 2 — Employee master data</h2>
+      <span class="module-tag">hr_uae_master_data</span>
+      <h3>Purpose</h3>
+      <p>This is the <strong>single place</strong> for important employee facts for UAE operations: rank, passport, roster, position, project, cost center, employment status, visa.</p>
+      <h3>What you set up</h3>
+      <ul>
+        <li>Define <strong>ranks</strong> and <strong>positions</strong> your company uses.</li>
+        <li>Set up <strong>analytic accounts</strong> / plans if you report cost by project or cost center.</li>
+        <li>Align fields with your <strong>contract</strong> process so wage and job data stay consistent.</li>
+      </ul>
+      <h3>What HR does every day</h3>
+      <ul>
+        <li>Create or open an <strong>employee</strong>.</li>
+        <li>Fill UAE fields (visa, passport, project, roster, and so on).</li>
+        <li>Keep status up to date (for example: active, on leave).</li>
+      </ul>
+      <h3>Link to next phase</h3>
+      <p>When employee facts exist, you attach <strong>documents</strong> (passport scan, visa, medical). You also use this data later in <strong>payroll</strong> and <strong>reports</strong>.</p>
+    </section>
+
+    <section id="documents">
+      <h2>Phase 3 — Employee documents</h2>
+      <span class="module-tag">hr_uae_documents</span>
+      <h3>Purpose</h3>
+      <p>You store <strong>typed files</strong> per employee: passport, visa, medical, photo, contract. The system can warn you before a document <strong>expires</strong>.</p>
+      <h3>What you set up</h3>
+      <ul>
+        <li>Decide who may see which documents (record rules protect owners).</li>
+        <li>Turn on mail templates if you want email alerts for expiry.</li>
+      </ul>
+      <h3>What HR does</h3>
+      <ul>
+        <li>Upload or renew documents on the employee form.</li>
+        <li>React to <strong>expiry alerts</strong> so visas and medical cards stay valid.</li>
+      </ul>
+      <h3>Link to next phase</h3>
+      <p>Documents support compliance. <strong>Audit trail</strong> (next) shows who changed important HR values over time.</p>
+    </section>
+
+    <section id="audit">
+      <h2>Phase 4 — Audit trail</h2>
+      <span class="module-tag">hr_uae_audit_trail</span>
+      <h3>Purpose</h3>
+      <p>You can prove <strong>what changed</strong>, <strong>old value</strong>, <strong>new value</strong>, <strong>who</strong> changed it, and <strong>when</strong>. This helps internal control and disputes.</p>
+      <h3>What you set up</h3>
+      <ul>
+        <li>Give access only to roles that should read audit lines.</li>
+        <li>Show HR how to open the audit tab on the employee.</li>
+      </ul>
+      <h3>What HR does</h3>
+      <ul>
+        <li>Review history before approving sensitive changes.</li>
+        <li>Print the <strong>audit PDF report</strong> when a manager asks for evidence.</li>
+      </ul>
+      <h3>Link to next phase</h3>
+      <p>When data and documents are stable, employees request <strong>time off</strong> in the Leaves phase.</p>
+    </section>
+
+    <section id="leaves">
+      <h2>Phase 5 — Leaves and movements</h2>
+      <span class="module-tag">hr_uae_leaves</span>
+      <h3>Purpose</h3>
+      <p>You manage UAE-style <strong>leave types</strong>: annual, special, medical, unpaid. <strong>Unpaid leave</strong> can follow an auto-deduction rule. You also track <strong>movement</strong> (where the employee is) and send <strong>alerts</strong> for vacation or permit dates.</p>
+      <h3>What you set up</h3>
+      <ul>
+        <li>Review default <strong>leave types</strong>. Change names if your policy uses other words.</li>
+        <li>Train managers on <strong>approval</strong> steps in standard Odoo time off.</li>
+        <li>Explain the <strong>Movement Tracking</strong> report to security or HR operations.</li>
+      </ul>
+      <h3>What HR and managers do</h3>
+      <ul>
+        <li>Employees create leave requests. Managers approve or refuse.</li>
+        <li>HR checks movement reports when many people travel.</li>
+      </ul>
+      <h3>Link to next phase</h3>
+      <p>Long leave can affect <strong>payroll</strong> (hold rules). Flight benefits are handled in <strong>Flight tickets</strong>.</p>
+    </section>
+
+    <section id="flights">
+      <h2>Phase 6 — Flight tickets</h2>
+      <span class="module-tag">hr_uae_flights</span>
+      <h3>Purpose</h3>
+      <p>The company records <strong>flight tickets</strong> using the expenses app. The system can create expenses for tickets. If the <strong>employee pays</strong> for a ticket, that cost can flow into <strong>payroll</strong> later.</p>
+      <h3>What you set up</h3>
+      <ul>
+        <li>Check <strong>product</strong> data for ticket types (installed with the module).</li>
+        <li>Explain the process: who creates the ticket record, who approves expenses.</li>
+      </ul>
+      <h3>What HR does</h3>
+      <ul>
+        <li>Register tickets and link them to the correct employee.</li>
+        <li>Use the <strong>flight report</strong> for reconciliation with finance.</li>
+      </ul>
+      <h3>Link to next phase</h3>
+      <p>Ticket costs and leave dates feed <strong>payroll calculations</strong> in the next phase.</p>
+    </section>
+
+    <section id="payroll">
+      <h2>Phase 7 — Payroll</h2>
+      <span class="module-tag">hr_uae_payroll (+ community payroll)</span>
+      <h3>Purpose</h3>
+      <p>You run <strong>UAE salary structures</strong> and rules. The suite adds logic for <strong>salary hold during vacation</strong> (on-hold state and return flag). You get a <strong>payroll dashboard</strong> and a <strong>live dashboard</strong> view for analysis.</p>
+      <h3>What you set up</h3>
+      <ul>
+        <li>Confirm <strong>structures</strong> and <strong>salary rules</strong> match your company contract text.</li>
+        <li>Map contracts to the correct structure for each employee group.</li>
+        <li>Train payroll staff on <strong>hold during vacation</strong> if you use it.</li>
+      </ul>
+      <h3>What payroll staff does</h3>
+      <ul>
+        <li>Create batches or payslips per period.</li>
+        <li>Check computed lines before confirmation.</li>
+        <li>Use dashboards to find exceptions (for example many absences).</li>
+      </ul>
+      <aside class="note"><strong>Note.</strong> If you upgrade code, test the live dashboard after deploy. A past SQL issue in the live dashboard was fixed; always verify in a copy of the database first.</aside>
+      <h3>Link to next phase</h3>
+      <p>After normal pay works, you add <strong>salary adjustments</strong> for one-time or recurring changes.</p>
+    </section>
+
+    <section id="adjust">
+      <h2>Phase 8 — Salary adjustments</h2>
+      <span class="module-tag">hr_uae_salary_adjustment</span>
+      <h3>Purpose</h3>
+      <p>You record <strong>allowances</strong> and <strong>deductions</strong> outside the main contract line. Each record needs <strong>HR Manager approval</strong> (single stage). Modes: <strong>one payment</strong>, <strong>from–to date range</strong>, or <strong>recurring</strong>.</p>
+      <h3>What you set up</h3>
+      <ul>
+        <li>Define who holds the HR Manager role for approval.</li>
+        <li>Explain to finance how approved lines reach payslips.</li>
+      </ul>
+      <h3>What HR does</h3>
+      <ul>
+        <li>Create adjustment requests with clear reason and dates.</li>
+        <li>Wait for approval before expecting pay impact.</li>
+      </ul>
+      <h3>Link to next phase</h3>
+      <p>When employment ends, you use <strong>termination</strong>. That step closes the contract and stops future payslips.</p>
+    </section>
+
+    <section id="termination">
+      <h2>Phase 9 — Contract termination</h2>
+      <span class="module-tag">hr_uae_termination</span>
+      <h3>Purpose</h3>
+      <p>You run a clear <strong>exit workflow</strong>: the employee file can be <strong>archived</strong>, the <strong>contract ends</strong>, <strong>future payslips</strong> are cancelled where needed, and you print a <strong>termination report</strong>.</p>
+      <h3>What you set up</h3>
+      <ul>
+        <li>Decide who may start a termination case.</li>
+        <li>Align the report text with your legal / HR policy.</li>
+      </ul>
+      <h3>What HR does</h3>
+      <ul>
+        <li>Complete termination steps in order.</li>
+        <li>Keep the PDF in the employee paper file or document system.</li>
+      </ul>
+      <h3>Link to next phase</h3>
+      <p>Leadership often wants <strong>summary dashboards and PDF packs</strong>. That is Phase 10.</p>
+    </section>
+
+    <section id="reports">
+      <h2>Phase 10 — Reports and dashboards</h2>
+      <span class="module-tag">hr_uae_reports</span>
+      <h3>Purpose</h3>
+      <p>You get <strong>one place</strong> for important PDF reports and <strong>dashboard screens</strong>: master data, payroll, tickets, vacations, movement tracking, termination, and audit trail.</p>
+      <h3>What you set up</h3>
+      <ul>
+        <li>Give access to managers who need read-only insight.</li>
+        <li>Test each report with a small sample of real-like data.</li>
+      </ul>
+      <h3>What users do</h3>
+      <ul>
+        <li>Open the dashboard at the start of the week.</li>
+        <li>Export or print PDFs for meetings.</li>
+      </ul>
+    </section>
+
+    <section id="theme">
+      <h2>Phase 11 — Screen look (theme and responsive layout)</h2>
+      <span class="module-tag">hr_uae_backend_theme + web_responsive</span>
+      <h3>Purpose</h3>
+      <p>The backend gets a <strong>cleaner layout</strong> and a theme studio. <strong>Web responsive</strong> helps when HR uses a tablet or a small laptop screen.</p>
+      <h3>What you set up</h3>
+      <ul>
+        <li>Open settings linked to the theme if your team wants company colors.</li>
+        <li>Train users where the app menu moved (if they used plain Odoo before).</li>
+      </ul>
+    </section>
+
+    <section id="story">
+      <h2>End-to-end story (one path)</h2>
+      <p>This is a simple path many companies follow. Your path can differ.</p>
+      <div class="flow" aria-label="Process flow">
+        <span>Install app</span><span class="arrow">→</span>
+        <span>Set base + security</span><span class="arrow">→</span>
+        <span>Create employee + UAE master data</span><span class="arrow">→</span>
+        <span>Upload documents</span><span class="arrow">→</span>
+        <span>Leaves + movements</span><span class="arrow">→</span>
+        <span>Flights (if used)</span><span class="arrow">→</span>
+        <span>Monthly payroll</span><span class="arrow">→</span>
+        <span>Adjustments when needed</span><span class="arrow">→</span>
+        <span>Termination at exit</span><span class="arrow">→</span>
+        <span>Reports for leadership</span>
+      </div>
+      <p>At every step, <strong>audit trail</strong> helps you answer “who changed this field?”.</p>
+    </section>
+
+    <section id="appendix">
+      <h2>Appendix: staging server (Docker)</h2>
+      <p>This part is for <strong>technical implementors</strong>. It is not for daily HR work.</p>
+      <p>We also built a <strong>Docker</strong> package so you can run Odoo 18 + PostgreSQL on a Linux server. The code and deploy scripts live next to this project in the same workspace:</p>
+      <ul>
+        <li><strong>Folder:</strong> <code>KIG7/</code> (sibling of <code>HrProject/</code> under <code>Custom-Projects/Odoo-18/</code>).</li>
+        <li><strong>Read first:</strong> <code>KIG7/deploy/README.md</code> — how to copy environment files, pull images, and restore a backup.</li>
+        <li><strong>Server checklist:</strong> <code>KIG7/deploy/VPS_RUNBOOK.md</code> — private GitHub clone, deploy keys, and smoke tests.</li>
+        <li><strong>Agent prompt:</strong> <code>KIG7/deploy/VPS_AGENT_PROMPT.md</code> — text you can give to another person or agent on the VPS.</li>
+      </ul>
+      <aside class="tip"><strong>Tip.</strong> The GitHub mirror for Docker is private. Use a deploy key or token on the server. Do not share database backups in public channels.</aside>
+    </section>
+  </div>
+
+  <footer>
+    <p>HR UAE Admin — Odoo 18 Community. This guide describes the business meaning of the custom modules under <code>HrProject/</code>. For technical changes, follow your company change process.</p>
+  </footer>
+</body>
+</html>
