@@ -28,16 +28,22 @@ Either:
 - Download it to that path, **or**
 - Place any path and export `ODOO_BACKUP_ZIP=/full/path/to/the.zip` before running the restore script.
 
-### 3. Odoo master password (database manager)
+### 3. Odoo master password (`admin_passwd`)
 
-The operator wants **`admin_passwd = admin_1`** (not committed to the public repo). After clone, set it on **this server only**:
+Do **not** put your real master password in a public GitHub repo. After clone, set it **only on this server** (the operator will tell you the value out-of-band, e.g. in a private message):
 
 ```bash
 cd /opt/kig7-odoo18
-sed -i 's/^admin_passwd = .*/admin_passwd = admin_1/' configs/docker.odoo.conf
+nano configs/docker.odoo.conf
+# set: admin_passwd = <value from operator>
 ```
 
-(Or edit `configs/docker.odoo.conf` manually.)
+Or a one-liner when `MASTER_PASS` is exported in the shell session (value not logged in git):
+
+```bash
+cd /opt/kig7-odoo18
+sed -i "s/^admin_passwd = .*/admin_passwd = ${MASTER_PASS}/" configs/docker.odoo.conf
+```
 
 ### 4. Postgres password in sync
 
