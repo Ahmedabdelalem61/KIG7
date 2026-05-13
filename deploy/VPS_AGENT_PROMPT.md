@@ -6,31 +6,35 @@ Use the block below as the **user message** for an agent that has shell access o
 
 You are on a Linux VPS with Docker Engine and Docker Compose v2 already installed. Bring up **Odoo 18 + PostgreSQL** for the KIG7 HrProject stack.
 
-### 1. Clone the public repo (no GitHub auth)
+### 1. Clone the private GitHub repo (auth required)
+
+The repo **Ahmedabdelalem61/KIG7-odoo18-staging** is **private**. Pick **one**:
+
+**A — Deploy key (recommended)**  
+1. On the VPS: `ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519_kig7_readonly`  
+2. In GitHub: repo **Settings → Deploy keys → Add deploy key** (read-only), paste `~/.ssh/id_ed25519_kig7_readonly.pub`  
+3. Clone:
 
 ```bash
 sudo mkdir -p /opt/kig7-odoo18 && sudo chown -R "$USER:$USER" /opt/kig7-odoo18
 cd /opt/kig7-odoo18
-git clone --branch staging https://github.com/Ahmedabdelalem61/KIG7-odoo18-staging.git .
+GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_kig7_readonly -o IdentitiesOnly=yes' \
+  git clone --branch staging git@github.com:Ahmedabdelalem61/KIG7-odoo18-staging.git .
 ```
 
-If `/opt/kig7-odoo18` is not empty, remove only stale content you are sure is disposable, or clone into a new directory.
+**B — HTTPS + PAT** (fine-grained or classic with repo read): use `read -s TOKEN`, then  
+`git clone --branch staging "https://x-access-token:${TOKEN}@github.com/Ahmedabdelalem61/KIG7-odoo18-staging.git .`  
+then `unset TOKEN`.
 
-### 2. Put the Odoo backup zip in place
+If `/opt/kig7-odoo18` is not empty, remove only disposable content first, or clone into a new directory.
 
-The repo expects an **Odoo native backup** zip (contains `dump.sql`, `filestore/`, `manifest.json`). Default filename the restore script looks for:
+### 2. Odoo backup zip
 
-`deploy/artifacts/18c_hr_project_test_2026-05-13_03-21-27.zip`
-
-Either:
-
-- Copy that file from the operator’s machine with `scp` into `/opt/kig7-odoo18/deploy/artifacts/`, **or**
-- Download it to that path, **or**
-- Place any path and export `ODOO_BACKUP_ZIP=/full/path/to/the.zip` before running the restore script.
+The default backup zip is **tracked in git** at `deploy/artifacts/18c_hr_project_test_2026-05-13_03-21-27.zip` after a successful clone. If it is missing, copy it with `scp` or set `ODOO_BACKUP_ZIP` to a full path before restore.
 
 ### 3. Odoo master password (`admin_passwd`)
 
-Do **not** put your real master password in a public GitHub repo. After clone, set it **only on this server** (the operator will tell you the value out-of-band, e.g. in a private message):
+Do **not** commit your real master password into **git** (it would be visible to anyone with repo access). After clone, set it **only on this server** (the operator will tell you the value out-of-band, e.g. in a private message):
 
 ```bash
 cd /opt/kig7-odoo18
@@ -81,7 +85,7 @@ Use an Odoo user that exists **inside the restored database**. The master passwo
 
 ### Constraints
 
-- Do **not** commit `.env`, backup zips, or edited secrets back to GitHub.
+- Do **not** commit `.env` or local-only secrets. The staging DB zip may already be in the repo; do not add new sensitive blobs without team agreement.
 - If restore fails, capture `docker compose logs db` and `docker compose logs web` and fix before retrying (e.g. `docker compose down -v` only if a full reset is acceptable).
 
 ---

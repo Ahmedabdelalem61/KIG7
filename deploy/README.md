@@ -6,7 +6,7 @@
 - **`configs/docker.odoo.conf`** — Odoo options for the **official `odoo:18.0` image** (paths and `db_host=db`).
 - **`configs/host-hr_project.conf.reference`** — original developer `addons_path` on a full Odoo tree (reference only; not used in Docker).
 - **`docker-compose.yml`** — Postgres 16 + Odoo 18.
-- **`deploy/artifacts/`** — place `*.dump` + `*.tgz` here before restore (files are gitignored once present). The **Odoo UI backup** zip `18c_hr_project_test_2026-05-13_03-21-27.zip` is **committed** in this repo for easy VPS clone (contains real DB data — do not use for public production without review).
+- **`deploy/artifacts/`** — place `*.dump` + `*.tgz` here before restore (files are gitignored once present). The **Odoo UI backup** zip `18c_hr_project_test_2026-05-13_03-21-27.zip` is **committed** in this repo for easy VPS clone (contains real DB data — restrict repo access; repo is **private**).
 
 ## Restore from Odoo UI backup (`.zip` with `dump.sql` + `filestore/`)
 
@@ -33,7 +33,7 @@ tar -czf deploy/artifacts/kig7_filestore_18c_hr_project_test.tgz -C ~/.local/sha
 
 1. **Do not paste production passwords into chat.** Use SSH keys. See `deploy/SECURITY.md`.
 2. Install Docker Engine + Compose plugin (distro docs).
-3. Clone and enter the repo (use branch `staging` or `phase-one-branch` — same Docker layout):
+3. Clone and enter the repo (branch `staging` or `phase-one-branch`). The GitHub repo is **private** — use a **deploy key** or **HTTPS + PAT** on the server (see `deploy/VPS_RUNBOOK.md` §2a). Example with an existing credential helper:
 
    ```bash
    sudo mkdir -p /opt/kig7-odoo18 && sudo chown "$USER:$USER" /opt/kig7-odoo18
@@ -42,9 +42,7 @@ tar -czf deploy/artifacts/kig7_filestore_18c_hr_project_test.tgz -C ~/.local/sha
    # or: git clone --branch phase-one-branch https://github.com/Ahmedabdelalem61/KIG7-odoo18-staging.git .
    ```
 
-4. Copy **backup** onto the server (not in git):
-   - **Odoo `.zip`** (e.g. `18c_hr_project_test_2026-05-13_03-21-27.zip`) → `deploy/artifacts/` then use `deploy/restore_from_odoo_zip.sh`, **or**
-   - **`pg_dump -Fc` + filestore `.tgz`** → `deploy/artifacts/` then use `deploy/restore.sh`.
+4. **Backup files:** the committed Odoo **`.zip`** is already under `deploy/artifacts/` after clone. For **`pg_dump -Fc` + `.tgz`** only, copy those into `deploy/artifacts/` (they stay gitignored) and use `deploy/restore.sh` instead of `restore_from_odoo_zip.sh`.
 
 5. Environment:
 

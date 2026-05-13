@@ -1,6 +1,6 @@
 # VPS runbook (185.196.21.19 or any host)
 
-**Public clone URL (no GitHub login):** `https://github.com/Ahmedabdelalem61/KIG7-odoo18-staging.git` — branch `staging`.
+**Canonical repo (private):** `https://github.com/Ahmedabdelalem61/KIG7-odoo18-staging.git` — branch `staging`. Anonymous `git clone` will fail; use a **deploy key**, **HTTPS + PAT**, or a **tarball** (§2a).
 
 These steps assume **SSH access** with keys (see `SECURITY.md`). Do **not** store root passwords in repositories.
 
@@ -29,7 +29,7 @@ cd /opt/kig7-odoo18
 
 ## 2a. Private GitHub — why `git clone` says “Repository not found”
 
-If **anonymous** `git clone https://github.com/Amrorg26/KIG7.git` or `GET https://api.github.com/repos/Amrorg26/KIG7` returns **404**, the repo is almost certainly **private**. GitHub hides private repos from unauthenticated clients. Your laptop can still clone because **GitHub credentials** are stored there (credential helper, SSH agent, or `gh auth`), while the VPS has **none**.
+If **anonymous** `git clone https://github.com/Ahmedabdelalem61/KIG7-odoo18-staging.git` (or another private URL) returns **Repository not found** / API **404**, GitHub is rejecting unauthenticated access. Your laptop can still clone because **GitHub credentials** are stored there (credential helper, SSH agent, or `gh auth`), while the VPS has **none**.
 
 Pick **one** approach:
 
@@ -41,13 +41,13 @@ Pick **one** approach:
      ```bash
      cd /opt/kig7-odoo18
      GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_kig7_readonly -o IdentitiesOnly=yes' \
-       git clone --branch staging git@github.com:Amrorg26/KIG7.git .
+       git clone --branch staging git@github.com:Ahmedabdelalem61/KIG7-odoo18-staging.git .
      ```
 
 2. **HTTPS + personal access token (classic or fine‑grained with repo read)**  
    Do **not** commit the token. Avoid leaving it in shell history (e.g. use `read -s` into a variable, clone, then `unset`, or configure a one-off credential helper). Example pattern:
 
-   `git clone --branch staging "https://x-access-token:${TOKEN}@github.com/Amrorg26/KIG7.git" .`
+   `git clone --branch staging "https://x-access-token:${TOKEN}@github.com/Ahmedabdelalem61/KIG7-odoo18-staging.git" .`
 
 3. **Tarball from a machine that already has the repo** (no GitHub from VPS):
 
@@ -65,11 +65,11 @@ Pick **one** approach:
 
    (This unpacks tracked files only — no `.git`; you can still run Docker; for `git pull` updates you would re‑ship a new archive or fix GitHub access.)
 
-4. **Make the repository public** (Settings → Danger zone) if that is acceptable for this project.
+4. **Optional:** temporarily set the repository to **public** in GitHub settings if you accept the loss of confidentiality (not recommended if the repo contains DB backups).
 
 ## 3. Clone the branch you want
 
-If you use **git** with credentials (public repo, deploy key, or PAT), either clone into a **`src` subfolder** (below) **or** into `.` as in §2a — in both cases, **run `docker compose` from the directory that contains `docker-compose.yml`**.
+If you use **git** with credentials (deploy key, PAT, or cached login), either clone into a **`src` subfolder** (below) **or** into `.` as in §2a — in both cases, **run `docker compose` from the directory that contains `docker-compose.yml`**.
 
 ```bash
 cd /opt/kig7-odoo18
@@ -78,7 +78,7 @@ cd src
 # or: git clone --branch phase-one-branch https://github.com/Ahmedabdelalem61/KIG7-odoo18-staging.git src
 ```
 
-For a **private** org repo (e.g. `Amrorg26/KIG7`) over HTTPS without embedding the token in the URL, configure Git credentials on the server once, then use that repository URL instead.
+HTTPS URLs require **authentication** for this private repo (credential helper on the server, or embed a PAT once per §2a). For **SSH** use `git@github.com:Ahmedabdelalem61/KIG7-odoo18-staging.git` with a deploy key.
 
 ## 4. Artifacts (dump + filestore)
 
