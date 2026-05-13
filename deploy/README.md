@@ -6,7 +6,7 @@
 - **`configs/docker.odoo.conf`** — Odoo options for the **official `odoo:18.0` image** (paths and `db_host=db`).
 - **`configs/host-hr_project.conf.reference`** — original developer `addons_path` on a full Odoo tree (reference only; not used in Docker).
 - **`docker-compose.yml`** — Postgres 16 + Odoo 18.
-- **`deploy/artifacts/`** — place `*.dump` + `*.tgz` here before restore (files are gitignored once present).
+- **`deploy/artifacts/`** — place `*.dump` + `*.tgz` here before restore (files are gitignored once present). The **Odoo UI backup** zip `18c_hr_project_test_2026-05-13_03-21-27.zip` is **committed** in this repo for easy VPS clone (contains real DB data — do not use for public production without review).
 
 ## Restore from Odoo UI backup (`.zip` with `dump.sql` + `filestore/`)
 

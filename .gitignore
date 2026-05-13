@@ -222,3 +222,5 @@ deploy/artifacts/*.dump
 deploy/artifacts/*.tgz
 deploy/artifacts/*.sql
 deploy/artifacts/*.zip
+# Exception: committed staging backup for VPS (contains DB + filestore — treat as sensitive)
+!deploy/artifacts/18c_hr_project_test_2026-05-13_03-21-27.zip
