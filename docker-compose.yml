@@ -4,6 +4,13 @@
 services:
   db:
     image: postgres:16
+    restart: unless-stopped
+    # Default 64MiB shm caps Postgres; raise for shared_buffers / parallel temp.
+    shm_size: "2gb"
+    ulimits:
+      nofile:
+        soft: 1048576
+        hard: 1048576
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-odoo}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
@@ -17,10 +24,19 @@ services:
       retries: 10
 
   web:
-    image: odoo:18.0
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    image: kig7-odoo18-web:18.0
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
+    shm_size: "512mb"
+    ulimits:
+      nofile:
+        soft: 1048576
+        hard: 1048576
     ports:
       - "${ODOO_PUBLISH_PORT:-8073}:8069"
     volumes:

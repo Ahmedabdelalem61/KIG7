@@ -3,9 +3,9 @@
 ## What is in this repo
 
 - **`HrProject/`** — UAE HR addons + `thirdparty` + `design-themes` (same layout as local dev).
-- **`configs/docker.odoo.conf`** — Odoo options for the **official `odoo:18.0` image** (paths and `db_host=db`).
+- **`configs/docker.odoo.conf`** — Odoo options (paths and `db_host=db`); used by the **web** service built from [`deploy/Dockerfile`](Dockerfile) (extends `odoo:18.0`).
 - **`configs/host-hr_project.conf.reference`** — original developer `addons_path` on a full Odoo tree (reference only; not used in Docker).
-- **`docker-compose.yml`** — Postgres 16 + Odoo 18.
+- **`docker-compose.yml`** — Postgres 16 + Odoo 18 (`web` image built from `deploy/Dockerfile`).
 - **`deploy/artifacts/`** — place `*.dump` + `*.tgz` here before restore (files are gitignored once present). The **Odoo UI backup** zip `18c_hr_project_test_2026-05-13_03-21-27.zip` is **committed** in this repo for easy VPS clone (contains real DB data — restrict repo access; repo is **private**).
 
 ## Restore from Odoo UI backup (`.zip` with `dump.sql` + `filestore/`)
@@ -13,7 +13,8 @@
 Place the zip under `deploy/artifacts/` (default name `18c_hr_project_test_2026-05-13_03-21-27.zip`) or set `ODOO_BACKUP_ZIP` to its path, then from repo root:
 
 ```bash
-docker compose pull
+docker compose pull db
+docker compose build web
 bash deploy/restore_from_odoo_zip.sh
 ```
 
@@ -56,14 +57,16 @@ tar -czf deploy/artifacts/kig7_filestore_18c_hr_project_test.tgz -C ~/.local/sha
    **From Odoo `.zip`** (`dump.sql` + `filestore/` in `deploy/artifacts/`):
 
    ```bash
-   docker compose pull
+   docker compose pull db
+   docker compose build web
    bash deploy/restore_from_odoo_zip.sh
    ```
 
    **From `pg_dump -Fc` + filestore `.tgz`:**
 
    ```bash
-   docker compose pull
+   docker compose pull db
+   docker compose build web
    bash deploy/restore.sh
    ```
 
@@ -75,7 +78,8 @@ tar -czf deploy/artifacts/kig7_filestore_18c_hr_project_test.tgz -C ~/.local/sha
 
 ```bash
 docker compose down -v
-docker compose pull
+docker compose pull db
+docker compose build web
 bash deploy/restore_from_odoo_zip.sh
 # or: bash deploy/restore.sh
 ```
