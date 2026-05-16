@@ -6,3 +6,5 @@
 4. Change **`POSTGRES_PASSWORD`** and the matching `db_password` in `configs/docker.odoo.conf` before any internet-exposed deployment.
 5. **`admin_passwd`** in `docker.odoo.conf` is the Odoo “master password” for database operations; treat it like a secret in production.
 6. After restore, log in with **existing users from the dump** (or reset one admin via Odoo shell). The literal login `admin` / `admin` only applies if that user exists in the restored database with that password.
+
+7. **Automated backups** (`deploy/backup-manage.sh`) write PostgreSQL dumps and filestore archives to `/var/backups/kig7-odoo18/`. Restrict that directory to root (`chmod 700`). Never commit backup files to git.

@@ -6,6 +6,7 @@
 - **`configs/docker.odoo.conf`** — Odoo options (paths and `db_host=db`); used by the **web** service built from [`deploy/Dockerfile`](Dockerfile) (extends `odoo:18.0`).
 - **`configs/host-hr_project.conf.reference`** — original developer `addons_path` on a full Odoo tree (reference only; not used in Docker).
 - **`docker-compose.yml`** — Postgres 16 + Odoo 18 (`web` image built from `deploy/Dockerfile`).
+- **`deploy/backup-manage.sh`**, **`deploy/deploy-staging.sh`** — online backup + retention (see § Backup management below).
 - **`deploy/artifacts/`** — place `*.dump` + `*.tgz` here before restore (files are gitignored once present). The **Odoo UI backup** zip `18c_hr_project_test_2026-05-13_03-21-27.zip` is **committed** in this repo for easy VPS clone (contains real DB data — restrict repo access; repo is **private**).
 
 ## Restore from Odoo UI backup (`.zip` with `dump.sql` + `filestore/`)
@@ -91,3 +92,37 @@ bash deploy/restore_from_odoo_zip.sh
 ## Payroll live dashboard SQL fix
 
 The ambiguous `GROUP BY code` in `hr.uae.payroll.live.dashboard` is fixed in `HrProject/hr_uae_payroll/models/hr_uae_payroll_live_dashboard.py` (`GROUP BY sr.id, sr.name, sr.code`). Ensure your checkout includes that change before reporting dashboard errors.
+
+## Backup management (no restore)
+
+Online backups while `db`, `web`, and `proxy` keep running. Artifacts live **outside git** under `/var/backups/kig7-odoo18/sets/` (each set: `db.dump`, `filestore.tgz`, `manifest.json`).
+
+| Script | Purpose |
+|--------|---------|
+| `deploy/backup-manage.sh` | Main entry: backup + retention |
+| `deploy/backup-retention.sh` | Prune sets older than 7 days (always keeps newest) |
+| `deploy/deploy-staging.sh` | `backup-manage.sh deploy` then `git pull` |
+
+```bash
+# From repo root (/opt/kig7-odoo18)
+bash deploy/backup-manage.sh daily    # manual daily run
+bash deploy/backup-manage.sh deploy   # before code deploy
+bash deploy/backup-manage.sh cleanup-only
+```
+
+**Before every staging deploy**, run `bash deploy/deploy-staging.sh` (or at least `backup-manage.sh deploy`) instead of pulling without a backup.
+
+### Daily schedule (05:00 UTC)
+
+```bash
+sudo cp deploy/systemd/kig7-odoo18-backup.{service,timer} /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now kig7-odoo18-backup.timer
+systemctl list-timers kig7-odoo18-backup.timer
+```
+
+Logs: `/var/backups/kig7-odoo18/logs/backup-manage.log` and `journalctl -u kig7-odoo18-backup.service`.
+
+**Restore is manual** — copy `db.dump` + `filestore.tgz` into `deploy/artifacts/` and use `deploy/restore.sh` when needed. These scripts do not restore automatically.
+
+Environment overrides: `KIG7_BACKUP_ROOT`, `KIG7_RETENTION_DAYS` (default `7`).

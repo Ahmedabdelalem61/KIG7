@@ -1,0 +1,12 @@
+[Unit]
+Description=KIG7 Odoo 18 staging backup (database + filestore)
+Documentation=file:///opt/kig7-odoo18/deploy/README.md
+After=docker.service
+Wants=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/kig7-odoo18
+ExecStart=/opt/kig7-odoo18/deploy/backup-manage.sh daily
+StandardOutput=journal
+StandardError=journal

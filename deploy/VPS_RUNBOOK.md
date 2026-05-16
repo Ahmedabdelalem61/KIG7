@@ -80,6 +80,25 @@ cd src
 
 HTTPS URLs require **authentication** for this private repo (credential helper on the server, or embed a PAT once per §2a). For **SSH** use `git@github.com:Ahmedabdelalem61/KIG7-odoo18-staging.git` with a deploy key.
 
+
+## 3b. Automated backups (before deploy)
+
+From repo root (where `docker-compose.yml` lives):
+
+```bash
+bash deploy/backup-manage.sh deploy   # or: bash deploy/deploy-staging.sh
+```
+
+Install the daily timer (05:00 UTC):
+
+```bash
+sudo cp deploy/systemd/kig7-odoo18-backup.{service,timer} /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now kig7-odoo18-backup.timer
+```
+
+See `deploy/README.md` § Backup management. Retention: 7 days; the newest set is always kept.
+
 ## 4. Artifacts (dump + filestore)
 
 If `deploy/artifacts/*.dump` and `*.tgz` are **not** in the clone (gitignored), copy them from your workstation:
