@@ -6,7 +6,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-ZIP="${ODOO_BACKUP_ZIP:-deploy/artifacts/18c_hr_project_test_2026-05-13_03-21-27.zip}"
+ZIP="${ODOO_BACKUP_ZIP:-deploy/artifacts/18c_hr_project_test_2026-05-16_local.zip}"
 DB_NAME="${ODOO_DB_NAME:-18c_hr_project_test}"
 
 if [[ ! -f "$ZIP" ]]; then

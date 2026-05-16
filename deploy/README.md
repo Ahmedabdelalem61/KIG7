@@ -275,7 +275,7 @@ docker compose up -d
 
 ### From Odoo UI `.zip` (`dump.sql` + `filestore/`)
 
-Place zip under `deploy/artifacts/` (committed seed: `18c_hr_project_test_2026-05-13_03-21-27.zip` for initial VPS clone only).
+Place zip under `deploy/artifacts/` (committed seed: `18c_hr_project_test_2026-05-16_local.zip` for initial VPS clone / restore).
 
 ```bash
 docker compose pull db

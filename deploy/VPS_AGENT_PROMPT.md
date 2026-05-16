@@ -30,7 +30,7 @@ If `/opt/kig7-odoo18` is not empty, remove only disposable content first, or clo
 
 ### 2. Odoo backup zip
 
-The default backup zip is **tracked in git** at `deploy/artifacts/18c_hr_project_test_2026-05-13_03-21-27.zip` after a successful clone. If it is missing, copy it with `scp` or set `ODOO_BACKUP_ZIP` to a full path before restore.
+The default backup zip is **tracked in git** at `deploy/artifacts/18c_hr_project_test_2026-05-16_local.zip` after a successful clone. If it is missing, copy it with `scp` or set `ODOO_BACKUP_ZIP` to a full path before restore.
 
 ### 3. Odoo master password (`admin_passwd`)
 
@@ -68,7 +68,7 @@ bash deploy/restore_from_odoo_zip.sh
 
 If the zip is not at the default path, run:
 
-`ODOO_BACKUP_ZIP=/full/path/to/18c_hr_project_test_2026-05-13_03-21-27.zip bash deploy/restore_from_odoo_zip.sh`
+`ODOO_BACKUP_ZIP=/full/path/to/18c_hr_project_test_2026-05-16_local.zip bash deploy/restore_from_odoo_zip.sh`
 
 ### 6. Verify
 
