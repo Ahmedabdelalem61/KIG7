@@ -2,8 +2,7 @@
 Description=Daily KIG7 Odoo 18 backup at 05:00 UTC
 
 [Timer]
-OnCalendar=*-*-* 05:00:00
-Timezone=UTC
+OnCalendar=*-*-* 05:00:00 UTC
 Persistent=true
 
 [Install]
