@@ -1,0 +1,7 @@
+[flake8]
+max-line-length = 250
+extend-ignore = F401
+exclude =
+    .git,
+    __pycache__,
+    */manual_shell_*.py

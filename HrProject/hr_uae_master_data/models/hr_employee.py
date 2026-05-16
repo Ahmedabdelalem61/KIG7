@@ -276,8 +276,3 @@ class HrEmployee(models.Model):
         emps._compute_hr_uae_status()
         emps.flush_recordset(["hr_uae_status"])
         return True
-
-    # ---------- Display helpers ----------
-
-    def name_get(self):
-        return [(emp.id, emp.name or "") for emp in self]

@@ -46,14 +46,14 @@ class HrUaeAuditLog(models.Model):
         index=True,
     )
 
-    def name_get(self):
-        return [
-            (
-                rec.id,
-                "%s: %s -> %s" % (rec.field_label or rec.model, rec.old_display or "", rec.new_display or ""),
+    @api.depends("field_label", "model", "old_display", "new_display")
+    def _compute_display_name(self):
+        for rec in self:
+            rec.display_name = "%s: %s -> %s" % (
+                rec.field_label or rec.model,
+                rec.old_display or "",
+                rec.new_display or "",
             )
-            for rec in self
-        ]
 
     @api.model
     def _gc_old_logs(self, retention_days=730):

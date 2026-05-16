@@ -1,4 +1,4 @@
-from odoo import api, fields, models, tools
+from odoo import fields, models, tools
 
 
 class HrUaeMovementTracking(models.Model):
