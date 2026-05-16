@@ -1,7 +1,7 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
 {
     "name": "HR UAE Backend Theme",
-    "version": "18.0.1.0.8",
+    "version": "18.0.1.0.7",
     "license": "LGPL-3",
     "category": "Human Resources",
     "summary": "First-party backend theme studio and UI refresh for the HR UAE suite.",
