@@ -17,8 +17,8 @@
         <field name="sequence">10</field>
         <field name="category_id" ref="hr_salary_rule_category_alw"/>
         <field name="condition_select">none</field>
-        <field name="amount_select">fix</field>
-        <field name="amount_fix">0.0</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = contract.housing_allowance or 0.0</field>
     </record>
 
     <record id="hr_salary_rule_transport" model="hr.salary.rule">
@@ -27,8 +27,18 @@
         <field name="sequence">15</field>
         <field name="category_id" ref="hr_salary_rule_category_alw"/>
         <field name="condition_select">none</field>
-        <field name="amount_select">fix</field>
-        <field name="amount_fix">0.0</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = contract.transportation_allowance or 0.0</field>
+    </record>
+
+    <record id="hr_salary_rule_other_allowances" model="hr.salary.rule">
+        <field name="name">Other Allowances</field>
+        <field name="code">OTHER_ALW</field>
+        <field name="sequence">20</field>
+        <field name="category_id" ref="hr_salary_rule_category_alw"/>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = contract.other_allowances or 0.0</field>
     </record>
 
     <record id="hr_salary_rule_unpaid_leave" model="hr.salary.rule">
@@ -93,6 +103,7 @@ result = allowances + adjustments - deductions
             (4, ref('hr_salary_rule_basic')),
             (4, ref('hr_salary_rule_housing')),
             (4, ref('hr_salary_rule_transport')),
+            (4, ref('hr_salary_rule_other_allowances')),
             (4, ref('hr_salary_rule_unpaid_leave')),
             (4, ref('hr_salary_rule_flight_ded')),
             (4, ref('hr_salary_rule_adjustments')),

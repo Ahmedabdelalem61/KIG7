@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Keep the primary operating company aligned with the UAE setup. -->
+    <function model="res.company" name="_hr_uae_enforce_main_company"/>
+
+</odoo>

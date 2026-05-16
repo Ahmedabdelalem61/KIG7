@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Backfill the UAE structure onto contracts of the UAE main company. -->
+    <function model="hr.contract" name="_hr_uae_assign_default_structure"/>
+
+</odoo>

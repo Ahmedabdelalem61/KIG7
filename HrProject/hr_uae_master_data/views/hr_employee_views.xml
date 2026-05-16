@@ -31,6 +31,10 @@
                             <field name="first_contract_date" readonly="1"/>
                             <field name="time_of_service"/>
                             <field name="contract_wage" widget="monetary"/>
+                            <field name="housing_allowance" widget="monetary"/>
+                            <field name="transportation_allowance" widget="monetary"/>
+                            <field name="other_allowances" widget="monetary"/>
+                            <field name="annual_ticket_amount" widget="monetary"/>
                         </group>
                         <group string="Analytic">
                             <field name="project_allocation_id"

@@ -8,6 +8,7 @@ class TestHrUaeMasterData(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.Employee = cls.env["hr.employee"]
+        cls.Contract = cls.env["hr.contract"]
         cls.cost_center_plan = cls.env.ref(
             "hr_uae_master_data.account_analytic_plan_cost_center"
         )
@@ -67,3 +68,50 @@ class TestHrUaeMasterData(TransactionCase):
     def test_seed_ranks_and_positions(self):
         self.assertTrue(self.env.ref("hr_uae_master_data.rank_civilian"))
         self.assertTrue(self.env.ref("hr_uae_master_data.position_driver"))
+
+    def test_contract_benefit_fields_are_stored(self):
+        emp = self.Employee.create({"name": "Contract Benefit"})
+        contract = self.Contract.create(
+            {
+                "name": "Benefit Contract",
+                "employee_id": emp.id,
+                "wage": 3500,
+                "housing_allowance": 1500,
+                "transportation_allowance": 300,
+                "other_allowances": 200,
+                "annual_ticket_amount": 1200,
+            }
+        )
+        emp.contract_id = contract
+        contract.flush_recordset(
+            [
+                "housing_allowance",
+                "transportation_allowance",
+                "other_allowances",
+                "annual_ticket_amount",
+            ]
+        )
+        contract.invalidate_recordset(
+            [
+                "housing_allowance",
+                "transportation_allowance",
+                "other_allowances",
+                "annual_ticket_amount",
+            ]
+        )
+        emp.invalidate_recordset(
+            [
+                "housing_allowance",
+                "transportation_allowance",
+                "other_allowances",
+                "annual_ticket_amount",
+            ]
+        )
+        self.assertEqual(contract.housing_allowance, 1500)
+        self.assertEqual(contract.transportation_allowance, 300)
+        self.assertEqual(contract.other_allowances, 200)
+        self.assertEqual(contract.annual_ticket_amount, 1200)
+        self.assertEqual(emp.housing_allowance, 1500)
+        self.assertEqual(emp.transportation_allowance, 300)
+        self.assertEqual(emp.other_allowances, 200)
+        self.assertEqual(emp.annual_ticket_amount, 1200)

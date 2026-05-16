@@ -1,7 +1,7 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
 {
     "name": "HR UAE - Payroll",
-    "version": "18.0.1.0.4",
+    "version": "18.0.1.0.8",
     "license": "LGPL-3",
     "category": "Payroll",
     "summary": "UAE salary structure, hold-during-vacation logic with on_hold "
@@ -19,6 +19,8 @@
         "security/ir.model.access.csv",
         "data/hr_payroll_structure_data.xml",
         "data/hr_salary_rule_data.xml",
+        "data/hr_salary_rule_contract_allowances_data.xml",
+        "data/hr_contract_data.xml",
         "views/hr_payslip_views.xml",
         "views/hr_leave_payroll_buttons.xml",
         "views/hr_uae_payroll_dashboard_views.xml",

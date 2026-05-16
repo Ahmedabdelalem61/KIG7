@@ -88,6 +88,30 @@ class HrEmployee(models.Model):
         currency_field="currency_id",
         readonly=True,
     )
+    housing_allowance = fields.Monetary(
+        string="Housing Allowance",
+        related="contract_id.housing_allowance",
+        currency_field="currency_id",
+        readonly=True,
+    )
+    transportation_allowance = fields.Monetary(
+        string="Transportation Allowance",
+        related="contract_id.transportation_allowance",
+        currency_field="currency_id",
+        readonly=True,
+    )
+    other_allowances = fields.Monetary(
+        string="Other Allowances",
+        related="contract_id.other_allowances",
+        currency_field="currency_id",
+        readonly=True,
+    )
+    annual_ticket_amount = fields.Monetary(
+        string="Annual Ticket Amount",
+        related="contract_id.annual_ticket_amount",
+        currency_field="currency_id",
+        readonly=True,
+    )
 
     # ---------- Domains ----------
 

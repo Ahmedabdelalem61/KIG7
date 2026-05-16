@@ -416,7 +416,8 @@ html.o_hr_uae_backend_theme {
         }
     }
 
-    .o_input,
+    input.o_input,
+    textarea.o_input,
     .form-control,
     select {
         min-height: var(--hr-input-height);
@@ -430,6 +431,14 @@ html.o_hr_uae_backend_theme {
             border-color: var(--hr-accent);
             box-shadow: 0 0 0 0.2rem var(--hr-accent-soft);
         }
+    }
+
+    .o_field_widget.o_field_monetary > .text-nowrap > .o_input.position-absolute {
+        min-height: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
     }
 
     .btn {

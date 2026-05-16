@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="hr_salary_rule_housing" model="hr.salary.rule">
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = contract.housing_allowance or 0.0</field>
+    </record>
+
+    <record id="hr_salary_rule_transport" model="hr.salary.rule">
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = contract.transportation_allowance or 0.0</field>
+    </record>
+
+    <record id="hr_salary_rule_other_allowances" model="hr.salary.rule">
+        <field name="name">Other Allowances</field>
+        <field name="code">OTHER_ALW</field>
+        <field name="sequence">20</field>
+        <field name="category_id" ref="hr_salary_rule_category_alw"/>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = contract.other_allowances or 0.0</field>
+    </record>
+
+    <record id="hr_payroll_structure_uae" model="hr.payroll.structure">
+        <field name="rule_ids" eval="[(4, ref('hr_salary_rule_other_allowances'))]"/>
+    </record>
+
+    <function model="hr.salary.rule" name="_hr_uae_sync_contract_allowance_rules"/>
+
+</odoo>

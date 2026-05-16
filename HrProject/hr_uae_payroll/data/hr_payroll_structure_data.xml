@@ -29,6 +29,7 @@
     <record id="hr_payroll_structure_uae" model="hr.payroll.structure">
         <field name="name">UAE Standard</field>
         <field name="code">UAE</field>
+        <field name="company_id" ref="base.main_company"/>
     </record>
 
 </odoo>

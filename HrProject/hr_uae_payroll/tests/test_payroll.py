@@ -36,6 +36,34 @@ class TestHrUaePayroll(TransactionCase):
     def test_payslip_state_includes_on_hold(self):
         self.assertIn("on_hold", dict(self.Payslip._fields["state"].selection))
 
+    def test_contract_allowances_flow_into_monthly_payslip(self):
+        emp, contract = self._make_employee_with_contract("PR Allowances", wage=3000)
+        contract.write(
+            {
+                "housing_allowance": 1500,
+                "transportation_allowance": 300,
+                "other_allowances": 200,
+            }
+        )
+        slip = self.Payslip.create(
+            {
+                "employee_id": emp.id,
+                "contract_id": contract.id,
+                "struct_id": self.struct.id,
+                "date_from": date(2026, 2, 1),
+                "date_to": date(2026, 2, 28),
+            }
+        )
+        slip.compute_sheet()
+        housing = slip.line_ids.filtered(lambda record: record.code == "HOUSING")
+        transport = slip.line_ids.filtered(lambda record: record.code == "TRANSPORT")
+        other = slip.line_ids.filtered(lambda record: record.code == "OTHER_ALW")
+        net = slip.line_ids.filtered(lambda record: record.code == "NET")
+        self.assertEqual(housing.total, 1500)
+        self.assertEqual(transport.total, 300)
+        self.assertEqual(other.total, 200)
+        self.assertEqual(net.total, 5000)
+
     def test_compute_sheet_no_leave_no_hold(self):
         emp, contract = self._make_employee_with_contract("PR No Hold")
         slip = self.Payslip.create(
