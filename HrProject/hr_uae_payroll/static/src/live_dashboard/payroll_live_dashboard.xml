@@ -4,7 +4,8 @@
     <t t-name="hr_uae_payroll.HrUaePayrollLiveDashboard">
         <div class="o_hr_uae_payroll_live h-100 overflow-auto">
 
-            <div class="o_pdash_topbar d-flex align-items-center justify-content-between flex-wrap gap-3 p-3 mb-3">
+            <div class="o_pdash_topbar mb-3">
+                <div class="o_pdash_topbar__inner d-flex align-items-center justify-content-between flex-wrap gap-3">
                 <div>
                     <h2 class="mb-0">Payroll — Live Dashboard</h2>
                     <span class="o_pdash_subtitle">
@@ -27,17 +28,18 @@
                         <i class="fa fa-table me-1"/> Excel-style Table
                     </button>
                 </div>
+                </div>
             </div>
 
-            <div t-if="state.loading" class="text-center py-5">
+            <div t-if="state.loading" class="text-center py-5 o_hr_uae_dashboard_state">
                 <i class="fa fa-spinner fa-spin fa-2x text-muted"/>
             </div>
 
-            <div t-elif="state.error" class="alert alert-danger m-3">
+            <div t-elif="state.error" class="alert alert-danger m-3 o_hr_uae_dashboard_state">
                 <strong>Error:</strong> <t t-esc="state.error"/>
             </div>
 
-            <div t-elif="state.data" class="px-3 pb-5">
+            <div t-elif="state.data" class="o_hr_uae_dashboard_body">
 
                 <!-- KPI tiles -->
                 <div class="o_pdash_kpi_grid">

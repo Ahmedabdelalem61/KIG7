@@ -20,9 +20,6 @@
     color: var(--pd-text);
 
     .o_pdash_topbar {
-        margin: 0 calc(-1 * var(--hr-shell-gap, 0px)) 0;
-        padding-left: #{"max(1rem, var(--hr-shell-gap, 1rem))"} !important;
-        padding-right: #{"max(1rem, var(--hr-shell-gap, 1rem))"} !important;
         background: linear-gradient(135deg, var(--pd-accent), var(--pd-accent-strong));
         color: #fff;
         border-radius: 0 0 var(--pd-radius) var(--pd-radius);

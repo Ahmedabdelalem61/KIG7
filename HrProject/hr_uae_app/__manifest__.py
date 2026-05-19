@@ -21,6 +21,7 @@
         "hr_uae_termination",
         "hr_uae_reports",
         "hr_uae_backend_theme",
+        "rebranding",
         "web_responsive",
     ],
     "data": [],

@@ -1,0 +1,63 @@
+// Dashboard horizontal inset — aligned with hr_uae_backend_theme when installed.
+// Without the theme, .o_content has no --hr-shell-gap padding; do NOT use negative
+// margins on the topbar or inner padding only cancels bleed (text flush to edge).
+
+$o-hr-dashboard-inset: 16px;
+
+.o_hr_uae_live_dashboard,
+.o_hr_uae_payroll_live {
+    --hr-dashboard-inset: #{$o-hr-dashboard-inset};
+
+    .o_hud_topbar,
+    .o_pdash_topbar {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 0;
+    }
+
+    .o_hud_topbar__inner,
+    .o_pdash_topbar__inner {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 1rem $o-hr-dashboard-inset;
+    }
+
+    .o_hr_uae_dashboard_body {
+        padding: $o-hr-dashboard-inset;
+        padding-bottom: $o-hr-dashboard-inset * 1.25;
+    }
+
+    .o_hr_uae_dashboard_state {
+        padding-left: $o-hr-dashboard-inset;
+        padding-right: $o-hr-dashboard-inset;
+    }
+}
+
+// Full-bleed topbar only when backend theme adds .o_content side padding.
+html.o_hr_uae_backend_theme .o_hr_uae_live_dashboard,
+html.o_hr_uae_backend_theme .o_hr_uae_payroll_live {
+    --hr-dashboard-inset: var(--hr-shell-gap, #{$o-hr-dashboard-inset});
+
+    .o_hud_topbar,
+    .o_pdash_topbar {
+        margin-left: calc(-1 * var(--hr-shell-gap, #{$o-hr-dashboard-inset}));
+        margin-right: calc(-1 * var(--hr-shell-gap, #{$o-hr-dashboard-inset}));
+    }
+
+    .o_hud_topbar__inner,
+    .o_pdash_topbar__inner {
+        padding: 1rem var(--hr-dashboard-inset);
+    }
+
+    .o_hr_uae_dashboard_body {
+        padding-left: var(--hr-dashboard-inset);
+        padding-right: var(--hr-dashboard-inset);
+        padding-top: var(--hr-dashboard-inset);
+        padding-bottom: calc(var(--hr-dashboard-inset) * 1.25);
+    }
+
+    .o_hr_uae_dashboard_state {
+        padding-left: var(--hr-dashboard-inset);
+        padding-right: var(--hr-dashboard-inset);
+    }
+}
