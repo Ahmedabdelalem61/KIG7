@@ -1,7 +1,7 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
 {
     "name": "Rebranding",
-    "version": "18.0.1.0.4",
+    "version": "18.0.1.0.5",
     "license": "LGPL-3",
     "category": "Hidden",
     "summary": "Hide Odoo branding in the user menu and align custom dashboard spacing.",
