@@ -20,7 +20,7 @@
         "hr_uae_salary_adjustment",
         "hr_uae_termination",
         "hr_uae_reports",
-        "hr_uae_backend_theme",
+        "sh_entmate_theme",
         "rebranding",
         "web_responsive",
     ],
