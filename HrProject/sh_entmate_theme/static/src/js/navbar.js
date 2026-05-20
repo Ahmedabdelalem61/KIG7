@@ -43,6 +43,7 @@ patch(NavBar.prototype, {
                 if (enable_multi_tab){
                    this.addmultitabtags()
                 }
+                this._repairMissingFontIcons();
                 browser.addEventListener("sh-close-apps-menu", this._closeAppsMenuHandler);
             });
             onWillUnmount(() => {
@@ -202,6 +203,30 @@ patch(NavBar.prototype, {
     getBackend_icon(){
         return backend_all_icon_style;
     },
+    onAppIconError(ev) {
+        const fallbackSrc = ev.currentTarget.dataset.fallbackSrc;
+        if (fallbackSrc && !ev.currentTarget.dataset.fallbackUsed) {
+            ev.currentTarget.dataset.fallbackUsed = "1";
+            ev.currentTarget.src = fallbackSrc;
+        }
+    },
+    _repairMissingFontIcons() {
+        browser.setTimeout(() => {
+            const icons = document.querySelectorAll(
+                ".sh_entmate_apps_menu_dropdown .sh_fa_icon"
+            );
+            for (const icon of icons) {
+                const before = window.getComputedStyle(icon, "::before");
+                const content = before.getPropertyValue("content");
+                const hasGlyph = content && content !== "none" && content !== '""';
+                icon.classList.toggle("sh_has_font_icon", Boolean(hasGlyph));
+                const fallbackIcon = icon.previousElementSibling;
+                if (fallbackIcon?.classList.contains("sh_font_icon_fallback")) {
+                    fallbackIcon.classList.toggle("d-none", Boolean(hasGlyph));
+                }
+            }
+        }, 0);
+    },
     isMobile(ev) {
         return isMobileOS;
     },
@@ -227,6 +252,7 @@ patch(NavBar.prototype, {
             $(".full").addClass("sidebar_arrow");
             $(".o_menu_brand").css("display", "none");
             $(".o_menu_sections").css("display", "none");
+            this._repairMissingFontIcons();
         } else {
             $("body").removeClass("sh_sidebar_background_enterprise");
             $(".sh_search_container").css("display", "none");
@@ -253,4 +279,3 @@ patch(NavBar.prototype, {
         }
     },
 });
-

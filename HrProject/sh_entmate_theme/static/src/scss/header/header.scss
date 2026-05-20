@@ -4,9 +4,7 @@
         align-items: center;
         padding: 10px;
 
-        // style navbar
-        // Karim Ahmed
-        background: #714b67 !important;
+        background: $primaryColor !important;
 
         .o_menu_brand {
             padding-left: 0;
@@ -180,17 +178,17 @@
                 }
 
                 &:hover {
-                    background: $secondaryColor !important;
+                    background: lighten($primaryColor, 8%) !important;
                 }
             }
 
             .dropdown.show {
                 .dropdown-toggle {
-                    border-color: $extra_color !important;
-                    background: lighten($extra_color, 70%) !important;
+                    border-color: lighten($primaryColor, 14%) !important;
+                    background: darken($primaryColor, 8%) !important;
 
                     span,i {
-                        color: #111827;
+                        color: #ffffff !important;
                     }
                 }
             }
@@ -258,10 +256,10 @@
 
 .o_web_client .o_main_navbar .o_menu_sections .dropdown-toggle:hover, 
 .o_web_client .o_main_navbar .o_menu_sections .dropdown-item.o_nav_entry:hover {
-    background: #a06c93 !important;
+    background: lighten($primaryColor, 8%) !important;
 }
 
 .o_web_client .o_main_navbar .o_menu_sections .dropdown.show .dropdown-toggle {
-    border-color: #464646 !important;
-    background: #796273 !important;
+    border-color: lighten($primaryColor, 14%) !important;
+    background: darken($primaryColor, 8%) !important;
 }

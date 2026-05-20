@@ -12,18 +12,20 @@
                     <t t-set="app_icon_style" t-value="getIconStyle()" />
                     <a t-att-href="getMenuItemHref(app)" class="o_menuitem d-flex flex-column rounded-3 justify-content-start align-items-center w-100 p-1 p-md-2">
                         <t t-if="app_icon_style  == 'style_1'">
-                            <img class="img o_app_icon" t-attf-src="/web/image?model=ir.ui.menu&amp;field=web_icon_data&amp;id={{app_id}}" t-att-title="app.name" t-att-alt="app.name" />
+                            <img class="img o_app_icon" t-att-src="app.webIconData || '/web/static/img/default_icon_app.png'" t-att-title="app.name" t-att-alt="app.name" />
                         </t>
                         <t t-elif="app_icon_style  == 'style_2'">
                             <t t-set="app_cls_name" t-value="getAppClassName(app)" />
+                            <img class="img o_app_icon sh_font_icon_fallback" t-att-src="app.webIconData || '/web/static/img/default_icon_app.png'" t-att-title="app.name" t-att-alt="app.name" />
                             <span t-attf-class="sh-{{app_cls_name}} sh_fa_icon"></span>
                         </t>
                         <t t-elif="app_icon_style  == 'style_3'">
                             <t t-set="app_cls_name" t-value="getAppClassName(app)" />
-                            <img class="img h-100 threed_icon" t-attf-src="sh_entmate_theme/static/src/app_icon/3d_icons/{{app_cls_name}}.png" t-att-title="app.name" t-att-alt="app.name" />
+                            <img class="img h-100 threed_icon" t-attf-src="/sh_entmate_theme/static/src/app_icon/3d_icons/{{app_cls_name}}.png" t-att-data-fallback-src="app.webIconData || '/web/static/img/default_icon_app.png'" t-on-error="onAppIconError" t-att-title="app.name" t-att-alt="app.name" />
                         </t>
                         <t t-elif="app_icon_style  == 'style_4'">
                             <t t-set="app_cls_name" t-value="getAppClassName(app)" />
+                            <img class="img o_app_icon sh_font_icon_fallback" t-att-src="app.webIconData || '/web/static/img/default_icon_app.png'" t-att-title="app.name" t-att-alt="app.name" />
                             <span t-attf-class="sh-{{app_cls_name}}-dt sh_fa_icon">
                                 <span class="path1"></span>
                                 <span class="path2"></span>
@@ -31,10 +33,11 @@
                         </t>
                         <t t-elif="app_icon_style  == 'style_5'">
                             <t t-set="app_cls_name" t-value="getAppClassName(app)" />
-                            <img class="img w-100 h-100 glass_icon" t-attf-src="sh_entmate_theme/static/src/app_icon/glass_icons/{{app_cls_name}}.png" t-att-title="app.name" t-att-alt="app.name" />
+                            <img class="img w-100 h-100 glass_icon" t-attf-src="/sh_entmate_theme/static/src/app_icon/glass_icons/{{app_cls_name}}.png" t-att-data-fallback-src="app.webIconData || '/web/static/img/default_icon_app.png'" t-on-error="onAppIconError" t-att-title="app.name" t-att-alt="app.name" />
                         </t>
                         <t t-elif="app_icon_style  == 'style_6'">
                             <t t-set="app_cls_name" t-value="getAppClassName(app)" />
+                            <img class="img o_app_icon sh_font_icon_fallback" t-att-src="app.webIconData || '/web/static/img/default_icon_app.png'" t-att-title="app.name" t-att-alt="app.name" />
                             <span t-attf-class="sh-{{app_cls_name}}-l sh_fa_icon"></span>
                         </t>
                         <span class="sh_app_name o_caption w-100 text-center text-truncate mt-2" t-att-title="app.name">

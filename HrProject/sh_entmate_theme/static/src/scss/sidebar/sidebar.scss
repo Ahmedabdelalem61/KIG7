@@ -368,3 +368,82 @@ body.sh_sidebar_background_enterprise .o-dropdown--menu.sh_entmate_apps_menu_dro
         }
     }
 }
+
+.o_popover .o-dropdown--menu.sh_entmate_apps_menu_dropdown.dropdown-menu,
+body.sh_sidebar_background_enterprise .o-dropdown--menu.sh_entmate_apps_menu_dropdown.dropdown-menu,
+.o_web_client .sh_entmate_theme_appmenu_div div.o-dropdown--menu.dropdown-menu.d-block {
+    .dropdown-item.o_app {
+        min-height: 112px;
+
+        a.o_menuitem {
+            min-height: 104px;
+            gap: 8px;
+        }
+
+        .o_app_icon,
+        .sh_font_icon_fallback,
+        .glass_icon,
+        .threed_icon {
+            width: 64px !important;
+            height: 64px !important;
+            max-width: 64px !important;
+            max-height: 64px !important;
+            object-fit: contain !important;
+        }
+
+        .sh_fa_icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            font-size: 42px !important;
+            line-height: 64px !important;
+            margin-bottom: 0 !important;
+        }
+
+        .sh_font_icon_fallback + .sh_fa_icon {
+            display: none;
+
+            &.sh_has_font_icon {
+                display: inline-flex;
+            }
+        }
+
+        .sh_app_name {
+            max-width: 100%;
+            margin-top: 0 !important;
+            line-height: 1.25;
+        }
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .o_popover .o-dropdown--menu.sh_entmate_apps_menu_dropdown.dropdown-menu,
+    body.sh_sidebar_background_enterprise .o-dropdown--menu.sh_entmate_apps_menu_dropdown.dropdown-menu,
+    .o_web_client .sh_entmate_theme_appmenu_div div.o-dropdown--menu.dropdown-menu.d-block {
+        .dropdown-item.o_app {
+            min-height: 92px;
+
+            a.o_menuitem {
+                min-height: 84px;
+            }
+
+            .o_app_icon,
+            .sh_font_icon_fallback,
+            .glass_icon,
+            .threed_icon,
+            .sh_fa_icon {
+                width: 48px !important;
+                height: 48px !important;
+                max-width: 48px !important;
+                max-height: 48px !important;
+                line-height: 48px !important;
+            }
+
+            .sh_fa_icon {
+                font-size: 32px !important;
+            }
+        }
+    }
+}

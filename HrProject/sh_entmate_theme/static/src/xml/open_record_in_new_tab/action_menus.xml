@@ -2,12 +2,15 @@
 
 <templates id="sh_add_custom_action" xml:space="preserve">
     <t t-name="web.ActionMenus_sh" t-inherit="web.ActionMenus" t-inherit-mode="extension">
-        <xpath expr="//Dropdown[2]/t[2]" position="after">
+        <xpath expr="//div[@t-if='actionItems.length']//t[@t-set-slot='content']" position="inside">
             <t t-if="show_open_record_new_tab_button_action">
                 <DropdownItem class="'sh_custom_action'" onSelected="() => this.onOpenRecord()">
                     Open Records In New Tab
                 </DropdownItem>
             </t>
+        </xpath>
+        <xpath expr="//div[@t-if='actionItems.length']" position="attributes">
+            <attribute name="t-if">actionItems.length or show_open_record_new_tab_button_action</attribute>
         </xpath>
     </t>
 </templates>

@@ -11,7 +11,7 @@ import { renderToFragment } from "@web/core/utils/render";
 export class ThemeConfigurationTemplate extends Component {
     static template = "ThemeConfigurationTemplate";
 
-    async setup() {
+    setup() {
         super.setup()
         this.orm = useService("orm");
         let userAgent = navigator.userAgent;
@@ -47,26 +47,26 @@ export class ThemeConfigurationTemplate extends Component {
                              async  _click_theme_color_box(ev){
                                 var color_id = $(ev.currentTarget).attr('id');
 
-                                $.each($('.theme_color_box'), function (event) {
-                                    $(event).removeClass('active');
-                                    $(event).find('input[name="themeColor"]').attr('checked', false);
+                                $.each($('.theme_color_box'), function () {
+                                    $(this).removeClass('active');
+                                    $(this).find('input[name="themeColor"]').prop('checked', false);
                                 })
                                 $(ev.currentTarget).addClass('active');
-                                $(ev.currentTarget).find('input[name="themeColor"]').attr('checked', true);
+                                $(ev.currentTarget).find('input[name="themeColor"]').prop('checked', true);
 
                                 color_change = true;
 
-                                jsonrpc("/web/dataset/call_kw/res.lang/onchange_theme_style_js", {
-                                            model: 'sh.ent.theme.config.settings',
-                                            method: 'onchange_theme_style_js',
-                                            args: [color_id],
-                                            kwargs: {},
-                                        }).then(async function (rec) {
-                                            var result = await self.orm.write("sh.ent.theme.config.settings", [1], { theme_style : color_id });
-                                            if (result){
-                                                location.reload();
-                                            }
-                                        });
+                                var rec = await self.orm.call(
+                                    "sh.ent.theme.config.settings",
+                                    "onchange_theme_style_js",
+                                    [color_id]
+                                );
+                                if (rec) {
+                                    var result = await self.orm.write("sh.ent.theme.config.settings", [1], { theme_style : color_id });
+                                    if (result){
+                                        location.reload();
+                                    }
+                                }
                             },
                             _click_sidebar_style_box: function(ev){
                                 self._click_sidebar_style_box(ev)
@@ -144,13 +144,13 @@ export class ThemeConfigurationTemplate extends Component {
 
                 var active_color = data['theme_style']
                 if (active_color) {
-                    $('#' + active_color).find('input[name="themeColor"]').attr('checked', true);
+                    $('#' + active_color).addClass('active').find('input[name="themeColor"]').prop('checked', true);
                 }
 
 
                 var sidebar_img = data['sidebar_img']
                 if (sidebar_img) {
-                    $('#theme_style_id').find('#' + sidebar_img).find('input[name="themeStyle"]').attr('checked', true);
+                    $('#theme_style_id').find('#' + sidebar_img).addClass('active').find('input[name="themeStyle"]').prop('checked', true);
                 }
 
                 var separator_style = data['separator_style']
@@ -166,7 +166,7 @@ export class ThemeConfigurationTemplate extends Component {
 
                 var app_icon_style = data['app_icon_style']
                 if (app_icon_style) {
-                    $('#app_icon_style_id').find('#' + app_icon_style).find('input[name="app_icon_style"]').attr('checked', true);
+                    $('#app_icon_style_id').find('#' + app_icon_style).addClass('active').find('input[name="app_icon_style"]').prop('checked', true);
                 }
 
                 var tab_style = data['tab_style']
@@ -481,12 +481,12 @@ export class ThemeConfigurationTemplate extends Component {
 
     async _click_sidebar_style_box(ev){
         var sidebar_style = $(ev.currentTarget).attr('id');
-        $.each($('.theme_style_box'), function (event) {
-            $(event).removeClass('active');
-            $(event).find('input[name="themeStyle"]').attr('checked', false);
+        $.each($('#theme_style_id .theme_style_box'), function () {
+            $(this).removeClass('active');
+            $(this).find('input[name="themeStyle"]').prop('checked', false);
         })
         $(ev.currentTarget).addClass('active');
-        $(ev.currentTarget).find('input[name="themeStyle"]').attr('checked', true);
+        $(ev.currentTarget).find('input[name="themeStyle"]').prop('checked', true);
         var result = await this.orm.write("sh.ent.theme.config.settings", [1], {
          sidebar_img : sidebar_style});
          if (result){
@@ -530,12 +530,10 @@ export class ThemeConfigurationTemplate extends Component {
 
     async _click_separator_style_box(ev){
         var separator_style = $(ev.currentTarget).attr('id');
-        $.each($('.theme_style_box'), function (event) {
-            $(event).removeClass('active');
-            $(event).find('input[name="separator_style"]').attr('checked', false);
-        })
+        $(ev.currentTarget).closest(".sh_main_div").find(".theme_style_box").removeClass('active')
+            .find('input[name="separator_style"]').prop('checked', false);
         $(ev.currentTarget).addClass('active');
-        $(ev.currentTarget).find('input[name="separator_style"]').attr('checked', true);
+        $(ev.currentTarget).find('input[name="separator_style"]').prop('checked', true);
         var result = await this.orm.write("sh.ent.theme.config.settings", [1], {
          separator_style : separator_style});
          if (result){
@@ -546,12 +544,10 @@ export class ThemeConfigurationTemplate extends Component {
 
     async _click_button_style_box(ev){
         var button_style = $(ev.currentTarget).attr('id');
-        $.each($('.theme_style_box'), function (event) {
-            $(event).removeClass('active');
-            $(event).find('input[name="button_style"]').attr('checked', false);
-        })
+        $(ev.currentTarget).closest(".sh_main_div").find(".theme_style_box").removeClass('active')
+            .find('input[name="button_style"]').prop('checked', false);
         $(ev.currentTarget).addClass('active');
-        $(ev.currentTarget).find('input[name="button_style"]').attr('checked', true);
+        $(ev.currentTarget).find('input[name="button_style"]').prop('checked', true);
         var result = await this.orm.write("sh.ent.theme.config.settings", [1], {
          button_style : button_style});
          if (result){
@@ -562,12 +558,12 @@ export class ThemeConfigurationTemplate extends Component {
 
     async _click_app_icon_style_box(ev){
         var app_icon_style = $(ev.currentTarget).attr('id');
-        $.each($('.theme_style_box'), function (event) {
-            $(event).removeClass('active');
-            $(event).find('input[name="app_icon_style"]').attr('checked', false);
+        $.each($('#app_icon_style_id .theme_style_box'), function () {
+            $(this).removeClass('active');
+            $(this).find('input[name="app_icon_style"]').prop('checked', false);
         })
         $(ev.currentTarget).addClass('active');
-        $(ev.currentTarget).find('input[name="app_icon_style"]').attr('checked', true);
+        $(ev.currentTarget).find('input[name="app_icon_style"]').prop('checked', true);
         var result = await this.orm.write("sh.ent.theme.config.settings", [1], {
          app_icon_style : app_icon_style});
          if (result){
@@ -578,12 +574,10 @@ export class ThemeConfigurationTemplate extends Component {
 
     async _click_tab_style_box(ev){
         var tab_style = $(ev.currentTarget).attr('id');
-        $.each($('.theme_style_box'), function (event) {
-            $(event).removeClass('active');
-            $(event).find('input[name="tab_style"]').attr('checked', false);
-        })
+        $(ev.currentTarget).closest(".sh_main_div").find(".theme_style_box").removeClass('active')
+            .find('input[name="tab_style"]').prop('checked', false);
         $(ev.currentTarget).addClass('active');
-        $(ev.currentTarget).find('input[name="tab_style"]').attr('checked', true);
+        $(ev.currentTarget).find('input[name="tab_style"]').prop('checked', true);
         var result = await this.orm.write("sh.ent.theme.config.settings", [1], {
          horizontal_tab_style : tab_style});
          if (result){
@@ -635,9 +629,9 @@ export class ThemeConfigurationTemplate extends Component {
     async _click_login_style_box(ev){
         var login_style = $(ev.currentTarget).attr('id');
         $("#login_style_id").find(".theme_style_box").removeClass('active')
-        $("#login_style_id").find(".theme_style_box").find('input[name="login_style"]').attr('checked', false);
+        $("#login_style_id").find(".theme_style_box").find('input[name="login_style"]').prop('checked', false);
         $(ev.currentTarget).addClass('active');
-        $(ev.currentTarget).find('input[name="login_style"]').attr('checked', true);
+        $(ev.currentTarget).find('input[name="login_style"]').prop('checked', true);
 
          if (login_style == 'style_1') {
 
@@ -711,12 +705,10 @@ export class ThemeConfigurationTemplate extends Component {
 
    async _click_form_element_style_box(ev){
         var form_element_style = $(ev.currentTarget).attr('id');
-        $.each($('.theme_style_box'), function (event) {
-            $(event).removeClass('active');
-            $(event).find('input[name="form_element_style"]').attr('checked', false);
-        })
+        $(ev.currentTarget).closest(".sh_main_div").find(".theme_style_box").removeClass('active')
+            .find('input[name="form_element_style"]').prop('checked', false);
         $(ev.currentTarget).addClass('active');
-        $(ev.currentTarget).find('input[name="form_element_style"]').attr('checked', true);
+        $(ev.currentTarget).find('input[name="form_element_style"]').prop('checked', true);
         var result = await this.orm.write("sh.ent.theme.config.settings", [1], {
          form_element_style : form_element_style});
          if (result){
@@ -726,12 +718,10 @@ export class ThemeConfigurationTemplate extends Component {
 
    async _click_breadcrumbs_style_box(ev){
         var breadcrumbs_style = $(ev.currentTarget).attr('id');
-        $.each($('.theme_style_box'), function (event) {
-            $(event).removeClass('active');
-            $(event).find('input[name="breadcrumbs_style"]').attr('checked', false);
-        })
+        $(ev.currentTarget).closest(".sh_main_div").find(".theme_style_box").removeClass('active')
+            .find('input[name="breadcrumbs_style"]').prop('checked', false);
         $(ev.currentTarget).addClass('active');
-        $(ev.currentTarget).find('input[name="breadcrumbs_style"]').attr('checked', true);
+        $(ev.currentTarget).find('input[name="breadcrumbs_style"]').prop('checked', true);
         var result = await this.orm.write("sh.ent.theme.config.settings", [1], {
          breadcrumb_style : breadcrumbs_style});
          if (result){
@@ -741,12 +731,10 @@ export class ThemeConfigurationTemplate extends Component {
 
    async _click_checkbox_style_box(ev){
         var checkbox_style = $(ev.currentTarget).attr('id');
-        $.each($('.theme_style_box'), function (event) {
-            $(event).removeClass('active');
-            $(event).find('input[name="checkbox_style"]').attr('checked', false);
-        })
+        $(ev.currentTarget).closest(".sh_main_div").find(".theme_style_box").removeClass('active')
+            .find('input[name="checkbox_style"]').prop('checked', false);
         $(ev.currentTarget).addClass('active');
-        $(ev.currentTarget).find('input[name="checkbox_style"]').attr('checked', true);
+        $(ev.currentTarget).find('input[name="checkbox_style"]').prop('checked', true);
         var result = await this.orm.write("sh.ent.theme.config.settings", [1], {
          checkbox_style : checkbox_style});
          if (result){
@@ -757,12 +745,10 @@ export class ThemeConfigurationTemplate extends Component {
 
    async _click_radio_button_style_box(ev){
         var radio_button_style = $(ev.currentTarget).attr('id');
-        $.each($('.theme_style_box'), function (event) {
-            $(event).removeClass('active');
-            $(event).find('input[name="radio_button_style"]').attr('checked', false);
-        })
+        $(ev.currentTarget).closest(".sh_main_div").find(".theme_style_box").removeClass('active')
+            .find('input[name="radio_button_style"]').prop('checked', false);
         $(ev.currentTarget).addClass('active');
-        $(ev.currentTarget).find('input[name="radio_button_style"]').attr('checked', true);
+        $(ev.currentTarget).find('input[name="radio_button_style"]').prop('checked', true);
         var result = await this.orm.write("sh.ent.theme.config.settings", [1], {
          radio_style : radio_button_style});
          if (result){
@@ -772,12 +758,10 @@ export class ThemeConfigurationTemplate extends Component {
 
    async _click_scrollbar_style_box(ev){
         var scrollbar_style = $(ev.currentTarget).attr('id');
-        $.each($('.theme_style_box'), function (event) {
-            $(event).removeClass('active');
-            $(event).find('input[name="scrollbar_style"]').attr('checked', false);
-        })
+        $(ev.currentTarget).closest(".sh_main_div").find(".theme_style_box").removeClass('active')
+            .find('input[name="scrollbar_style"]').prop('checked', false);
         $(ev.currentTarget).addClass('active');
-        $(ev.currentTarget).find('input[name="scrollbar_style"]').attr('checked', true);
+        $(ev.currentTarget).find('input[name="scrollbar_style"]').prop('checked', true);
         var result = await this.orm.write("sh.ent.theme.config.settings", [1], {
          scrollbar_style : scrollbar_style});
          if (result){
@@ -787,12 +771,10 @@ export class ThemeConfigurationTemplate extends Component {
 
    async _click_kanban_style_box(ev){
         var kanban_style = $(ev.currentTarget).attr('id');
-        $.each($('.theme_style_box'), function (event) {
-            $(event).removeClass('active');
-            $(event).find('input[name="kanban_style"]').attr('checked', false);
-        })
+        $(ev.currentTarget).closest(".sh_main_div").find(".theme_style_box").removeClass('active')
+            .find('input[name="kanban_style"]').prop('checked', false);
         $(ev.currentTarget).addClass('active');
-        $(ev.currentTarget).find('input[name="kanban_style"]').attr('checked', true);
+        $(ev.currentTarget).find('input[name="kanban_style"]').prop('checked', true);
         var result = await this.orm.write("sh.ent.theme.config.settings", [1], {
          kanban_box_style : kanban_style});
          if (result){
@@ -802,12 +784,10 @@ export class ThemeConfigurationTemplate extends Component {
 
    async _click_font_icon_style_box(ev){
         var font_icon_style = $(ev.currentTarget).attr('id');
-        $.each($('.theme_style_box'), function (event) {
-            $(event).removeClass('active');
-            $(event).find('input[name="font_icon_style"]').attr('checked', false);
-        })
+        $(ev.currentTarget).closest(".sh_main_div").find(".theme_style_box").removeClass('active')
+            .find('input[name="font_icon_style"]').prop('checked', false);
         $(ev.currentTarget).addClass('active');
-        $(ev.currentTarget).find('input[name="font_icon_style"]').attr('checked', true);
+        $(ev.currentTarget).find('input[name="font_icon_style"]').prop('checked', true);
         var result = await this.orm.write("sh.ent.theme.config.settings", [1], {
          backend_all_icon_style : font_icon_style});
          if (result){
@@ -818,9 +798,9 @@ export class ThemeConfigurationTemplate extends Component {
    async _click_listview_style_box(ev){
         var listview_style = $(ev.currentTarget).attr('id');
         $("#listview_table_id").find(".theme_style_box").removeClass('active')
-        $("#listview_table_id").find(".theme_style_box").find('input[name="listview_style"]').attr('checked', false);
+        $("#listview_table_id").find(".theme_style_box").find('input[name="listview_style"]').prop('checked', false);
         $(ev.currentTarget).addClass('active');
-        $(ev.currentTarget).find('input[name="listview_style"]').attr('checked', true);
+        $(ev.currentTarget).find('input[name="listview_style"]').prop('checked', true);
    }
 
    async _click_save_color(ev){
@@ -978,4 +958,3 @@ export class ThemeConfigurationTemplate extends Component {
     }
 
 registry.category("systray").add("sh_entmate_theme.ThemeConfigurationTemplate", { Component: ThemeConfigurationTemplate });
-

@@ -631,6 +631,11 @@ dict_theme_style = {
     },
 }
 
+THEME_STYLE_INDEPENDENT_FIELDS = {
+    "app_icon_style",
+    "sidebar_img",
+}
+
 
 class sh_entmate_theme_settings(models.Model):
     _name = 'sh.ent.theme.config.settings'
@@ -930,7 +935,12 @@ class sh_entmate_theme_settings(models.Model):
             selected_theme_style_dict = dict_theme_style.get(
                 self.theme_style, False)
             if selected_theme_style_dict:
-                self.update(selected_theme_style_dict)
+                vals = {
+                    key: value
+                    for key, value in selected_theme_style_dict.items()
+                    if key not in THEME_STYLE_INDEPENDENT_FIELDS
+                }
+                self.update(vals)
 
     @api.onchange('theme_style')
     def onchage_theme_style(self):
@@ -938,7 +948,12 @@ class sh_entmate_theme_settings(models.Model):
             selected_theme_style_dict = dict_theme_style.get(
                 self.theme_style, False)
             if selected_theme_style_dict:
-                self.update(selected_theme_style_dict)
+                vals = {
+                    key: value
+                    for key, value in selected_theme_style_dict.items()
+                    if key not in THEME_STYLE_INDEPENDENT_FIELDS
+                }
+                self.update(vals)
 
     @api.model
     def onchange_theme_style_js(self,theme_style):
@@ -947,7 +962,12 @@ class sh_entmate_theme_settings(models.Model):
             selected_theme_style_dict = dict_theme_style.get(
                 theme_style, False)
             if selected_theme_style_dict:
-                theme_config_rec.update(selected_theme_style_dict)
+                vals = {
+                    key: value
+                    for key, value in selected_theme_style_dict.items()
+                    if key not in THEME_STYLE_INDEPENDENT_FIELDS
+                }
+                theme_config_rec.update(vals)
                 return True
 
     def write(self, vals):

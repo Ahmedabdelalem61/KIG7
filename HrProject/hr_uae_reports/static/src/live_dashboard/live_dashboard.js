@@ -193,16 +193,16 @@ export class HrUaeLiveDashboard extends Component {
 }
 
 const PALETTE = [
-    "#0ea5e9",
-    "#10b981",
-    "#f59e0b",
-    "#ef4444",
-    "#8b5cf6",
-    "#ec4899",
-    "#14b8a6",
-    "#f97316",
-    "#22c55e",
-    "#6366f1",
+    "var(--hud-chart-1)",
+    "var(--hud-chart-2)",
+    "var(--hud-chart-3)",
+    "var(--hud-chart-4)",
+    "var(--hud-chart-5)",
+    "var(--hud-chart-6)",
+    "var(--hud-chart-7)",
+    "var(--hud-chart-8)",
+    "var(--hud-chart-9)",
+    "var(--hud-chart-10)",
 ];
 
 registry.category("actions").add("hr_uae_live_dashboard", HrUaeLiveDashboard);

@@ -12,8 +12,19 @@
     --hud-muted: var(--hr-muted, #6b7280);
     --hud-shadow: var(--hr-content-shadow-soft, 0 1px 3px rgba(0, 0, 0, 0.05));
     --hud-shadow-hover: var(--hr-content-shadow, 0 8px 28px rgba(15, 23, 42, 0.1));
-    --hud-accent: var(--hr-accent, #0ea5e9);
-    --hud-accent-strong: var(--hr-accent-strong, #0369a1);
+    --hud-accent: #{$primaryColor};
+    --hud-accent-strong: color-mix(in srgb, var(--hud-accent) 78%, #000);
+    --hud-accent-soft: color-mix(in srgb, var(--hud-accent) 14%, transparent);
+    --hud-chart-1: var(--hud-accent);
+    --hud-chart-2: color-mix(in srgb, var(--hud-accent) 76%, #10b981);
+    --hud-chart-3: color-mix(in srgb, var(--hud-accent) 70%, #f59e0b);
+    --hud-chart-4: color-mix(in srgb, var(--hud-accent) 68%, #ef4444);
+    --hud-chart-5: color-mix(in srgb, var(--hud-accent) 72%, #8b5cf6);
+    --hud-chart-6: color-mix(in srgb, var(--hud-accent) 66%, #ec4899);
+    --hud-chart-7: color-mix(in srgb, var(--hud-accent) 74%, #14b8a6);
+    --hud-chart-8: color-mix(in srgb, var(--hud-accent) 68%, #f97316);
+    --hud-chart-9: color-mix(in srgb, var(--hud-accent) 72%, #22c55e);
+    --hud-chart-10: color-mix(in srgb, var(--hud-accent) 72%, #6366f1);
     --hud-track: var(--hr-surface-muted, #f3f4f6);
 
     min-height: 100%;
@@ -107,28 +118,28 @@
             border-left-color: var(--hud-accent);
         }
         &.o_hud_tile_green {
-            border-left-color: #10b981;
+            border-left-color: var(--hud-chart-2);
         }
         &.o_hud_tile_amber {
-            border-left-color: #f59e0b;
+            border-left-color: var(--hud-chart-3);
         }
         &.o_hud_tile_red {
-            border-left-color: #ef4444;
+            border-left-color: var(--hud-chart-4);
         }
         &.o_hud_tile_purple {
-            border-left-color: #8b5cf6;
+            border-left-color: var(--hud-chart-5);
         }
         &.o_hud_tile_pink {
-            border-left-color: #ec4899;
+            border-left-color: var(--hud-chart-6);
         }
         &.o_hud_tile_teal {
-            border-left-color: #14b8a6;
+            border-left-color: var(--hud-chart-7);
         }
         &.o_hud_tile_orange {
-            border-left-color: #f97316;
+            border-left-color: var(--hud-chart-8);
         }
         &.o_hud_tile_indigo {
-            border-left-color: #6366f1;
+            border-left-color: var(--hud-chart-10);
         }
     }
 
@@ -177,7 +188,7 @@
         border-radius: var(--hud-radius-sm);
 
         &:hover {
-            background: var(--hr-accent-soft, rgba(15, 23, 42, 0.04));
+            background: var(--hud-accent-soft);
         }
 
         .o_hud_bar_label {
@@ -231,7 +242,7 @@
             transition: background-color 0.12s ease;
 
             &:hover {
-                background: var(--hr-accent-soft, #f9fafb);
+                background: var(--hud-accent-soft);
             }
         }
     }

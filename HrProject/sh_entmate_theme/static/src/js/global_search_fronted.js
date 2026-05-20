@@ -12,7 +12,7 @@ var show_company = false;
 export class GlobalSearchSh extends Component {
     static template = "sh_entmate_theme.GlobalSearch";
 
-    async setup() {
+    setup() {
         super.setup()
          // todo
         /*onWillStart(async () => {
@@ -25,13 +25,14 @@ export class GlobalSearchSh extends Component {
         onMounted(() => {
             this.$search_input = $(".sh_search_input input.usermenu_search_input");
         });
-        const data = await this.orm.searchRead(
+        this.orm.searchRead(
             "sh.ent.theme.config.settings",
             [['id', '=', 1]],
-            ["theme_style"]);
+            ["theme_style"]).then((data) => {
             if (data && !this.$search_input) {
                 this.$search_input = $(".sh_search_input input.usermenu_search_input");
             }
+        });
     }
 
     _onclick_search_top_bar(event) {

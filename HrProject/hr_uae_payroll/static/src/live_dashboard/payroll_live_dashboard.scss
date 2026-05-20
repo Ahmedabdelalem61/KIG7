@@ -11,8 +11,21 @@
     --pd-muted: var(--hr-muted, #6b7280);
     --pd-shadow: var(--hr-content-shadow-soft, 0 1px 3px rgba(0, 0, 0, 0.05));
     --pd-shadow-hover: var(--hr-content-shadow, 0 8px 28px rgba(15, 23, 42, 0.1));
-    --pd-accent: var(--hr-accent, #0ea5e9);
-    --pd-accent-strong: var(--hr-accent-strong, #0369a1);
+    --pd-accent: #{$primaryColor};
+    --pd-accent-strong: color-mix(in srgb, var(--pd-accent) 78%, #000);
+    --pd-accent-soft: color-mix(in srgb, var(--pd-accent) 14%, transparent);
+    --pd-chart-1: var(--pd-accent);
+    --pd-chart-2: color-mix(in srgb, var(--pd-accent) 76%, #10b981);
+    --pd-chart-3: color-mix(in srgb, var(--pd-accent) 70%, #f59e0b);
+    --pd-chart-4: color-mix(in srgb, var(--pd-accent) 68%, #ef4444);
+    --pd-chart-5: color-mix(in srgb, var(--pd-accent) 72%, #8b5cf6);
+    --pd-chart-6: color-mix(in srgb, var(--pd-accent) 66%, #ec4899);
+    --pd-chart-7: color-mix(in srgb, var(--pd-accent) 74%, #14b8a6);
+    --pd-chart-8: color-mix(in srgb, var(--pd-accent) 68%, #f97316);
+    --pd-chart-9: color-mix(in srgb, var(--pd-accent) 72%, #22c55e);
+    --pd-chart-10: color-mix(in srgb, var(--pd-accent) 72%, #6366f1);
+    --pd-chart-11: color-mix(in srgb, var(--pd-accent) 72%, #06b6d4);
+    --pd-chart-12: color-mix(in srgb, var(--pd-accent) 72%, #a855f7);
     --pd-track: var(--hr-surface-muted, #f3f4f6);
 
     min-height: 100%;
@@ -134,22 +147,22 @@
             border-left-color: var(--pd-accent);
         }
         &.o_pdash_green {
-            border-left-color: #10b981;
+            border-left-color: var(--pd-chart-2);
         }
         &.o_pdash_amber {
-            border-left-color: #f59e0b;
+            border-left-color: var(--pd-chart-3);
         }
         &.o_pdash_red {
-            border-left-color: #ef4444;
+            border-left-color: var(--pd-chart-4);
         }
         &.o_pdash_purple {
-            border-left-color: #8b5cf6;
+            border-left-color: var(--pd-chart-5);
         }
         &.o_pdash_pink {
-            border-left-color: #ec4899;
+            border-left-color: var(--pd-chart-6);
         }
         &.o_pdash_teal {
-            border-left-color: #14b8a6;
+            border-left-color: var(--pd-chart-7);
         }
     }
 
@@ -210,7 +223,7 @@
         transition: background-color 0.12s ease;
 
         &:hover {
-            background: var(--hr-accent-soft, rgba(15, 23, 42, 0.04));
+            background: var(--pd-accent-soft);
         }
 
         .o_pdash_bar_label {
@@ -326,7 +339,7 @@
             transition: background-color 0.12s ease;
 
             &:hover {
-                background: var(--hr-accent-soft, #f9fafb);
+                background: var(--pd-accent-soft);
             }
         }
     }

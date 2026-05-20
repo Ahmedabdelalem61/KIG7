@@ -6,18 +6,18 @@ import { useService } from "@web/core/utils/hooks";
 import { formatFloat } from "@web/core/utils/numbers";
 
 const PALETTE = [
-    "#0ea5e9",
-    "#10b981",
-    "#f59e0b",
-    "#ef4444",
-    "#8b5cf6",
-    "#ec4899",
-    "#14b8a6",
-    "#f97316",
-    "#22c55e",
-    "#6366f1",
-    "#06b6d4",
-    "#a855f7",
+    "var(--pd-chart-1)",
+    "var(--pd-chart-2)",
+    "var(--pd-chart-3)",
+    "var(--pd-chart-4)",
+    "var(--pd-chart-5)",
+    "var(--pd-chart-6)",
+    "var(--pd-chart-7)",
+    "var(--pd-chart-8)",
+    "var(--pd-chart-9)",
+    "var(--pd-chart-10)",
+    "var(--pd-chart-11)",
+    "var(--pd-chart-12)",
 ];
 
 export class HrUaePayrollLiveDashboard extends Component {
@@ -137,7 +137,7 @@ export class HrUaePayrollLiveDashboard extends Component {
                 widthPct,
                 isNeg: item.value < 0,
                 valueLabel: this.formatCurrency(item.value),
-                color: item.value < 0 ? "#ef4444" : "#10b981",
+                color: item.value < 0 ? "var(--pd-chart-4)" : "var(--pd-chart-2)",
             };
         });
     }

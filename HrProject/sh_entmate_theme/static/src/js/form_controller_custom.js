@@ -6,8 +6,8 @@ import { session } from "@web/session";
 
 patch(FormController.prototype, {
 
-     async setup() {
-        await super.setup();
+     setup() {
+        super.setup();
         if (this.footerArchInfo) {
             // If dialogue box then need to give edit permission
             this.props.preventEdit = false;
