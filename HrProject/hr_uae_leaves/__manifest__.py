@@ -17,6 +17,7 @@
     "data": [
         "security/ir.model.access.csv",
         "data/hr_leave_type_data.xml",
+        "data/hr_leave_type_defaults_data.xml",
         "data/ir_cron_data.xml",
         "data/mail_template_data.xml",
         "views/hr_leave_type_views.xml",

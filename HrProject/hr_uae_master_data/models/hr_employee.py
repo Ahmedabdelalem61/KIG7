@@ -82,6 +82,13 @@ class HrEmployee(models.Model):
         help="If set, the UAE Status above will not be auto-recomputed.",
         tracking=True,
     )
+    hr_uae_deduct_employee_paid_tickets = fields.Boolean(
+        string="Deduct Employee-Paid Flight Tickets",
+        default=False,
+        tracking=True,
+        help="If enabled, employee-paid flight tickets are reimbursed through "
+        "expenses and also deducted from salary in the ticket departure month.",
+    )
     contract_wage = fields.Monetary(
         string="Contract Wage",
         related="contract_id.wage",

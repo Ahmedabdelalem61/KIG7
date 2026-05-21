@@ -51,7 +51,8 @@
         <field name="amount_select">code</field>
         <field name="amount_python_compute"><![CDATA[
 unpaid = worked_days.UNPAID
-result = -((contract.wage / 30.0) * unpaid.number_of_days) if unpaid else 0.0
+days = abs(unpaid.number_of_days or 0.0) if unpaid else 0.0
+result = -((contract.wage / 30.0) * days) if days else 0.0
 ]]></field>
     </record>
 
@@ -70,21 +71,33 @@ result = -(flight.amount if flight else 0.0)
     </record>
 
     <record id="hr_salary_rule_adjustments" model="hr.salary.rule">
-        <field name="name">Adjustments / Allowances / Deductions</field>
+        <field name="name">Adjustments / Allowances</field>
         <field name="code">ADJUSTMENTS</field>
         <field name="sequence">60</field>
         <field name="category_id" ref="hr_salary_rule_category_alw"/>
         <field name="condition_select">python</field>
-        <field name="condition_python">result = bool(inputs.ADJ_ALW or inputs.ADJ_DED or inputs.ADJ_ADJ)</field>
+        <field name="condition_python">result = bool(inputs.ADJ_ALW or inputs.ADJ_ADJ)</field>
         <field name="amount_select">code</field>
         <field name="amount_python_compute"><![CDATA[
 adj_alw = inputs.ADJ_ALW
 adj_adj = inputs.ADJ_ADJ
-adj_ded = inputs.ADJ_DED
 allowances = adj_alw.amount if adj_alw else 0.0
 adjustments = adj_adj.amount if adj_adj else 0.0
-deductions = adj_ded.amount if adj_ded else 0.0
-result = allowances + adjustments - deductions
+result = allowances + adjustments
+]]></field>
+    </record>
+
+    <record id="hr_salary_rule_adjustment_deductions" model="hr.salary.rule">
+        <field name="name">Salary Adjustment Deduction</field>
+        <field name="code">ADJ_DED_LINE</field>
+        <field name="sequence">61</field>
+        <field name="category_id" ref="hr_salary_rule_category_ded"/>
+        <field name="condition_select">python</field>
+        <field name="condition_python">result = bool(inputs.ADJ_DED)</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute"><![CDATA[
+adj_ded = inputs.ADJ_DED
+result = -(adj_ded.amount if adj_ded else 0.0)
 ]]></field>
     </record>
 
@@ -107,6 +120,7 @@ result = allowances + adjustments - deductions
             (4, ref('hr_salary_rule_unpaid_leave')),
             (4, ref('hr_salary_rule_flight_ded')),
             (4, ref('hr_salary_rule_adjustments')),
+            (4, ref('hr_salary_rule_adjustment_deductions')),
             (4, ref('hr_salary_rule_net')),
         ]"/>
     </record>

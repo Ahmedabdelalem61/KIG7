@@ -28,6 +28,7 @@
                         <group string="Employment">
                             <field name="hr_uae_status"/>
                             <field name="hr_uae_status_manual"/>
+                            <field name="hr_uae_deduct_employee_paid_tickets"/>
                             <field name="first_contract_date" readonly="1"/>
                             <field name="time_of_service"/>
                             <field name="contract_wage" widget="monetary"/>

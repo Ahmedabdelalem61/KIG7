@@ -10,6 +10,7 @@
                 <group string="UAE Settings">
                     <field name="hr_uae_status_code"/>
                     <field name="hr_uae_alert_days"/>
+                    <field name="hr_uae_hold_payroll"/>
                     <field name="hr_uae_unpaid"/>
                 </group>
             </xpath>

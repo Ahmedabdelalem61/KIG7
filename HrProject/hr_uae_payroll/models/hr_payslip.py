@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
@@ -13,6 +15,8 @@ _LEAVE_HOLD_TRACK = frozenset(
         "hr_uae_returned",
     }
 )
+
+_AUTO_FLIGHT_INPUT_NAME = "Flight Ticket Deduction (UAE Auto)"
 
 
 def _hr_uae_recompute_notify(env, count):
@@ -83,13 +87,181 @@ class HrPayslip(models.Model):
         readonly=True,
     )
 
+    # ---------- Payroll inputs / worked days ----------
+
+    @api.model
+    def get_worked_day_lines(self, contracts, date_from, date_to):
+        """Keep standard worked days, then add UAE unpaid leave lines.
+
+        The upstream payroll module only deducts leave if the leave type has a
+        work entry type with a matching code. UAE setup keeps an explicit
+        checkbox on the leave type so standard unpaid leave configuration keeps
+        working, and missing work-entry mapping still generates ``UNPAID``.
+        """
+        lines = list(super().get_worked_day_lines(contracts, date_from, date_to))
+        contracts_with_unpaid = {
+            line.get("contract_id")
+            for line in lines
+            if line.get("code") == "UNPAID"
+            and abs(line.get("number_of_days") or 0.0) > 0.0
+        }
+        for line in lines:
+            if line.get("code") == "UNPAID":
+                line["number_of_days"] = abs(line.get("number_of_days") or 0.0)
+                line["number_of_hours"] = abs(line.get("number_of_hours") or 0.0)
+                line["name"] = line.get("name") or _("Unpaid Leave")
+        for contract in contracts:
+            if contract.id in contracts_with_unpaid:
+                continue
+            days = self._hr_uae_unpaid_leave_days(contract, date_from, date_to)
+            if not days:
+                continue
+            hours_per_day = getattr(contract.resource_calendar_id, "hours_per_day", 0.0) or 8.0
+            lines.append(
+                {
+                    "name": _("Unpaid Leave"),
+                    "sequence": 50,
+                    "code": "UNPAID",
+                    "number_of_days": days,
+                    "number_of_hours": days * hours_per_day,
+                    "contract_id": contract.id,
+                }
+            )
+        return lines
+
+    def _hr_uae_unpaid_leave_days(self, contract, date_from, date_to):
+        """Return positive calendar days for validated unpaid leave overlaps."""
+        if not contract.employee_id or not date_from or not date_to:
+            return 0.0
+        Leave = self.env["hr.leave"].sudo()
+        leaves = Leave.search(
+            [
+                ("employee_id", "=", contract.employee_id.id),
+                ("state", "=", "validate"),
+                ("holiday_status_id.hr_uae_unpaid", "=", True),
+                ("date_from", "<=", date_to),
+                ("date_to", ">=", date_from),
+            ]
+        )
+        days = set()
+        for leave in leaves:
+            leave_start = leave.request_date_from or fields.Date.to_date(leave.date_from)
+            leave_end = leave.request_date_to or fields.Date.to_date(leave.date_to)
+            if not leave_start or not leave_end:
+                continue
+            current = max(date_from, leave_start)
+            last = min(date_to, leave_end)
+            while current <= last:
+                days.add(current)
+                current += timedelta(days=1)
+        return float(len(days))
+
+    def _hr_uae_refresh_worked_days(self):
+        for slip in self.filtered(lambda s: s.state in ("draft", "verify", "on_hold")):
+            if not slip.employee_id or not slip.date_from or not slip.date_to:
+                continue
+            contracts = slip._get_employee_contracts()
+            if not contracts:
+                continue
+            worked_days = slip.get_worked_day_lines(contracts, slip.date_from, slip.date_to)
+            slip.with_context(hr_uae_skip_audit=True).write(
+                {
+                    "worked_days_line_ids": [(5, 0, 0)]
+                    + [(0, 0, line) for line in worked_days],
+                }
+            )
+
+    def _hr_uae_flight_deduction_date(self, flight):
+        self.ensure_one()
+        return (
+            flight.departure_date
+            or flight.requested_date
+            or fields.Date.to_date(flight.create_date)
+        )
+
+    def _hr_uae_flight_deduction_amount(self):
+        self.ensure_one()
+        if (
+            not self.employee_id
+            or not self.employee_id.hr_uae_deduct_employee_paid_tickets
+            or not self.date_from
+            or not self.date_to
+        ):
+            return 0.0
+        flights = self.env["hr.uae.flight"].sudo().search(
+            [
+                ("employee_id", "=", self.employee_id.id),
+                ("payment_mode", "=", "own_account"),
+                ("booking_state", "in", ("booked", "completed")),
+                ("total", ">", 0.0),
+            ]
+        )
+        amount = 0.0
+        for flight in flights:
+            deduction_date = self._hr_uae_flight_deduction_date(flight)
+            if deduction_date and self.date_from <= deduction_date <= self.date_to:
+                amount += flight.total
+        return amount
+
+    def _hr_uae_sync_flight_deduction_inputs(self):
+        Input = self.env["hr.payslip.input"].sudo()
+        for slip in self.filtered(lambda s: s.state in ("draft", "verify", "on_hold")):
+            if not slip.contract_id:
+                continue
+            existing = Input.search(
+                [("payslip_id", "=", slip.id), ("code", "=", "FLIGHT_DED")],
+                order="id",
+            )
+            auto_inputs = existing.filtered(lambda line: line.name == _AUTO_FLIGHT_INPUT_NAME)
+            amount = slip._hr_uae_flight_deduction_amount()
+            if not amount:
+                auto_inputs.unlink()
+                continue
+            target = existing[:1] or Input.create(
+                {
+                    "payslip_id": slip.id,
+                    "contract_id": slip.contract_id.id,
+                    "code": "FLIGHT_DED",
+                    "name": _AUTO_FLIGHT_INPUT_NAME,
+                }
+            )
+            target.write(
+                {
+                    "payslip_id": slip.id,
+                    "contract_id": slip.contract_id.id,
+                    "code": "FLIGHT_DED",
+                    "name": _AUTO_FLIGHT_INPUT_NAME,
+                    "amount": amount,
+                }
+            )
+            (existing - target).unlink()
+
+    def _hr_uae_refresh_payroll_inputs(self):
+        self._hr_uae_sync_flight_deduction_inputs()
+
+    @api.model
+    def _hr_uae_sync_flight_inputs_for_employees(self, employees):
+        if not employees:
+            return
+        slips = self.sudo().search(
+            [
+                ("employee_id", "in", employees.ids),
+                ("state", "in", ("draft", "verify", "on_hold")),
+            ]
+        )
+        slips._hr_uae_sync_flight_deduction_inputs()
+
+    def _hr_uae_refresh_payroll_sources(self):
+        self._hr_uae_refresh_worked_days()
+        self._hr_uae_refresh_payroll_inputs()
+
     # ---------- Hold detection ----------
 
     def _hr_uae_overlapping_hold_leave(self):
         """Return the leave triggering a hold for this payslip, or empty.
 
-        Hold-eligible leaves: types whose ``hr_uae_status_code`` is
-        ``vacations`` or ``special_permit`` (Annual & Special Leave by default).
+        Hold-eligible leaves: types explicitly flagged to hold payroll. In the
+        UAE defaults, only Annual Leave has that flag.
         """
         self.ensure_one()
         if not self.employee_id or not self.date_from or not self.date_to:
@@ -101,32 +273,47 @@ class HrPayslip(models.Model):
                 ("hr_uae_returned", "=", False),
                 ("date_from", "<=", self.date_to),
                 ("date_to", ">=", self.date_from),
-                (
-                    "holiday_status_id.hr_uae_status_code",
-                    "in",
-                    ("vacations", "special_permit"),
-                ),
+                ("holiday_status_id.hr_uae_hold_payroll", "=", True),
             ],
             limit=1,
+        )
+
+    def _hr_uae_hold_base_amount(self):
+        self.ensure_one()
+        net = self.line_ids.filtered(lambda line: line.code == "NET")[:1]
+        if net:
+            return net.total
+        contract = self.contract_id
+        if not contract:
+            return 0.0
+        return (
+            (contract.wage or 0.0)
+            + (contract.housing_allowance or 0.0)
+            + (contract.transportation_allowance or 0.0)
+            + (contract.other_allowances or 0.0)
         )
 
     def _hr_uae_compute_hold_amounts(self, leave):
         """Compute payable-now / held amount based on a leave overlap.
 
-        Pro-rates the contract wage by the days worked before the leave's
-        start within the payslip period.
+        Pro-rates the computed NET by the days worked before the leave starts.
+        If the slip is not computed yet, it falls back to contract wage plus
+        regular allowances.
         """
         self.ensure_one()
-        wage = self.contract_id.wage if self.contract_id else 0.0
-        if not wage:
+        base_amount = self._hr_uae_hold_base_amount()
+        if not base_amount:
             return 0.0, 0.0
         period_days = (self.date_to - self.date_from).days + 1
         if period_days <= 0:
             return 0.0, 0.0
-        leave_start = max(self.date_from, leave.date_from.date() if leave.date_from else self.date_from)
+        leave_start = max(
+            self.date_from,
+            fields.Date.to_date(leave.date_from) if leave.date_from else self.date_from,
+        )
         worked_days = max(0, (leave_start - self.date_from).days)
-        payable_now = wage * worked_days / period_days
-        held = wage - payable_now
+        payable_now = base_amount * worked_days / period_days
+        held = base_amount - payable_now
         return round(payable_now, 2), round(held, 2)
 
     def _hr_uae_apply_or_clear_hold(self):
@@ -178,6 +365,7 @@ class HrPayslip(models.Model):
     # ---------- Workflow hooks ----------
 
     def compute_sheet(self):
+        self._hr_uae_refresh_payroll_sources()
         result = super().compute_sheet()
         self._hr_uae_apply_or_clear_hold()
         return result

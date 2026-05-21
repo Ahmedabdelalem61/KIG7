@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <function model="hr.leave.type" name="_hr_uae_ensure_default_leave_flags"/>
+</odoo>

@@ -19,6 +19,16 @@ class TestHrUaeLeaves(TransactionCase):
         annual = self.env.ref("hr_uae_leaves.leave_type_annual")
         self.assertFalse(annual.hr_uae_unpaid)
 
+    def test_only_annual_holds_payroll(self):
+        annual = self.env.ref("hr_uae_leaves.leave_type_annual")
+        special = self.env.ref("hr_uae_leaves.leave_type_special")
+        medical = self.env.ref("hr_uae_leaves.leave_type_medical")
+        unpaid = self.env.ref("hr_uae_leaves.leave_type_unpaid")
+        self.assertTrue(annual.hr_uae_hold_payroll)
+        self.assertFalse(special.hr_uae_hold_payroll)
+        self.assertFalse(medical.hr_uae_hold_payroll)
+        self.assertFalse(unpaid.hr_uae_hold_payroll)
+
     def test_status_codes(self):
         self.assertEqual(
             self.env.ref("hr_uae_leaves.leave_type_annual").hr_uae_status_code,

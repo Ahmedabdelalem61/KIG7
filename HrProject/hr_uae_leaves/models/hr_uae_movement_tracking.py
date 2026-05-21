@@ -44,10 +44,10 @@ class HrUaeMovementTracking(models.Model):
                     (l.id::bigint * 10 + 1) AS id,
                     l.employee_id           AS employee_id,
                     CASE
+                        WHEN lt.hr_uae_unpaid                         THEN 'unpaid_leave'
                         WHEN lt.hr_uae_status_code = 'vacations'      THEN 'vacation'
                         WHEN lt.hr_uae_status_code = 'special_permit' THEN 'special_permit'
                         WHEN lt.hr_uae_status_code = 'sick_leave'     THEN 'sick_leave'
-                        WHEN lt.hr_uae_unpaid                         THEN 'unpaid_leave'
                         ELSE 'vacation'
                     END                     AS movement_type,
                     l.date_from::date       AS movement_date,

@@ -9,6 +9,7 @@
         <field name="allocation_validation_type">hr</field>
         <field name="hr_uae_status_code">vacations</field>
         <field name="hr_uae_alert_days">20</field>
+        <field name="hr_uae_hold_payroll" eval="True"/>
         <field name="hr_uae_unpaid" eval="False"/>
         <field name="color">1</field>
     </record>
@@ -20,6 +21,7 @@
         <field name="requires_allocation">no</field>
         <field name="hr_uae_status_code">special_permit</field>
         <field name="hr_uae_alert_days">7</field>
+        <field name="hr_uae_hold_payroll" eval="False"/>
         <field name="hr_uae_unpaid" eval="False"/>
         <field name="color">2</field>
     </record>
@@ -31,6 +33,7 @@
         <field name="requires_allocation">no</field>
         <field name="hr_uae_status_code">sick_leave</field>
         <field name="hr_uae_alert_days">0</field>
+        <field name="hr_uae_hold_payroll" eval="False"/>
         <field name="hr_uae_unpaid" eval="False"/>
         <field name="color">3</field>
     </record>
@@ -42,6 +45,7 @@
         <field name="requires_allocation">no</field>
         <field name="hr_uae_status_code">vacations</field>
         <field name="hr_uae_alert_days">0</field>
+        <field name="hr_uae_hold_payroll" eval="False"/>
         <field name="hr_uae_unpaid" eval="True"/>
         <field name="color">4</field>
     </record>
