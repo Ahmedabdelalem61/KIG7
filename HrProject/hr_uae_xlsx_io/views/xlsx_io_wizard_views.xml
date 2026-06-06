@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_uae_xlsx_wizard_form" model="ir.ui.view">
+        <field name="name">hr.uae.xlsx.import.wizard.form</field>
+        <field name="model">hr.uae.xlsx.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Excel Import / Export">
+                <sheet>
+                    <group>
+                        <field name="template_id"
+                               options="{'no_create': True, 'no_open': True}"/>
+                        <field name="model_name" readonly="1"/>
+                        <field name="allow_export" invisible="1"/>
+                        <field name="allow_import" invisible="1"/>
+                    </group>
+
+                    <group string="Export" invisible="not template_id or not allow_export">
+                        <div class="text-muted" colspan="2">
+                            Export current data (with the ID column) to edit and
+                            re-import, or download an empty template.
+                        </div>
+                        <button name="action_export_data" type="object"
+                                string="Export Data" class="btn-primary"
+                                icon="fa-download"/>
+                        <button name="action_export_empty" type="object"
+                                string="Download Empty Template"
+                                icon="fa-file-excel-o"/>
+                    </group>
+
+                    <group string="Import"
+                           invisible="not template_id or not allow_import">
+                        <field name="import_file" filename="import_filename"/>
+                        <field name="import_filename" invisible="1"/>
+                        <div colspan="2">
+                            <button name="action_validate" type="object"
+                                    string="Validate" icon="fa-check"
+                                    invisible="not import_file"/>
+                            <button name="action_import" type="object"
+                                    string="Import" class="btn-primary"
+                                    icon="fa-upload"
+                                    invisible="not import_file"
+                                    confirm="Import the file now? Records will be created/updated through the normal ORM. Nothing is saved if any row fails."/>
+                        </div>
+                    </group>
+
+                    <group string="Result" invisible="not has_result">
+                        <field name="has_result" invisible="1"/>
+                        <field name="result_html" nolabel="1" colspan="2"/>
+                        <field name="error_file" filename="error_filename"
+                               invisible="not error_file"
+                               string="Error Report"/>
+                        <field name="error_filename" invisible="1"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_uae_xlsx_wizard" model="ir.actions.act_window">
+        <field name="name">Excel Import / Export</field>
+        <field name="res_model">hr.uae.xlsx.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

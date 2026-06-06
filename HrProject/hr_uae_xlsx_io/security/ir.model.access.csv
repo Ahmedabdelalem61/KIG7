@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_uae_xlsx_template_manager,hr.uae.xlsx.template.manager,model_hr_uae_xlsx_template,hr_uae_base.group_hr_uae_manager,1,1,1,1
+access_hr_uae_xlsx_template_line_manager,hr.uae.xlsx.template.line.manager,model_hr_uae_xlsx_template_line,hr_uae_base.group_hr_uae_manager,1,1,1,1
+access_hr_uae_xlsx_wizard_manager,hr.uae.xlsx.import.wizard.manager,model_hr_uae_xlsx_import_wizard,hr_uae_base.group_hr_uae_manager,1,1,1,1

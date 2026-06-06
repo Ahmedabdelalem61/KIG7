@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_uae_payroll_dashboard_tree_xlsx" model="ir.ui.view">
+        <field name="name">hr.uae.payroll.dashboard.list.xlsx</field>
+        <field name="model">hr.uae.payroll.dashboard</field>
+        <field name="inherit_id" ref="hr_uae_payroll.view_hr_uae_payroll_dashboard_tree"/>
+        <field name="arch" type="xml">
+            <field name="salary" position="after">
+                <field name="basic_amount"/>
+            </field>
+            <field name="total_to_pay" position="after">
+                <field name="net_amount"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

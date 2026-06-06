@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_hr_uae_xlsx_io"
+        name="Excel Import / Export"
+        parent="hr_uae_base.menu_hr_uae_config"
+        action="action_hr_uae_xlsx_wizard"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_hr_uae_xlsx_templates"
+        name="Excel Templates"
+        parent="hr_uae_base.menu_hr_uae_config"
+        action="action_hr_uae_xlsx_template"
+        sequence="20"/>
+
+</odoo>

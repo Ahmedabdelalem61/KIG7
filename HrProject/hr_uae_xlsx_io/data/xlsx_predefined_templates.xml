@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Seed the predefined HR UAE templates. The method is idempotent: it only
+        creates templates whose code is missing, so user edits survive upgrades
+        and missing optional fields/models are skipped safely.
+    -->
+    <function model="hr.uae.xlsx.template" name="_seed_predefined_templates"/>
+
+</odoo>
