@@ -66,6 +66,10 @@ class TestHrUaeMasterData(TransactionCase):
         emp = self.Employee.create({"name": "OnSite"})
         self.assertEqual(emp.hr_uae_state_id.code, "on_site")
 
+    def test_state_tag_ids_mirror_state(self):
+        emp = self.Employee.create({"name": "TagMirror"})
+        self.assertEqual(emp.hr_uae_state_tag_ids, emp.hr_uae_state_id)
+
     def test_status_terminated_maps_to_project_termination(self):
         emp = self.Employee.create({"name": "Terminated"})
         emp.active = False

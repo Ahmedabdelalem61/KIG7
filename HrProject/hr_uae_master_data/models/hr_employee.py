@@ -1,6 +1,7 @@
 from dateutil.relativedelta import relativedelta
 
 from odoo import _, api, fields, models
+from odoo.fields import Command
 
 
 HR_UAE_STATUS_SELECTION = [
@@ -106,6 +107,12 @@ class HrEmployee(models.Model):
         string="Manual State Override",
         help="If set, the Employee State above will not be auto-recomputed.",
         tracking=True,
+    )
+    hr_uae_state_tag_ids = fields.Many2many(
+        comodel_name="hr.uae.employee.state",
+        string="Employee State Tags",
+        compute="_compute_hr_uae_state_tag_ids",
+        help="Display-only mirror of hr_uae_state_id for colored tag widgets.",
     )
     hr_uae_deduct_employee_paid_tickets = fields.Boolean(
         string="Deduct Employee-Paid Flight Tickets",
@@ -259,6 +266,14 @@ class HrEmployee(models.Model):
             if state:
                 emp.hr_uae_state_id = state
 
+    @api.depends("hr_uae_state_id")
+    def _compute_hr_uae_state_tag_ids(self):
+        for emp in self:
+            if emp.hr_uae_state_id:
+                emp.hr_uae_state_tag_ids = [Command.set(emp.hr_uae_state_id.ids)]
+            else:
+                emp.hr_uae_state_tag_ids = [Command.clear()]
+
     @api.onchange("hr_uae_state_id")
     def _onchange_hr_uae_state_id(self):
         if self.hr_uae_state_id:
@@ -326,5 +341,6 @@ class HrEmployee(models.Model):
         do not have manual override on."""
         emps = self.search([("hr_uae_status_manual", "=", False), ("active", "=", True)])
         emps._compute_hr_uae_status()
-        emps.flush_recordset(["hr_uae_status"])
+        emps._compute_hr_uae_state_id()
+        emps.flush_recordset(["hr_uae_status", "hr_uae_state_id"])
         return True

@@ -1,7 +1,7 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
 {
     "name": "HR UAE - Master Data",
-    "version": "18.0.1.0.2",
+    "version": "18.0.1.0.3",
     "license": "LGPL-3",
     "category": "Human Resources",
     "summary": "Single source of truth for UAE employee master data: rank, "
