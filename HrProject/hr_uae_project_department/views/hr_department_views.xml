@@ -12,6 +12,9 @@
             <xpath expr="//field[@name='name']" position="attributes">
                 <attribute name="string">Project</attribute>
             </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="code" string="Project Code"/>
+            </xpath>
             <xpath expr="//field[@name='parent_id']" position="attributes">
                 <attribute name="string">Parent Project</attribute>
             </xpath>
@@ -34,6 +37,7 @@
                 <attribute name="string">Project</attribute>
             </xpath>
             <xpath expr="//field[@name='name']" position="after">
+                <field name="code" string="Project Code" optional="show"/>
                 <field name="project_allocation_id" optional="show"/>
             </xpath>
             <xpath expr="//field[@name='parent_id']" position="attributes">
@@ -53,6 +57,9 @@
             <xpath expr="//field[@name='name']" position="attributes">
                 <attribute name="string">Project</attribute>
             </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="code" string="Project Code"/>
+            </xpath>
             <xpath expr="//field[@name='manager_id']" position="after">
                 <field name="project_allocation_id" string="Project Cost Center"/>
             </xpath>
@@ -68,7 +75,13 @@
                 <a name="action_open_view_child_departments" type="object">Child projects</a>
             </xpath>
             <xpath expr="//field[@name='name']" position="after">
+                <field name="code"/>
                 <field name="project_allocation_id"/>
+            </xpath>
+            <xpath expr="//templates//field[@name='name']" position="after">
+                <div t-if="record.code.raw_value" class="text-muted">
+                    <field name="code"/>
+                </div>
             </xpath>
         </field>
     </record>

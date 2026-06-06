@@ -25,8 +25,11 @@ PROJECT_FIELD_MODELS = {
     "res.users",
     "resource.resource",
     "mail.activity.plan",
-    "hr.employee.skill.log",
 }
+
+
+def _department_code_from_analytic(analytic):
+    return (analytic.code or "").strip() or False
 
 
 def _analytic_name(analytic):
@@ -48,11 +51,21 @@ def _find_or_create_project_department(env, analytic, employee=None):
         search_domain = ["|", ("company_id", "=", employee.company_id.id), ("company_id", "=", False)] + search_domain
     department = Department.search(search_domain, limit=1)
     vals = {"project_allocation_id": analytic.id}
+    code = _department_code_from_analytic(analytic)
+    if code:
+        vals["code"] = code
     if employee and employee.company_id:
         vals["company_id"] = employee.company_id.id
     if department:
+        write_vals = {}
         if not department.project_allocation_id:
-            department.with_context(hr_uae_project_department_skip_sync=True).write(vals)
+            write_vals["project_allocation_id"] = analytic.id
+        if code and not department.code:
+            write_vals["code"] = code
+        if write_vals:
+            department.with_context(hr_uae_project_department_skip_sync=True).write(
+                write_vals
+            )
         return department
 
     vals["name"] = name
@@ -123,6 +136,9 @@ def relabel_department_metadata(env):
     )
     Field.search([("model", "=", "hr.department"), ("name", "=", "child_ids")]).write(
         {"field_description": "Child Projects"}
+    )
+    Field.search([("model", "=", "hr.department"), ("name", "=", "code")]).write(
+        {"field_description": "Project Code"}
     )
 
     env["ir.actions.act_window"].sudo().search([("res_model", "=", "hr.department")]).write(

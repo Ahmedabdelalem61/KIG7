@@ -6,8 +6,12 @@
         <field name="model">hr.employee</field>
         <field name="inherit_id" ref="hr.view_employee_filter"/>
         <field name="arch" type="xml">
+            <xpath expr="//search/field[@name='name']" position="attributes">
+                <attribute name="filter_domain">[('name', 'ilike', self)]</attribute>
+            </xpath>
             <xpath expr="//search/field[@name='department_id']" position="attributes">
                 <attribute name="string">Project</attribute>
+                <attribute name="filter_domain">['|', ('department_id.code', 'ilike', self), ('department_id.name', 'ilike', self)]</attribute>
             </xpath>
             <xpath expr="//searchpanel/field[@name='department_id']" position="attributes">
                 <attribute name="string">Project</attribute>
@@ -113,36 +117,119 @@
         </field>
     </record>
 
-    <record id="hr_employee_form_remove_org_chart" model="ir.ui.view">
-        <field name="name">hr.employee.form.remove.org.chart</field>
+    <record id="view_hr_employee_form_contact_cleanup" model="ir.ui.view">
+        <field name="name">hr.employee.form.contact.cleanup</field>
         <field name="model">hr.employee</field>
         <field name="inherit_id" ref="hr.view_employee_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//button[.//span[normalize-space()='Org Chart']]" position="replace"/>
-            <xpath expr="//div[@id='o_employee_right']" position="replace"/>
+            <xpath expr="//field[@name='work_email']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='work_phone']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='mobile_phone']" position="replace">
+                <field name="mobile_phone" readonly="1"/>
+            </xpath>
         </field>
     </record>
 
-    <record id="hr_employee_public_form_remove_org_chart" model="ir.ui.view">
-        <field name="name">hr.employee.public.form.remove.org.chart</field>
+    <record id="view_hr_employee_tree_contact_cleanup" model="ir.ui.view">
+        <field name="name">hr.employee.list.contact.cleanup</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='work_phone']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='work_email']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='work_email']" position="after">
+                <field name="mobile_phone" readonly="1" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_kanban_contact_cleanup" model="ir.ui.view">
+        <field name="name">hr.employee.kanban.contact.cleanup</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.hr_kanban_view_employees"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban/field[@name='company_id']" position="after">
+                <field name="mobile_phone"/>
+            </xpath>
+            <xpath expr="//div[field[@name='work_email']]" position="replace">
+                <div t-if="record.mobile_phone.raw_value">
+                    <i class="fa fa-fw me-2 fa-mobile text-primary" title="Mobile"/>
+                    <field name="mobile_phone" readonly="1"/>
+                </div>
+            </xpath>
+            <xpath expr="//div[field[@name='work_phone']]" position="replace"/>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_public_search_contact_cleanup" model="ir.ui.view">
+        <field name="name">hr.employee.public.search.contact.cleanup</field>
+        <field name="model">hr.employee.public</field>
+        <field name="inherit_id" ref="hr.hr_employee_public_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/field[@name='name']" position="attributes">
+                <attribute name="filter_domain">[('name', 'ilike', self)]</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_public_form_contact_cleanup" model="ir.ui.view">
+        <field name="name">hr.employee.public.form.contact.cleanup</field>
         <field name="model">hr.employee.public</field>
         <field name="inherit_id" ref="hr.hr_employee_public_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[@id='o_employee_right']" position="replace"/>
+            <xpath expr="//field[@name='work_email']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='work_phone']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='mobile_phone']" position="replace">
+                <field name="mobile_phone" readonly="1"/>
+            </xpath>
         </field>
     </record>
 
-    <record id="res_users_form_remove_org_chart" model="ir.ui.view">
-        <field name="name">res.users.form.remove.org.chart</field>
-        <field name="model">res.users</field>
-        <field name="inherit_id" ref="hr.res_users_view_form_profile"/>
+    <record id="view_hr_employee_public_tree_contact_cleanup" model="ir.ui.view">
+        <field name="name">hr.employee.public.list.contact.cleanup</field>
+        <field name="model">hr.employee.public</field>
+        <field name="inherit_id" ref="hr.hr_employee_public_view_tree"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[@id='o_employee_right']" position="replace"/>
+            <xpath expr="//field[@name='work_phone']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='work_email']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='work_email']" position="after">
+                <field name="mobile_phone" readonly="1" optional="show"/>
+            </xpath>
         </field>
     </record>
 
-    <record id="hr_org_chart.action_hr_employee_org_chart" model="ir.actions.act_window">
-        <field name="name">Employee Hierarchy</field>
+    <record id="view_hr_employee_public_kanban_contact_cleanup" model="ir.ui.view">
+        <field name="name">hr.employee.public.kanban.contact.cleanup</field>
+        <field name="model">hr.employee.public</field>
+        <field name="inherit_id" ref="hr.hr_employee_public_view_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban/field[@name='image_128']" position="after">
+                <field name="mobile_phone"/>
+            </xpath>
+            <xpath expr="//div[field[@name='work_email']]" position="replace">
+                <div t-if="record.mobile_phone.raw_value">
+                    <i class="fa fa-fw me-2 fa-mobile text-primary" title="Mobile"/>
+                    <field name="mobile_phone" readonly="1"/>
+                </div>
+            </xpath>
+            <xpath expr="//div[field[@name='work_phone']]" position="replace"/>
+        </field>
     </record>
 
 </odoo>

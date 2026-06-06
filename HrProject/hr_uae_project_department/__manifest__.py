@@ -1,7 +1,7 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
 {
     "name": "HR UAE - Project as Department",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.1",
     "license": "LGPL-3",
     "category": "Human Resources",
     "summary": "Use HR departments as operational Projects while keeping analytic project allocations as project cost centers.",
@@ -18,12 +18,11 @@
         "hr_contract",
         "hr_expense",
         "hr_holidays",
-        "hr_org_chart",
-        "hr_skills",
     ],
     "data": [
         "views/hr_uae_project_menus.xml",
         "views/hr_department_views.xml",
+        "views/hr_uae_discuss_hide.xml",
         "views/hr_employee_views.xml",
         "views/hr_uae_transaction_views.xml",
         "views/hr_ui_label_views.xml",
@@ -33,6 +32,7 @@
         "web.assets_backend": [
             "hr_uae_project_department/static/src/live_dashboard/payroll_project_patch.js",
             "hr_uae_project_department/static/src/live_dashboard/dashboard_project_labels.xml",
+            "hr_uae_project_department/static/src/discuss_systray_hide.js",
         ],
     },
     "post_init_hook": "post_init_hook",

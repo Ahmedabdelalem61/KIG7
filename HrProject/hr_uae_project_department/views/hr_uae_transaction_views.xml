@@ -30,7 +30,8 @@
         <field name="inherit_id" ref="hr_uae_flights.view_hr_uae_flight_search"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='employee_id']" position="after">
-                <field name="department_id" string="Project"/>
+                <field name="department_id" string="Project"
+                       filter_domain="['|', ('department_id.code', 'ilike', self), ('department_id.name', 'ilike', self)]"/>
             </xpath>
             <xpath expr="//filter[@name='group_project']" position="attributes">
                 <attribute name="context">{'group_by': 'department_id'}</attribute>
@@ -67,7 +68,8 @@
             <search>
                 <field name="name"/>
                 <field name="employee_id"/>
-                <field name="department_id" string="Project"/>
+                <field name="department_id" string="Project"
+                       filter_domain="['|', ('department_id.code', 'ilike', self), ('department_id.name', 'ilike', self)]"/>
                 <field name="reason"/>
                 <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
                 <filter name="active" string="Active" domain="[('state','=','active')]"/>
@@ -114,7 +116,8 @@
         <field name="inherit_id" ref="hr_uae_salary_adjustment.view_hr_uae_salary_adjustment_search"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='employee_id']" position="after">
-                <field name="department_id" string="Project"/>
+                <field name="department_id" string="Project"
+                       filter_domain="['|', ('department_id.code', 'ilike', self), ('department_id.name', 'ilike', self)]"/>
             </xpath>
             <xpath expr="//filter[@name='g_emp']" position="after">
                 <filter name="g_project" string="Project" context="{'group_by': 'department_id'}"/>
@@ -150,7 +153,8 @@
         <field name="inherit_id" ref="hr_uae_documents.view_hr_uae_document_search"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='employee_id']" position="after">
-                <field name="department_id" string="Project"/>
+                <field name="department_id" string="Project"
+                       filter_domain="['|', ('department_id.code', 'ilike', self), ('department_id.name', 'ilike', self)]"/>
             </xpath>
             <xpath expr="//filter[@name='group_employee']" position="after">
                 <filter name="group_project" string="Project" context="{'group_by': 'department_id'}"/>
@@ -175,7 +179,8 @@
         <field name="inherit_id" ref="hr_uae_leaves.view_hr_uae_movement_tracking_search"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='employee_id']" position="after">
-                <field name="department_id" string="Project"/>
+                <field name="department_id" string="Project"
+                       filter_domain="['|', ('department_id.code', 'ilike', self), ('department_id.name', 'ilike', self)]"/>
             </xpath>
             <xpath expr="//filter[@name='group_employee']" position="after">
                 <filter name="group_project" string="Project" context="{'group_by': 'department_id'}"/>
@@ -200,7 +205,8 @@
         <field name="inherit_id" ref="hr_uae_payroll.view_hr_uae_payroll_dashboard_search"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='project_allocation_id']" position="replace">
-                <field name="department_id" string="Project"/>
+                <field name="department_id" string="Project"
+                       filter_domain="['|', ('department_id.code', 'ilike', self), ('department_id.name', 'ilike', self)]"/>
             </xpath>
             <xpath expr="//filter[@name='g_proj']" position="attributes">
                 <attribute name="context">{'group_by': 'department_id'}</attribute>

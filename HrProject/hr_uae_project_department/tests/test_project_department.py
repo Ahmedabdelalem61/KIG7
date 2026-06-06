@@ -224,3 +224,40 @@ class TestHrUaeProjectDepartment(TransactionCase):
 
         self.assertTrue(project_rows)
         self.assertEqual(project_rows[0]["label"], "PD Payroll Project")
+
+    def test_project_code_synced_from_analytic(self):
+        analytic = self.Analytic.create(
+            {"name": "PD Coded Project", "code": "PRJ-X", "plan_id": self.plan.id}
+        )
+        project = self.Department.create(
+            {"name": "PD Coded Project", "project_allocation_id": analytic.id}
+        )
+        self.assertEqual(project.code, "PRJ-X")
+        self.assertIn("[PRJ-X]", project.display_name)
+
+    def test_project_name_search_by_code(self):
+        self.Department.create({"name": "PD Searchable", "code": "PRJ-SRCH"})
+        found = self.Department.name_search("PRJ-SRCH", limit=1)
+        self.assertTrue(found)
+        self.assertEqual(found[0][1], "[PRJ-SRCH] PD Searchable")
+
+    def test_employee_form_hides_communication_and_chatter(self):
+        arch = self.env.ref("hr.view_employee_form").get_combined_arch()
+        root = etree.fromstring(arch.encode())
+
+        work_email = root.xpath("//field[@name='work_email']")
+        work_phone = root.xpath("//field[@name='work_phone']")
+        mobile_phone = root.xpath("//field[@name='mobile_phone']")
+        chatter = root.xpath("//chatter")
+
+        self.assertTrue(work_email)
+        self.assertEqual(work_email[0].get("invisible"), "1")
+        self.assertTrue(work_phone)
+        self.assertEqual(work_phone[0].get("invisible"), "1")
+        self.assertTrue(mobile_phone)
+        self.assertEqual(mobile_phone[0].get("readonly"), "1")
+        self.assertFalse(chatter)
+
+    def test_discuss_menu_inactive(self):
+        discuss_menu = self.env.ref("mail.menu_root_discuss")
+        self.assertFalse(discuss_menu.active)

@@ -33,8 +33,6 @@ PREDEFINED_TEMPLATES = [
             ("name", {"required": True}),
             ("passport_id", {"match_key": True}),
             ("identification_id", {}),
-            ("work_email", {}),
-            ("work_phone", {}),
             ("mobile_phone", {}),
             ("job_title", {}),
             ("gender", {}),

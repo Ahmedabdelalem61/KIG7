@@ -29,9 +29,3 @@ class MailActivityPlan(models.Model):
     _inherit = "mail.activity.plan"
 
     department_id = fields.Many2one("hr.department", string="Project")
-
-
-class HrEmployeeSkillLog(models.Model):
-    _inherit = "hr.employee.skill.log"
-
-    department_id = fields.Many2one("hr.department", string="Project")
