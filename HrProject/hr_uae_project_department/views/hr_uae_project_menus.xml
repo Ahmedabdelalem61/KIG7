@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_hr_uae_projects"
+        name="Projects"
+        parent="hr_uae_base.menu_hr_uae_root"
+        action="hr.hr_department_kanban_action"
+        sequence="25"/>
+
+</odoo>

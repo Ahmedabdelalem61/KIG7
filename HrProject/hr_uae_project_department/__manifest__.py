@@ -22,6 +22,7 @@
         "hr_skills",
     ],
     "data": [
+        "views/hr_uae_project_menus.xml",
         "views/hr_department_views.xml",
         "views/hr_employee_views.xml",
         "views/hr_uae_transaction_views.xml",

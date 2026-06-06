@@ -1,5 +1,7 @@
 from datetime import timedelta
 
+from lxml import etree
+
 from odoo import fields
 from odoo.tests import tagged
 from odoo.tests.common import TransactionCase
@@ -143,6 +145,28 @@ class TestHrUaeProjectDepartment(TransactionCase):
                 "hr_uae_payroll.view_hr_uae_payroll_dashboard_search"
             ).get_combined_arch(),
         )
+
+    def test_projects_menu_is_after_employee_menu(self):
+        employee_menu = self.env.ref("hr_uae_base.menu_hr_uae_employees")
+        project_menu = self.env.ref("hr_uae_project_department.menu_hr_uae_projects")
+
+        self.assertEqual(project_menu.parent_id, employee_menu.parent_id)
+        self.assertEqual(project_menu.sequence, employee_menu.sequence + 5)
+        self.assertEqual(project_menu.action.res_model, "hr.department")
+
+    def test_employee_project_field_is_in_master_data_tab(self):
+        arch = self.env.ref("hr.view_employee_form").get_combined_arch()
+        root = etree.fromstring(arch.encode())
+
+        master_project_fields = root.xpath(
+            "//page[@name='hr_uae_master_data']//field[@name='department_id']"
+        )
+        top_project_fields = root.xpath("//sheet/group/group/field[@name='department_id']")
+
+        self.assertTrue(master_project_fields)
+        self.assertEqual(master_project_fields[0].get("string"), "Project")
+        self.assertTrue(top_project_fields)
+        self.assertEqual(top_project_fields[0].get("invisible"), "1")
 
     def test_hr_live_dashboard_groups_headcount_by_project(self):
         project = self.Department.create({"name": "PD Dashboard Project"})
