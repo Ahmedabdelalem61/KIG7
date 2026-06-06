@@ -28,6 +28,10 @@ if [[ ! -d "$TMP/filestore" ]]; then
   exit 1
 fi
 
+# Odoo native backups can be produced by newer PostgreSQL versions. Postgres 16
+# does not know transaction_timeout, but removing this session SET is harmless.
+sed -i '/^SET transaction_timeout = /d' "$TMP/dump.sql"
+
 docker compose up -d db
 echo "Waiting for Postgres..."
 for _ in $(seq 1 60); do

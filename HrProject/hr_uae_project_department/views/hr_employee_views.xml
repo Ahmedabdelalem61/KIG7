@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_employee_filter_project" model="ir.ui.view">
+        <field name="name">hr.employee.search.project</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/field[@name='department_id']" position="attributes">
+                <attribute name="string">Project</attribute>
+            </xpath>
+            <xpath expr="//searchpanel/field[@name='department_id']" position="attributes">
+                <attribute name="string">Project</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='my_department']" position="attributes">
+                <attribute name="string">My Project</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='group_department']" position="attributes">
+                <attribute name="string">Project</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_employee_form_project" model="ir.ui.view">
+        <field name="name">hr.employee.form.project</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='department_id']" position="attributes">
+                <attribute name="string">Project</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_employee_tree_project" model="ir.ui.view">
+        <field name="name">hr.employee.list.project</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='department_id']" position="attributes">
+                <attribute name="string">Project</attribute>
+                <attribute name="optional">show</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_form_uae_hide_project_allocation" model="ir.ui.view">
+        <field name="name">hr.employee.form.uae.hide.project.allocation</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr_uae_master_data.view_hr_employee_form_uae"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='hr_uae_master_data']//field[@name='project_allocation_id']" position="replace"/>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_tree_uae_hide_project_allocation" model="ir.ui.view">
+        <field name="name">hr.employee.list.uae.hide.project.allocation</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr_uae_master_data.view_hr_employee_tree_uae"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='project_allocation_id']" position="replace"/>
+        </field>
+    </record>
+
+    <record id="hr_employee_public_view_search_project" model="ir.ui.view">
+        <field name="name">hr.employee.public.search.project</field>
+        <field name="model">hr.employee.public</field>
+        <field name="inherit_id" ref="hr.hr_employee_public_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//searchpanel/field[@name='department_id']" position="attributes">
+                <attribute name="string">Project</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='my_department']" position="attributes">
+                <attribute name="string">My Project</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='group_department']" position="attributes">
+                <attribute name="string">Project</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_employee_public_view_form_project" model="ir.ui.view">
+        <field name="name">hr.employee.public.form.project</field>
+        <field name="model">hr.employee.public</field>
+        <field name="inherit_id" ref="hr.hr_employee_public_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='department_id']" position="attributes">
+                <attribute name="string">Project</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_employee_public_view_tree_project" model="ir.ui.view">
+        <field name="name">hr.employee.public.list.project</field>
+        <field name="model">hr.employee.public</field>
+        <field name="inherit_id" ref="hr.hr_employee_public_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='department_id']" position="attributes">
+                <attribute name="string">Project</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_employee_form_remove_org_chart" model="ir.ui.view">
+        <field name="name">hr.employee.form.remove.org.chart</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[.//span[normalize-space()='Org Chart']]" position="replace"/>
+            <xpath expr="//div[@id='o_employee_right']" position="replace"/>
+        </field>
+    </record>
+
+    <record id="hr_employee_public_form_remove_org_chart" model="ir.ui.view">
+        <field name="name">hr.employee.public.form.remove.org.chart</field>
+        <field name="model">hr.employee.public</field>
+        <field name="inherit_id" ref="hr.hr_employee_public_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='o_employee_right']" position="replace"/>
+        </field>
+    </record>
+
+    <record id="res_users_form_remove_org_chart" model="ir.ui.view">
+        <field name="name">res.users.form.remove.org.chart</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="hr.res_users_view_form_profile"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='o_employee_right']" position="replace"/>
+        </field>
+    </record>
+
+    <record id="hr_org_chart.action_hr_employee_org_chart" model="ir.actions.act_window">
+        <field name="name">Employee Hierarchy</field>
+    </record>
+
+</odoo>

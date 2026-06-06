@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_department_form_project" model="ir.ui.view">
+        <field name="name">hr.department.form.project</field>
+        <field name="model">hr.department</field>
+        <field name="inherit_id" ref="hr.view_department_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="string">Project</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="string">Project</attribute>
+            </xpath>
+            <xpath expr="//field[@name='parent_id']" position="attributes">
+                <attribute name="string">Parent Project</attribute>
+            </xpath>
+            <xpath expr="//field[@name='manager_id']" position="after">
+                <field name="project_allocation_id"
+                       context="{'default_plan_id': %(hr_uae_master_data.account_analytic_plan_project_allocation)d, 'default_company_id': company_id}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_department_tree_project" model="ir.ui.view">
+        <field name="name">hr.department.list.project</field>
+        <field name="model">hr.department</field>
+        <field name="inherit_id" ref="hr.view_department_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="string">Projects</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="string">Project</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="project_allocation_id" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='parent_id']" position="attributes">
+                <attribute name="string">Parent Project</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_department_filter_project" model="ir.ui.view">
+        <field name="name">hr.department.search.project</field>
+        <field name="model">hr.department</field>
+        <field name="inherit_id" ref="hr.view_department_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="attributes">
+                <attribute name="string">Projects</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="string">Project</attribute>
+            </xpath>
+            <xpath expr="//field[@name='manager_id']" position="after">
+                <field name="project_allocation_id" string="Project Cost Center"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_department_view_kanban_project" model="ir.ui.view">
+        <field name="name">hr.department.kanban.project</field>
+        <field name="model">hr.department</field>
+        <field name="inherit_id" ref="hr.hr_department_view_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//a[@name='action_open_view_child_departments']" position="replace">
+                <a name="action_open_view_child_departments" type="object">Child projects</a>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="project_allocation_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr.hr_department_tree_action" model="ir.actions.act_window">
+        <field name="name">Projects</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new project
+            </p><p>
+                Structure employees per project and assign each project cost center for reporting and costing.
+            </p>
+        </field>
+    </record>
+
+    <record id="hr.hr_department_kanban_action" model="ir.actions.act_window">
+        <field name="name">Projects</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new project
+            </p><p>
+                Structure employees per project and assign each project cost center for reporting and costing.
+            </p>
+        </field>
+    </record>
+
+</odoo>

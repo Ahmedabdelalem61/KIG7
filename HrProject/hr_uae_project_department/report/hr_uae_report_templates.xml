@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_master_data_document_project" inherit_id="hr_uae_reports.report_master_data_document">
+        <xpath expr="//span[@t-esc='emp.project_allocation_id.name']" position="replace">
+            <span t-esc="emp.department_id.name"/>
+        </xpath>
+    </template>
+
+    <template id="report_flight_ticket_document_project" inherit_id="hr_uae_flights.report_flight_ticket_document">
+        <xpath expr="//span[@t-esc='doc.project_allocation_id.name']" position="replace">
+            <span t-esc="doc.department_id.name"/>
+        </xpath>
+    </template>
+
+    <template id="report_termination_document_project" inherit_id="hr_uae_termination.report_termination_document">
+        <xpath expr="//span[@t-esc='doc.project_allocation_id.name']" position="replace">
+            <span t-esc="doc.department_id.name"/>
+        </xpath>
+    </template>
+
+    <template id="report_payroll_dashboard_document_project" inherit_id="hr_uae_payroll.report_payroll_dashboard_document">
+        <xpath expr="//span[@t-esc='row.project_allocation_id.name']" position="replace">
+            <span t-esc="row.department_id.name"/>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-inherit="hr_uae_reports.HrUaeLiveDashboard" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_hud_card_title') and contains(text(), 'Headcount by Project Allocation')]" position="replace">
+            <div class="o_hud_card_title">Headcount by Project</div>
+        </xpath>
+        <xpath expr="//div[contains(text(), 'No project allocations yet.')]" position="replace">
+            <div t-if="!state.data.per_project.length" class="text-muted">No projects yet.</div>
+        </xpath>
+    </t>
+
+    <t t-inherit="hr_uae_payroll.HrUaePayrollLiveDashboard" t-inherit-mode="extension">
+        <xpath expr="//div[contains(text(), 'No project allocation in payroll yet.')]" position="replace">
+            <div t-if="!state.data.net_by_project.length" class="text-muted py-4 text-center">
+                No project data in payroll yet.
+            </div>
+        </xpath>
+    </t>
+
+</templates>
