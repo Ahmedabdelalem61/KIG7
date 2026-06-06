@@ -13,6 +13,16 @@ HR_UAE_STATUS_SELECTION = [
     ("terminated", "Terminated"),
 ]
 
+HR_UAE_STATUS_TO_STATE_CODE = {
+    "active": "on_site",
+    "vacations": "vacations",
+    "special_permit": "special_permit",
+    "sick_leave": "medical_issue",
+    "resignation": "resignation",
+    "cancellation": "cancellation",
+    "terminated": "project_termination",
+}
+
 
 class HrEmployee(models.Model):
     _inherit = "hr.employee"
@@ -80,6 +90,21 @@ class HrEmployee(models.Model):
     hr_uae_status_manual = fields.Boolean(
         string="Manual Status Override",
         help="If set, the UAE Status above will not be auto-recomputed.",
+        tracking=True,
+    )
+    hr_uae_state_id = fields.Many2one(
+        "hr.uae.employee.state",
+        string="Employee State",
+        compute="_compute_hr_uae_state_id",
+        store=True,
+        readonly=False,
+        tracking=True,
+        help="Colored lifecycle tag derived from UAE Status. "
+        "Set 'Manual State Override' to pick a state the system cannot infer.",
+    )
+    hr_uae_state_manual = fields.Boolean(
+        string="Manual State Override",
+        help="If set, the Employee State above will not be auto-recomputed.",
         tracking=True,
     )
     hr_uae_deduct_employee_paid_tickets = fields.Boolean(
@@ -218,6 +243,26 @@ class HrEmployee(models.Model):
                 emp.hr_uae_status = "cancellation"
             else:
                 emp.hr_uae_status = "active"
+
+    @api.depends("hr_uae_status", "hr_uae_state_manual")
+    def _compute_hr_uae_state_id(self):
+        for emp in self:
+            if emp.hr_uae_state_manual:
+                continue
+            state_code = HR_UAE_STATUS_TO_STATE_CODE.get(emp.hr_uae_status)
+            if not state_code:
+                continue
+            state = self.env.ref(
+                "hr_uae_master_data.emp_state_%s" % state_code,
+                raise_if_not_found=False,
+            )
+            if state:
+                emp.hr_uae_state_id = state
+
+    @api.onchange("hr_uae_state_id")
+    def _onchange_hr_uae_state_id(self):
+        if self.hr_uae_state_id:
+            self.hr_uae_state_manual = True
 
     @api.model
     def _map_leave_to_status(self, leave):

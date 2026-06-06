@@ -86,6 +86,32 @@ class HrPayslip(models.Model):
         related="company_id.currency_id",
         readonly=True,
     )
+    hr_uae_basic = fields.Monetary(
+        string="Basic",
+        compute="_compute_hr_uae_basic_net",
+        currency_field="currency_id",
+    )
+    hr_uae_net = fields.Monetary(
+        string="Net",
+        compute="_compute_hr_uae_basic_net",
+        currency_field="currency_id",
+    )
+
+    @api.depends(
+        "line_ids.total",
+        "line_ids.code",
+        "hr_uae_hold_active",
+        "hr_uae_payable_now",
+    )
+    def _compute_hr_uae_basic_net(self):
+        for slip in self:
+            basic_line = slip.line_ids.filtered(lambda line: line.code == "BASIC")[:1]
+            slip.hr_uae_basic = basic_line.total if basic_line else 0.0
+            if slip.hr_uae_hold_active:
+                slip.hr_uae_net = slip.hr_uae_payable_now or 0.0
+            else:
+                net_line = slip.line_ids.filtered(lambda line: line.code == "NET")[:1]
+                slip.hr_uae_net = net_line.total if net_line else 0.0
 
     # ---------- Payroll inputs / worked days ----------
 

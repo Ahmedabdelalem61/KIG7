@@ -54,9 +54,40 @@ class TestHrUaeMasterData(TransactionCase):
         emp._compute_visa_status()
         self.assertEqual(emp.visa_status, "none")
 
+    def test_employee_states_seeded(self):
+        states = self.env["hr.uae.employee.state"].search([])
+        self.assertEqual(len(states), 11)
+
     def test_default_status_active(self):
         emp = self.Employee.create({"name": "Active"})
         self.assertEqual(emp.hr_uae_status, "active")
+
+    def test_status_active_maps_to_on_site(self):
+        emp = self.Employee.create({"name": "OnSite"})
+        self.assertEqual(emp.hr_uae_state_id.code, "on_site")
+
+    def test_status_terminated_maps_to_project_termination(self):
+        emp = self.Employee.create({"name": "Terminated"})
+        emp.active = False
+        emp.invalidate_recordset(["hr_uae_status", "hr_uae_state_id"])
+        emp._compute_hr_uae_status()
+        emp._compute_hr_uae_state_id()
+        self.assertEqual(emp.hr_uae_status, "terminated")
+        self.assertEqual(emp.hr_uae_state_id.code, "project_termination")
+
+    def test_manual_state_survives_status_recompute(self):
+        transfered = self.env.ref("hr_uae_master_data.emp_state_transfered")
+        emp = self.Employee.create({"name": "Transferred"})
+        emp.write(
+            {
+                "hr_uae_state_id": transfered.id,
+                "hr_uae_state_manual": True,
+            }
+        )
+        emp.hr_uae_status = "vacations"
+        emp._compute_hr_uae_state_id()
+        self.assertTrue(emp.hr_uae_state_manual)
+        self.assertEqual(emp.hr_uae_state_id, transfered)
 
     def test_status_terminated_when_archived(self):
         emp = self.Employee.create({"name": "ToTerminate"})

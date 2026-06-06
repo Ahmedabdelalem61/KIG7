@@ -22,4 +22,11 @@
         action="action_hr_uae_position"
         sequence="20"/>
 
+    <menuitem
+        id="menu_hr_uae_employee_states"
+        name="Employee States"
+        parent="hr_uae_base.menu_hr_uae_config"
+        action="action_hr_uae_employee_state"
+        sequence="30"/>
+
 </odoo>

@@ -36,4 +36,16 @@
         </field>
     </record>
 
+    <record id="view_hr_payslip_tree_uae" model="ir.ui.view">
+        <field name="name">hr.payslip.list.uae</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="payroll.hr_payslip_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_id']" position="after">
+                <field name="hr_uae_basic"/>
+                <field name="hr_uae_net"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

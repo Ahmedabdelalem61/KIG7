@@ -26,6 +26,10 @@
                             <field name="age"/>
                         </group>
                         <group string="Employment">
+                            <field name="hr_uae_state_id"
+                                   widget="many2one_tags"
+                                   options="{'color_field': 'color'}"/>
+                            <field name="hr_uae_state_manual"/>
                             <field name="hr_uae_status"/>
                             <field name="hr_uae_status_manual"/>
                             <field name="hr_uae_deduct_employee_paid_tickets"/>
@@ -59,12 +63,32 @@
                 <field name="rank_id" optional="show"/>
                 <field name="passport_id" optional="hide"/>
                 <field name="roster" optional="show"/>
-                <field name="hr_uae_status" optional="show"/>
+                <field name="hr_uae_state_id"
+                       widget="many2one_tags"
+                       options="{'color_field': 'color'}"
+                       optional="show"/>
+                <field name="hr_uae_status" optional="hide"/>
                 <field name="visa_status" optional="hide"/>
                 <field name="project_allocation_id" optional="hide"
                        context="{'default_plan_id': %(hr_uae_master_data.account_analytic_plan_project_allocation)d, 'default_company_id': company_id}"/>
                 <field name="cost_center_id" optional="hide"
                        context="{'default_plan_id': %(hr_uae_master_data.account_analytic_plan_cost_center)d, 'default_company_id': company_id}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_kanban_uae" model="ir.ui.view">
+        <field name="name">hr.employee.kanban.uae</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.hr_kanban_view_employees"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban/field[@name='company_id']" position="after">
+                <field name="hr_uae_state_id"/>
+            </xpath>
+            <xpath expr="//field[@name='category_ids']" position="before">
+                <field name="hr_uae_state_id"
+                       widget="many2one_tags"
+                       options="{'color_field': 'color'}"/>
             </xpath>
         </field>
     </record>

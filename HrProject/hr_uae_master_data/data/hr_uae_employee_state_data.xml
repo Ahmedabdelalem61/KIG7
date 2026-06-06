@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="emp_state_on_site" model="hr.uae.employee.state">
+        <field name="name">On Site</field>
+        <field name="code">on_site</field>
+        <field name="color">10</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="emp_state_pending_to_book" model="hr.uae.employee.state">
+        <field name="name">Pending to Book</field>
+        <field name="code">pending_to_book</field>
+        <field name="color">2</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="emp_state_vacations" model="hr.uae.employee.state">
+        <field name="name">Vacations</field>
+        <field name="code">vacations</field>
+        <field name="color">3</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="emp_state_vacations_return" model="hr.uae.employee.state">
+        <field name="name">Vacations Return</field>
+        <field name="code">vacations_return</field>
+        <field name="color">8</field>
+        <field name="sequence">40</field>
+    </record>
+
+    <record id="emp_state_special_permit" model="hr.uae.employee.state">
+        <field name="name">Special Permit</field>
+        <field name="code">special_permit</field>
+        <field name="color">4</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="emp_state_transfered" model="hr.uae.employee.state">
+        <field name="name">Transfered</field>
+        <field name="code">transfered</field>
+        <field name="color">7</field>
+        <field name="sequence">60</field>
+    </record>
+
+    <record id="emp_state_medical_issue" model="hr.uae.employee.state">
+        <field name="name">Medical Issue</field>
+        <field name="code">medical_issue</field>
+        <field name="color">6</field>
+        <field name="sequence">70</field>
+    </record>
+
+    <record id="emp_state_resignation" model="hr.uae.employee.state">
+        <field name="name">Resignation</field>
+        <field name="code">resignation</field>
+        <field name="color">1</field>
+        <field name="sequence">80</field>
+    </record>
+
+    <record id="emp_state_cancellation" model="hr.uae.employee.state">
+        <field name="name">Cancellation</field>
+        <field name="code">cancellation</field>
+        <field name="color">9</field>
+        <field name="sequence">90</field>
+    </record>
+
+    <record id="emp_state_project_termination" model="hr.uae.employee.state">
+        <field name="name">Project Termination</field>
+        <field name="code">project_termination</field>
+        <field name="color">1</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <record id="emp_state_passed_away" model="hr.uae.employee.state">
+        <field name="name">Passed Away</field>
+        <field name="code">passed_away</field>
+        <field name="color">5</field>
+        <field name="sequence">110</field>
+    </record>
+
+</odoo>

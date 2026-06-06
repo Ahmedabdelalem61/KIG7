@@ -52,6 +52,52 @@ class TestHrUaePayroll(TransactionCase):
     def test_payslip_state_includes_on_hold(self):
         self.assertIn("on_hold", dict(self.Payslip._fields["state"].selection))
 
+    def test_payslip_basic_net_from_lines(self):
+        emp, contract = self._make_employee_with_contract("PR Basic Net", wage=3000)
+        slip = self.Payslip.create(
+            {
+                "employee_id": emp.id,
+                "contract_id": contract.id,
+                "struct_id": self.struct.id,
+                "date_from": date(2026, 2, 1),
+                "date_to": date(2026, 2, 28),
+            }
+        )
+        slip.compute_sheet()
+        basic = slip.line_ids.filtered(lambda line: line.code == "BASIC")[:1]
+        net = slip.line_ids.filtered(lambda line: line.code == "NET")[:1]
+        self.assertEqual(slip.hr_uae_basic, basic.total)
+        self.assertEqual(slip.hr_uae_net, net.total)
+
+    def test_payslip_net_uses_payable_when_on_hold(self):
+        emp, contract = self._make_employee_with_contract("PR Net Hold", wage=2800)
+        annual = self.env.ref("hr_uae_leaves.leave_type_annual")
+        self._allocate(emp, annual)
+        leave = self.Leave.create(
+            {
+                "name": "Vac",
+                "employee_id": emp.id,
+                "holiday_status_id": annual.id,
+                "request_date_from": date(2026, 2, 10),
+                "request_date_to": date(2026, 2, 28),
+                "date_from": datetime(2026, 2, 10, 0, 0),
+                "date_to": datetime(2026, 2, 28, 23, 59),
+            }
+        )
+        leave.action_validate()
+        slip = self.Payslip.create(
+            {
+                "employee_id": emp.id,
+                "contract_id": contract.id,
+                "struct_id": self.struct.id,
+                "date_from": date(2026, 2, 1),
+                "date_to": date(2026, 2, 28),
+            }
+        )
+        slip.compute_sheet()
+        self.assertTrue(slip.hr_uae_hold_active)
+        self.assertEqual(slip.hr_uae_net, slip.hr_uae_payable_now)
+
     def test_contract_allowances_flow_into_monthly_payslip(self):
         emp, contract = self._make_employee_with_contract("PR Allowances", wage=3000)
         contract.write(
