@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_contract_form_uae_currency" model="ir.ui.view">
+        <field name="name">hr.contract.form.uae.currency</field>
+        <field name="model">hr.contract</field>
+        <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+
+            <!-- Currency selector + info, before the wage. -->
+            <xpath expr="//field[@name='wage']" position="before">
+                <field name="company_currency_id" invisible="1"/>
+                <field name="contract_currency_id" options="{'no_create': True}"/>
+                <div class="alert alert-info" role="alert" colspan="2"
+                     invisible="contract_currency_id == company_currency_id">
+                    Amounts are entered in the contract currency. The AED values are
+                    derived at the current rate for display; each payslip reconverts
+                    at its period-end rate. Define rates in Accounting → Currencies.
+                </div>
+            </xpath>
+
+            <!-- Foreign entry fields, shown only when the contract is in a
+                 non-company currency. -->
+            <xpath expr="//field[@name='wage']" position="after">
+                <field name="wage_foreign" widget="monetary"
+                       invisible="contract_currency_id == company_currency_id"/>
+            </xpath>
+            <xpath expr="//field[@name='housing_allowance']" position="after">
+                <field name="housing_allowance_foreign" widget="monetary"
+                       invisible="contract_currency_id == company_currency_id"/>
+            </xpath>
+            <xpath expr="//field[@name='transportation_allowance']" position="after">
+                <field name="transportation_allowance_foreign" widget="monetary"
+                       invisible="contract_currency_id == company_currency_id"/>
+            </xpath>
+            <xpath expr="//field[@name='other_allowances']" position="after">
+                <field name="other_allowances_foreign" widget="monetary"
+                       invisible="contract_currency_id == company_currency_id"/>
+            </xpath>
+            <xpath expr="//field[@name='annual_ticket_amount']" position="after">
+                <field name="annual_ticket_amount_foreign" widget="monetary"
+                       invisible="contract_currency_id == company_currency_id"/>
+            </xpath>
+
+            <!-- In foreign mode the AED amounts are derived: make them read-only. -->
+            <xpath expr="//field[@name='wage']" position="attributes">
+                <attribute name="readonly">contract_currency_id != company_currency_id</attribute>
+            </xpath>
+            <xpath expr="//field[@name='housing_allowance']" position="attributes">
+                <attribute name="readonly">contract_currency_id != company_currency_id</attribute>
+            </xpath>
+            <xpath expr="//field[@name='transportation_allowance']" position="attributes">
+                <attribute name="readonly">contract_currency_id != company_currency_id</attribute>
+            </xpath>
+            <xpath expr="//field[@name='other_allowances']" position="attributes">
+                <attribute name="readonly">contract_currency_id != company_currency_id</attribute>
+            </xpath>
+            <xpath expr="//field[@name='annual_ticket_amount']" position="attributes">
+                <attribute name="readonly">contract_currency_id != company_currency_id</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
