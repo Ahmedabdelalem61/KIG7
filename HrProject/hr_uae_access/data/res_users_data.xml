@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- noupdate="1": users are created once at install; upgrades never touch or
+     duplicate them (idempotency by xmlid). -->
+<odoo noupdate="1">
+
+    <record id="user_kig7_hr_officer" model="res.users"
+            context="{'no_reset_password': True, 'mail_create_nolog': True}">
+        <field name="name">KIG7 HR Officer</field>
+        <field name="login">kig7.hr.officer</field>
+        <field name="password">kig7.hr.officer</field>
+        <field name="email">hr.officer@kig7.example.com</field>
+        <field name="groups_id" eval="[(6, 0, [
+            ref('base.group_user'),
+            ref('group_kig7_hr_officer'),
+        ])]"/>
+    </record>
+
+    <record id="user_kig7_hr_manager" model="res.users"
+            context="{'no_reset_password': True, 'mail_create_nolog': True}">
+        <field name="name">KIG7 HR Manager</field>
+        <field name="login">kig7.hr.manager</field>
+        <field name="password">kig7.hr.manager</field>
+        <field name="email">hr.manager@kig7.example.com</field>
+        <field name="groups_id" eval="[(6, 0, [
+            ref('base.group_user'),
+            ref('group_kig7_hr_manager'),
+        ])]"/>
+    </record>
+
+    <record id="user_kig7_payroll_manager" model="res.users"
+            context="{'no_reset_password': True, 'mail_create_nolog': True}">
+        <field name="name">KIG7 Payroll &amp; Accounting Manager</field>
+        <field name="login">kig7.payroll.manager</field>
+        <field name="password">kig7.payroll.manager</field>
+        <field name="email">payroll.manager@kig7.example.com</field>
+        <field name="groups_id" eval="[(6, 0, [
+            ref('base.group_user'),
+            ref('group_kig7_payroll_manager'),
+        ])]"/>
+    </record>
+
+</odoo>
