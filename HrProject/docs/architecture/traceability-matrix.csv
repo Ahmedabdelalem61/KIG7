@@ -1,0 +1,14 @@
+workflow,module,model,view_or_menu,security,test
+onboarding,hr_uae_master_data,hr.employee/hr.contract,hr_employee_views.xml/hr_contract_views.xml,hr_uae_base groups,hr_uae_master_data/tests
+contract mgmt,hr_uae_multicurrency,hr.contract,hr_contract_views.xml,HR Manager/contract manager,hr_uae_multicurrency/tests
+multicurrency conversion,hr_uae_multicurrency,hr.payslip/res.currency,Converted tab,payroll access + rates,hr_uae_multicurrency/tests
+fx update,hr_uae_fx_rate_update,res.currency,server action,account/admin operation,hr_uae_fx_rate_update/tests
+payroll run,hr_uae_payroll,hr.payslip,payroll views,payroll groups,hr_uae_payroll/tests
+adjustments,hr_uae_salary_adjustment,hr.uae.salary.adjustment,salary adjustment views,HR Manager approval,hr_uae_salary_adjustment/tests
+flights,hr_uae_flights,hr.uae.flight,flight views/menus,hr_uae groups,hr_uae_flights/tests
+leaves,hr_uae_leaves,hr.leave,leave views/menus,hr_holidays groups,hr_uae_leaves/tests
+termination,hr_uae_termination,hr.uae.termination,termination views/menus,hr_uae groups,hr_uae_termination/tests
+documents,hr_uae_documents,hr.uae.document,document views/menus,owner/company rules,hr_uae_documents/tests
+dashboards,hr_uae_reports/hr_uae_payroll,hr.uae.dashboard/hr.uae.payroll.dashboard,dashboard menus,payroll role excluded,hr_uae_reports/tests
+xlsx io,hr_uae_xlsx_io,hr.uae.xlsx.template/hr.uae.xlsx.import.wizard,xlsx views/wizard,manager-only inferred from module,hr_uae_xlsx_io/tests
+access roles,hr_uae_access,res.users/ir.rule,menu_restrictions.xml,3 exclusive roles/global deny,hr_uae_access/tests

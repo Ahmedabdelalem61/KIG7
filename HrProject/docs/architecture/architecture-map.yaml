@@ -1,0 +1,191 @@
+project: KIG7
+generated: 2026-06-12
+commit: 11ca9f9
+deployment:
+  compose: ../../docker-compose.yml
+  services: [db, web, proxy]
+integrations:
+  - name: open.er-api.com
+    auth: none
+    source: ../../hr_uae_fx_rate_update/models/res_currency.py
+modules:
+  - name: hr_uae_base
+    path: ../../hr_uae_base
+    kind: Custom
+    depends: [hr, hr_contract, resource]
+    models_defined: []
+    models_extended: [res.company]
+    crons: []
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Foundation, UAE defaults, root menu, base groups, USD company currency"
+  - name: hr_uae_master_data
+    path: ../../hr_uae_master_data
+    kind: Custom
+    depends: [hr_uae_base, hr_contract, hr_holidays, analytic]
+    models_defined: [hr.uae.rank, hr.uae.position, hr.uae.employee.state]
+    models_extended: [hr.contract, hr.employee]
+    crons: [ir_cron_hr_uae_recompute_status]
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Employee master data: rank, position, status, passport/roster/project fields"
+  - name: hr_uae_audit_trail
+    path: ../../hr_uae_audit_trail
+    kind: Custom
+    depends: [hr_uae_master_data, mail]
+    models_defined: [hr.uae.audit.log, hr.uae.audit.mixin, hr.uae.audit.report.wizard]
+    models_extended: [hr.contract, hr.employee]
+    crons: []
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Audit mixin and audit log/reporting for HR records"
+  - name: hr_uae_documents
+    path: ../../hr_uae_documents
+    kind: Custom
+    depends: [hr_uae_master_data, hr_uae_audit_trail, mail]
+    models_defined: [hr.uae.document]
+    models_extended: [hr.employee]
+    crons: [ir_cron_hr_uae_document_expiry]
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Employee documents, expiry states, expiry alert cron"
+  - name: hr_uae_flights
+    path: ../../hr_uae_flights
+    kind: Custom
+    depends: [hr_uae_master_data, hr_uae_audit_trail, hr_expense]
+    models_defined: [hr.uae.flight]
+    models_extended: []
+    crons: []
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Flight ticket requests, ticket expenses, employee-paid deduction source"
+  - name: hr_uae_leaves
+    path: ../../hr_uae_leaves
+    kind: Custom
+    depends: [hr_uae_master_data, hr_uae_audit_trail, hr_holidays]
+    models_defined: [hr.uae.movement.tracking]
+    models_extended: [hr.leave]
+    crons: [ir_cron_hr_uae_leave_alerts]
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Leave extensions, movement tracking, leave alerts"
+  - name: hr_uae_payroll
+    path: ../../hr_uae_payroll
+    kind: Custom
+    depends: [hr_uae_master_data, hr_uae_audit_trail, hr_uae_leaves, hr_uae_flights, payroll]
+    models_defined: [hr.uae.payroll.dashboard, hr.uae.payroll.live.dashboard]
+    models_extended: [hr.contract, hr.employee, hr.leave, hr.payslip, hr.salary.rule, hr.uae.flight]
+    crons: []
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: UAE payroll structure, salary rules, payslip extensions, dashboards"
+  - name: hr_uae_salary_adjustment
+    path: ../../hr_uae_salary_adjustment
+    kind: Custom
+    depends: [hr_uae_payroll]
+    models_defined: [hr.uae.salary.adjustment]
+    models_extended: []
+    crons: [ir_cron_hr_uae_adjustment_recurring]
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Approved adjustment/allowance/deduction inputs for payslips"
+  - name: hr_uae_termination
+    path: ../../hr_uae_termination
+    kind: Custom
+    depends: [hr_uae_payroll]
+    models_defined: [hr.uae.termination]
+    models_extended: []
+    crons: []
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Termination/EOS workflow and downstream contract/payslip effects"
+  - name: hr_uae_reports
+    path: ../../hr_uae_reports
+    kind: Custom
+    depends: [hr_uae_master_data, hr_uae_audit_trail, hr_uae_documents, hr_uae_leaves, hr_uae_flights, hr_uae_payroll, hr_uae_salary_adjustment, hr_uae_termination]
+    models_defined: [hr.uae.dashboard]
+    models_extended: []
+    crons: []
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Custom HR UAE dashboard and report actions"
+  - name: hr_uae_project_department
+    path: ../../hr_uae_project_department
+    kind: Custom
+    depends: [hr_uae_reports, hr_uae_payroll, hr_uae_flights, hr_uae_documents, hr_uae_salary_adjustment, hr_uae_termination, hr_uae_leaves, hr_contract, hr_expense, hr_holidays]
+    models_defined: []
+    models_extended: [hr.contract, hr.department, hr.employee, hr.expense.sheet, hr.leave, hr.uae.dashboard, hr.uae.document, hr.uae.flight, hr.uae.payroll.dashboard, hr.uae.payroll.live.dashboard, hr.uae.salary.adjustment, hr.uae.termination, res.users]
+    crons: []
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Project allocation and department extensions across HR transactions"
+  - name: hr_uae_xlsx_io
+    path: ../../hr_uae_xlsx_io
+    kind: Custom
+    depends: [hr_uae_project_department]
+    models_defined: [hr.uae.xlsx.template, hr.uae.xlsx.template.line, hr.uae.xlsx.import.wizard]
+    models_extended: [hr.uae.payroll.dashboard]
+    crons: []
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Configurable XLSX exports/import wizard and templates"
+  - name: hr_uae_multicurrency
+    path: ../../hr_uae_multicurrency
+    kind: Custom
+    depends: [hr_uae_payroll, hr_uae_salary_adjustment]
+    models_defined: []
+    models_extended: [hr.contract, hr.payslip, hr.uae.salary.adjustment, res.currency]
+    crons: [ir_cron_hr_uae_refresh_currency]
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Contract-currency fields, strict payroll conversion, daily display refresh"
+  - name: hr_uae_fx_rate_update
+    path: ../../hr_uae_fx_rate_update
+    kind: Custom
+    depends: [base]
+    models_defined: []
+    models_extended: [res.currency]
+    crons: [ir_cron_hr_uae_fx_update]
+    integrations: [open.er-api.com]
+    owner: HrProject Team
+    risk: "Inferred: Online FX updater for active currencies"
+  - name: hr_uae_access
+    path: ../../hr_uae_access
+    kind: Custom
+    depends: [hr_uae_xlsx_io, calendar, website]
+    models_defined: []
+    models_extended: [res.users]
+    crons: []
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: KIG7 mutually exclusive roles, menu restrictions, blocked app rules"
+  - name: hr_uae_app
+    path: ../../hr_uae_app
+    kind: Custom
+    depends: [hr_uae_base, hr_uae_master_data, hr_uae_audit_trail, hr_uae_documents, hr_uae_leaves, hr_uae_flights, hr_uae_payroll, hr_uae_salary_adjustment, hr_uae_termination, hr_uae_reports, sh_entmate_theme, rebranding, web_responsive]
+    models_defined: []
+    models_extended: []
+    crons: []
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Aggregator app for the KIG7 HR stack"
+  - name: hr_uae_backend_theme
+    path: ../../hr_uae_backend_theme
+    kind: Custom
+    depends: [web, hr_uae_base]
+    models_defined: []
+    models_extended: [ir.http, res.config.settings, res.users]
+    crons: []
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Backend branding/theme customizations"
+  - name: thirdparty/payroll
+    path: ../../thirdparty/payroll
+    kind: OCA vendored
+    depends: [hr_contract, hr_holidays, mail]
+    models_defined: [hr.payslip, hr.payslip.run, hr.salary.rule, hr.payroll.structure, hr.payslip.input, hr.payslip.line]
+    models_extended: [hr.contract, hr.employee, hr.salary.rule, res.config.settings]
+    crons: []
+    integrations: []
+    owner: OCA / HrProject Team
+    risk: "Inferred: Vendored OCA payroll for Odoo 18 Community"
