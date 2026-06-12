@@ -31,49 +31,57 @@
                        widget="monetary"/>
             </xpath>
 
-            <!-- 3. The company-currency amounts are always derived: read-only. -->
+            <!-- 3. The company-currency amounts are always derived: read-only and
+                 hidden in their original position (shown on the AED tab below). -->
             <xpath expr="//field[@name='wage']" position="attributes">
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>
+                <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='housing_allowance']" position="attributes">
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>
+                <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='transportation_allowance']" position="attributes">
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>
+                <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='other_allowances']" position="attributes">
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>
+                <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='annual_ticket_amount']" position="attributes">
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>
+                <attribute name="invisible">1</attribute>
             </xpath>
 
-            <!-- 4. Move the read-only AED amounts to a dedicated tab, shown only
-                 when the contract is in a non-company currency. -->
+            <!-- 4. Dedicated tab for read-only AED amounts, visible only when
+                 the contract is in a non-company currency. Fields are listed
+                 directly here (no position="move" — that is fragile). -->
             <xpath expr="//notebook" position="inside">
                 <page string="Converted (AED)" name="hr_uae_aed_converted"
                       invisible="contract_currency_id == company_currency_id">
                     <group>
-                        <group name="hr_uae_aed_monthly"
-                               string="Monthly (Company Currency)"/>
-                        <group name="hr_uae_aed_yearly"
-                               string="Yearly (Company Currency)"/>
+                        <group string="Monthly (Company Currency)">
+                            <field name="wage" readonly="1" force_save="1"
+                                   widget="monetary" string="Wage (AED)"/>
+                            <field name="housing_allowance" readonly="1" force_save="1"
+                                   widget="monetary" string="Housing Allowance (AED)"/>
+                            <field name="transportation_allowance" readonly="1" force_save="1"
+                                   widget="monetary" string="Transportation Allowance (AED)"/>
+                            <field name="other_allowances" readonly="1" force_save="1"
+                                   widget="monetary" string="Other Allowances (AED)"/>
+                        </group>
+                        <group string="Yearly (Company Currency)">
+                            <field name="annual_ticket_amount" readonly="1" force_save="1"
+                                   widget="monetary" string="Annual Ticket Amount (AED)"/>
+                        </group>
                     </group>
                 </page>
-            </xpath>
-            <xpath expr="//group[@name='hr_uae_aed_monthly']" position="inside">
-                <xpath expr="//field[@name='wage']" position="move"/>
-                <xpath expr="//field[@name='housing_allowance']" position="move"/>
-                <xpath expr="//field[@name='transportation_allowance']" position="move"/>
-                <xpath expr="//field[@name='other_allowances']" position="move"/>
-            </xpath>
-            <xpath expr="//group[@name='hr_uae_aed_yearly']" position="inside">
-                <xpath expr="//field[@name='annual_ticket_amount']" position="move"/>
             </xpath>
 
         </field>

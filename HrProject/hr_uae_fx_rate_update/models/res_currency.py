@@ -2,26 +2,20 @@ import json
 import logging
 import urllib.request
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
 # Free, no-key source. Returns rates as "units of <code> per 1 <base>", which is
 # exactly Odoo's res.currency.rate.rate convention when <base> is the company
-# currency. The URL is stored in ir.config_parameter so it can be swapped.
+# currency.
 DEFAULT_FX_URL = "https://open.er-api.com/v6/latest/%s"
-_PARAM_KEY = "hr_uae_fx_rate_update.url"
 
 
-class ResCurrency(models.Model):
+class ResCurrency(models.Model):  # pylint: disable=too-few-public-methods
+    """Extend res.currency with UAE-project online FX rate fetching."""
+
     _inherit = "res.currency"
-
-    @api.model
-    def _hr_uae_fx_url(self, base_code):
-        param = self.env["ir.config_parameter"].sudo().get_param(
-            _PARAM_KEY, DEFAULT_FX_URL
-        )
-        return param % base_code if "%s" in param else param + base_code
 
     @api.model
     def _hr_uae_fetch_rates(self, base_code):
@@ -29,11 +23,11 @@ class ResCurrency(models.Model):
 
         Returns an empty dict on any failure (network, bad payload) and logs a
         warning — never raises, so the cron can't crash the scheduler."""
-        url = self._hr_uae_fx_url(base_code)
+        url = DEFAULT_FX_URL % base_code
         try:
             with urllib.request.urlopen(url, timeout=20) as response:
                 data = json.load(response)
-        except Exception as exc:  # noqa: BLE001 - network/parse must not crash cron
+        except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-exception-caught
             _logger.warning("hr_uae_fx: fetch failed for %s: %s", base_code, exc)
             return {}
         if data.get("result") == "error":
@@ -54,13 +48,13 @@ class ResCurrency(models.Model):
             return 0
         date = date or fields.Date.context_today(self)
         base = company.currency_id
-        Rate = self.env["res.currency.rate"].sudo()
+        rate_model = self.env["res.currency.rate"].sudo()
         count = 0
         for currency in self.search([("id", "!=", base.id)]):
             value = rates.get(currency.name)
             if not value or value <= 0:
                 continue
-            existing = Rate.search(
+            existing = rate_model.search(
                 [
                     ("currency_id", "=", currency.id),
                     ("name", "=", date),
@@ -71,7 +65,7 @@ class ResCurrency(models.Model):
             if existing:
                 existing.rate = value
             else:
-                Rate.create(
+                rate_model.create(
                     {
                         "currency_id": currency.id,
                         "name": date,
@@ -86,7 +80,8 @@ class ResCurrency(models.Model):
     def _hr_uae_cron_update_rates(self):
         """Daily entrypoint: refresh active-currency rates for every company."""
         total = 0
-        for company in self.env["res.company"].sudo().search([]):
+        companies = self.env["res.company"].sudo().search([])  # pylint: disable=no-search-all
+        for company in companies:
             base = company.currency_id
             if not base:
                 continue
@@ -103,8 +98,8 @@ class ResCurrency(models.Model):
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": _("Exchange rates updated"),
-                "message": _("%s currency rate(s) refreshed for today.") % count,
+                "title": self.env._("Exchange rates updated"),
+                "message": self.env._("%s currency rate(s) refreshed for today.", count),
                 "type": "success" if count else "warning",
                 "sticky": False,
             },

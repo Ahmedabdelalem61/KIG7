@@ -14,7 +14,7 @@
         "base",
     ],
     "data": [
-        "data/ir_config_parameter.xml",
+        "data/res_currency_activate.xml",
         "data/ir_cron.xml",
         "data/server_action.xml",
     ],
