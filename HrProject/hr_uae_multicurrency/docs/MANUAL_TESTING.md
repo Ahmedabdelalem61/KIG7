@@ -37,12 +37,13 @@ period changes — Step 4.)
 1. Go to **Employees → Contracts** (or open an employee → their contract).
 2. Pick a test contract (or create one). On the **Salary Information** tab:
    - Change **Contract Currency** from AED to **USD**.
-   - A blue note appears. The **Wage (Contract Currency)** field shows up — enter
-     e.g. **1000** (USD). Do the same for any allowance you want to test.
+   - The **Wage** field (and the allowances) are now entered **in USD** — type
+     e.g. **1000**. Do the same for any allowance you want to test.
 3. Save.
 
-✅ **Expected:** the normal **Wage** (AED) becomes read-only and shows the
-converted value — about **4,000 AED** (1000 × 4). The USD figure is what you typed.
+✅ **Expected:** a new **“Converted (AED)”** tab appears showing the company-currency
+values **read-only** — Wage ≈ **4,000 AED** (1000 × 4). Only the USD amounts on
+Salary Information are editable.
 
 ---
 
