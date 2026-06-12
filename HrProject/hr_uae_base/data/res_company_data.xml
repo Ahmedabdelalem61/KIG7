@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<!-- noupdate: this bootstrap runs at first install only. Re-running it on
+     module upgrade must never reset an explicitly chosen company currency. -->
+<odoo noupdate="1">
 
     <!-- Keep the primary operating company aligned with the UAE setup. -->
     <function model="res.company" name="_hr_uae_enforce_main_company"/>

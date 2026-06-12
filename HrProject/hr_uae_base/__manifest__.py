@@ -1,7 +1,7 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
 {
     "name": "HR UAE - Base",
-    "version": "18.0.1.0.1",
+    "version": "18.0.1.1.0",
     "license": "LGPL-3",
     "category": "Human Resources",
     "summary": "Foundation module for UAE HR Admin platform "
@@ -23,6 +23,4 @@
         "data/res_users_admin_groups.xml",
         "views/hr_uae_menus.xml",
     ],
-    "installable": True,
-    "application": False,
 }

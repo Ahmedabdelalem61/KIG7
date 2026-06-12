@@ -78,3 +78,80 @@ class TestFxRateUpdate(TransactionCase):
                 self.Currency._hr_uae_fetch_rates(self.company.currency_id.name),
                 {},
             )
+
+    # ----------------------------------------------- fetch on activation
+
+    def _activate(self, currencies, fetch_return):
+        """Activate ``currencies`` with a mocked online fetch; return the mock."""
+        with patch.object(
+            type(self.Currency),
+            "_hr_uae_fetch_rates",
+            return_value=fetch_return,
+        ) as mock_fetch:
+            currencies.with_context(hr_uae_fx_force_autofetch=True).write(
+                {"active": True}
+            )
+        return mock_fetch
+
+    def test_activation_fetches_rate(self):
+        """Activating an inactive currency immediately stores today's rate."""
+        self._rate_rows().unlink()
+        self.foreign.active = False
+        mock_fetch = self._activate(self.foreign, {self.foreign.name: 0.27})
+        self.assertTrue(self.foreign.active)
+        mock_fetch.assert_called_once_with(self.company.currency_id.name)
+        rows = self._rate_rows()
+        self.assertEqual(len(rows), 1)
+        self.assertAlmostEqual(rows.rate, 0.27, places=6)
+
+    def test_activation_provider_failure_keeps_active(self):
+        """A provider outage must not block activation; no rate row appears."""
+        self._rate_rows().unlink()
+        self.foreign.active = False
+        self._activate(self.foreign, {})
+        self.assertTrue(self.foreign.active)
+        self.assertFalse(self._rate_rows())
+
+    def test_activation_no_duplicate_rows(self):
+        """Activation updates an existing same-date row instead of duplicating."""
+        self._rate_rows().unlink()
+        self.Currency._hr_uae_upsert_rates(self.company, {self.foreign.name: 0.25})
+        self.foreign.active = False
+        self._activate(self.foreign, {self.foreign.name: 0.30})
+        rows = self._rate_rows()
+        self.assertEqual(len(rows), 1)
+        self.assertAlmostEqual(rows.rate, 0.30, places=6)
+
+    def test_activation_batch(self):
+        """Activating several currencies in one write rates them all with a
+        single fetch per company."""
+        base = self.company.currency_id
+        batch = (
+            self.env.ref("base.EUR") | self.env.ref("base.GBP")
+        ) - base
+        batch.with_context(hr_uae_fx_skip_autofetch=True).write({"active": False})
+        rates = {c.name: 0.2 for c in batch}
+        mock_fetch = self._activate(batch, rates)
+        self.assertEqual(mock_fetch.call_count, 1)
+        for currency in batch:
+            rows = self.Rate.search(
+                [
+                    ("currency_id", "=", currency.id),
+                    ("name", "=", self.today),
+                    ("company_id", "=", self.company.id),
+                ]
+            )
+            self.assertEqual(len(rows), 1, currency.name)
+            self.assertAlmostEqual(rows.rate, 0.2, places=6)
+
+    def test_activation_company_currency_skipped(self):
+        """Activating the company's own currency fetches nothing (1:1)."""
+        base = self.company.currency_id
+        with patch.object(
+            type(self.Currency), "_hr_uae_fetch_rates", return_value={}
+        ) as mock_fetch:
+            count = base.with_context(
+                hr_uae_fx_force_autofetch=True
+            )._hr_uae_fetch_rates_on_activation()
+        self.assertEqual(count, 0)
+        mock_fetch.assert_not_called()

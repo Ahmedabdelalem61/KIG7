@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo noupdate="0">
+<odoo>
 
-    <!-- Activate common currencies so the daily FX cron can update their rates
-         automatically. noupdate="0" ensures this re-applies on module upgrade. -->
-    <record id="base.USD" model="res.currency">
-        <field name="active" eval="True"/>
-    </record>
-    <record id="base.EUR" model="res.currency">
-        <field name="active" eval="True"/>
-    </record>
-    <record id="base.GBP" model="res.currency">
-        <field name="active" eval="True"/>
-    </record>
+    <!-- Activate the project currencies (codes defined in
+         models/res_currency.py HR_UAE_ACTIVE_CURRENCY_CODES) on every
+         install/upgrade. A <function> is required: the base currency records
+         are noupdate, so plain <record> overrides are skipped on upgrade. -->
+    <function model="res.currency" name="_hr_uae_activate_currencies"/>
 
 </odoo>

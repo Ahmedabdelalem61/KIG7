@@ -14,10 +14,15 @@ What it does
   currency, relative to each company's currency.
 * A **manual “Update Exchange Rates (online)”** action is available from the
   Currencies list (Settings → Technical → Currencies → ⚙ Action).
-* The source URL is an **ir.config_parameter** (``hr_uae_fx_rate_update.url``,
-  default ``https://open.er-api.com/v6/latest/%s``) — change it to use another
-  provider. The provider must return rates as *units of each currency per 1 unit
-  of the base*, which is Odoo's rate convention.
+* **Activating a currency fetches its rate immediately** — no need to wait for
+  the daily cron. If the provider is unreachable the activation still succeeds
+  (a warning is logged; the cron retries later). The company's own currency is
+  never fetched (1:1 by definition).
+* The source URL is the ``DEFAULT_FX_URL`` constant in
+  ``models/res_currency.py`` (default ``https://open.er-api.com/v6/latest/%s``)
+  — change it there to use another provider. The provider must return rates as
+  *units of each currency per 1 unit of the base*, which is Odoo's rate
+  convention.
 
 Notes
 =====

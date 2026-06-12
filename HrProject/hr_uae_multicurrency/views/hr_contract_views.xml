@@ -8,50 +8,83 @@
         <field name="priority">100</field>
         <field name="arch" type="xml">
 
-            <!-- 1. Currency selector before the wage. -->
-            <xpath expr="//field[@name='wage']" position="before">
+            <!-- The base view renders wage as:
+                     <label for="wage"/>
+                     <div class="o_row mw-50" name="wage">
+                         <field name="wage" .../>
+                         <div name="wage_period_label">/ month</div>
+                     </div>
+                 Fields must be inserted at GROUP level (siblings of the label/div),
+                 never inside that o_row div — inline insertion corrupts the row. -->
+
+            <!-- 1. Currency selector as a proper row before the wage row. -->
+            <xpath expr="//group[@name='salary']/label[@for='wage']" position="before">
                 <field name="company_currency_id" invisible="1"/>
                 <field name="contract_currency_id" options="{'no_create': True}"
-                       help="Currency the contract is denominated in. Enter the amounts in this currency below; the company-currency (AED) values are derived and shown read-only on the 'Converted (AED)' tab. Each payslip reconverts at its period-end rate. Define rates in Accounting → Currencies."/>
+                       help="Currency the contract is denominated in. Enter the amounts in this currency below; the company-currency values are derived and shown read-only on the 'Converted' tab. Each payslip reconverts at its period-end rate. Define rates in Settings → Technical → Currencies."/>
             </xpath>
 
-            <!-- 2. Entered amounts (in the contract currency) = the editable
-                 fields, shown where the wage normally is. -->
-            <xpath expr="//field[@name='wage']" position="after">
-                <field name="wage_foreign" string="Wage" widget="monetary"/>
-                <field name="housing_allowance_foreign" string="Housing Allowance"
-                       widget="monetary"/>
-                <field name="transportation_allowance_foreign"
-                       string="Transportation Allowance" widget="monetary"/>
-                <field name="other_allowances_foreign" string="Other Allowances"
-                       widget="monetary"/>
+            <!-- 2. Hide the original wage row (label + o_row div). The wage field
+                 inside stays part of the form state so the derived AED value is
+                 still saved. -->
+            <xpath expr="//group[@name='salary']/label[@for='wage']" position="attributes">
+                <attribute name="invisible">1</attribute>
             </xpath>
-            <xpath expr="//field[@name='annual_ticket_amount']" position="after">
-                <field name="annual_ticket_amount_foreign" string="Annual Ticket Amount"
-                       widget="monetary"/>
+            <xpath expr="//div[@name='wage']" position="attributes">
+                <attribute name="invisible">1</attribute>
             </xpath>
-
-            <!-- 3. The company-currency amounts are always derived: read-only and
-                 hidden in their original position (shown on the AED tab below). -->
-            <xpath expr="//field[@name='wage']" position="attributes">
+            <xpath expr="//div[@name='wage']/field[@name='wage']" position="attributes">
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>
-                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- 3. Our editable wage row (in the contract currency), mirroring the
+                 original row's structure. -->
+            <xpath expr="//div[@name='wage']" position="after">
+                <label for="wage_foreign" string="Wage"/>
+                <div class="o_row mw-50" name="hr_uae_wage_foreign">
+                    <field name="wage_foreign" class="oe_inline o_hr_narrow_field"
+                           nolabel="1" widget="monetary"/>
+                    <div class="mb-3">/ month</div>
+                </div>
+            </xpath>
+
+            <!-- 4. Allowances: the AED fields (added by hr_uae_master_data as direct
+                 group children) become hidden mirrors; the editable contract-currency
+                 fields take their place. -->
+            <xpath expr="//field[@name='housing_allowance']" position="after">
+                <field name="housing_allowance_foreign" string="Housing Allowance"
+                       widget="monetary"/>
             </xpath>
             <xpath expr="//field[@name='housing_allowance']" position="attributes">
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>
                 <attribute name="invisible">1</attribute>
             </xpath>
+
+            <xpath expr="//field[@name='transportation_allowance']" position="after">
+                <field name="transportation_allowance_foreign"
+                       string="Transportation Allowance" widget="monetary"/>
+            </xpath>
             <xpath expr="//field[@name='transportation_allowance']" position="attributes">
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>
                 <attribute name="invisible">1</attribute>
             </xpath>
+
+            <xpath expr="//field[@name='other_allowances']" position="after">
+                <field name="other_allowances_foreign" string="Other Allowances"
+                       widget="monetary"/>
+            </xpath>
             <xpath expr="//field[@name='other_allowances']" position="attributes">
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>
                 <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='annual_ticket_amount']" position="after">
+                <field name="annual_ticket_amount_foreign" string="Annual Ticket Amount"
+                       widget="monetary"/>
             </xpath>
             <xpath expr="//field[@name='annual_ticket_amount']" position="attributes">
                 <attribute name="readonly">1</attribute>
@@ -59,26 +92,25 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
 
-            <!-- 4. Dedicated tab for read-only AED amounts, visible only when
-                 the contract is in a non-company currency. Fields are listed
-                 directly here (no position="move" — that is fragile). -->
+            <!-- 5. Dedicated tab for the read-only company-currency amounts,
+                 visible only when the contract is in a non-company currency. -->
             <xpath expr="//notebook" position="inside">
-                <page string="Converted (AED)" name="hr_uae_aed_converted"
+                <page string="Converted (Company Currency)" name="hr_uae_aed_converted"
                       invisible="contract_currency_id == company_currency_id">
                     <group>
                         <group string="Monthly (Company Currency)">
                             <field name="wage" readonly="1" force_save="1"
-                                   widget="monetary" string="Wage (AED)"/>
+                                   widget="monetary" string="Wage"/>
                             <field name="housing_allowance" readonly="1" force_save="1"
-                                   widget="monetary" string="Housing Allowance (AED)"/>
+                                   widget="monetary" string="Housing Allowance"/>
                             <field name="transportation_allowance" readonly="1" force_save="1"
-                                   widget="monetary" string="Transportation Allowance (AED)"/>
+                                   widget="monetary" string="Transportation Allowance"/>
                             <field name="other_allowances" readonly="1" force_save="1"
-                                   widget="monetary" string="Other Allowances (AED)"/>
+                                   widget="monetary" string="Other Allowances"/>
                         </group>
                         <group string="Yearly (Company Currency)">
                             <field name="annual_ticket_amount" readonly="1" force_save="1"
-                                   widget="monetary" string="Annual Ticket Amount (AED)"/>
+                                   widget="monetary" string="Annual Ticket Amount"/>
                         </group>
                     </group>
                 </page>

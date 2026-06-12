@@ -1,5 +1,6 @@
 import json
 import logging
+import threading
 import urllib.request
 
 from odoo import api, fields, models
@@ -11,11 +12,83 @@ _logger = logging.getLogger(__name__)
 # currency.
 DEFAULT_FX_URL = "https://open.er-api.com/v6/latest/%s"
 
+# Currencies the project keeps active (code-defined; reapplied on every module
+# upgrade so staging and production never drift apart).
+HR_UAE_ACTIVE_CURRENCY_CODES = ("USD", "AED", "EUR", "GBP")
+
 
 class ResCurrency(models.Model):  # pylint: disable=too-few-public-methods
     """Extend res.currency with UAE-project online FX rate fetching."""
 
     _inherit = "res.currency"
+
+    @api.model
+    def _hr_uae_activate_currencies(self):
+        """Activate the project currencies (called from a data file on every
+        install/upgrade — base currency records are noupdate, so a plain
+        ``<record>`` override would be skipped on upgrade)."""
+        currencies = self.with_context(active_test=False).search(
+            [("name", "in", list(HR_UAE_ACTIVE_CURRENCY_CODES))]
+        )
+        to_activate = currencies.filtered(lambda c: not c.active)
+        if to_activate:
+            to_activate.write({"active": True})
+        return len(to_activate)
+
+    def write(self, vals):
+        """On activation (active: False -> True), immediately fetch today's
+        online rate for the newly activated currencies instead of waiting for
+        the daily cron."""
+        activating = self.browse()
+        if vals.get("active"):
+            activating = self.filtered(lambda c: not c.active)
+        result = super().write(vals)
+        if activating:
+            activating._hr_uae_fetch_rates_on_activation()  # pylint: disable=protected-access
+        return result
+
+    def _hr_uae_fetch_rates_on_activation(self):
+        """Fetch and store today's rate for ``self`` (newly activated
+        currencies) against every company currency.
+
+        Never raises: a provider failure only logs a warning, so the
+        activation itself always succeeds (the daily cron retries later).
+        Skipped during XML data loading (install/upgrade) and in test mode
+        unless forced via the ``hr_uae_fx_force_autofetch`` context key, so
+        installs and unrelated test suites never hit the network."""
+        if self.env.context.get("hr_uae_fx_skip_autofetch"):
+            return 0
+        if self.env.context.get("install_mode"):
+            return 0
+        if getattr(
+            threading.current_thread(), "testing", False
+        ) and not self.env.context.get("hr_uae_fx_force_autofetch"):
+            return 0
+        total = 0
+        companies = self.env["res.company"].sudo().search([])  # pylint: disable=no-search-all
+        for company in companies:
+            base = company.currency_id
+            if not base:
+                continue
+            # The company's own currency converts 1:1 — nothing to fetch.
+            targets = self - base
+            if not targets:
+                continue
+            rates = self._hr_uae_fetch_rates(base.name)
+            wanted = {c.name: rates[c.name] for c in targets if rates.get(c.name)}
+            missing = [c.name for c in targets if not rates.get(c.name)]
+            if missing:
+                _logger.warning(
+                    "hr_uae_fx: no online rate at activation for %s "
+                    "(company %s); the daily cron will retry",
+                    ", ".join(missing),
+                    company.name,
+                )
+            if wanted:
+                total += self.with_context(  # pylint: disable=protected-access
+                    hr_uae_fx_skip_autofetch=True
+                )._hr_uae_upsert_rates(company, wanted)
+        return total
 
     @api.model
     def _hr_uae_fetch_rates(self, base_code):
