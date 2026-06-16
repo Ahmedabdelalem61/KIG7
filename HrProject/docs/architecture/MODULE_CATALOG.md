@@ -275,6 +275,57 @@ Status is source-verified from manifests where possible. Owner is HrProject Team
 - Risks: Inferred: low runtime risk; mostly data/aggregation.
 - Source: [../../hr_uae_app/__manifest__.py](../../hr_uae_app/__manifest__.py)
 
+## hr_uae_init_data
+
+- Kind: Custom
+- Purpose: Reproducible KIG7 initial master data for fresh database parity
+- Manifest version: `18.0.1.0.0`
+- Status: installable=True; application=False
+- Owner: HrProject Team
+- Depends: hr_uae_app
+- Models defined: None
+- Models extended: None
+- Views/menus: None
+- Crons: None
+- Reports/actions: None
+- Test count: 1; files: hr_uae_init_data/tests/test_init_data.py
+- Risks: Preserves known parity quirks including the `PEN_ER` formula bug and `[PRJ-B] Projec` typo.
+- Source: [../../hr_uae_init_data/__manifest__.py](../../hr_uae_init_data/__manifest__.py)
+
+## hr_uae_flight_currency
+
+- Kind: Custom
+- Purpose: Per-ticket currency selection and company-currency totals for flight tickets
+- Manifest version: `18.0.1.0.0`
+- Status: installable=True; application=False
+- Owner: HrProject Team
+- Depends: hr_uae_flights, hr_uae_multicurrency, hr_uae_fx_rate_update
+- Models defined: None
+- Models extended: hr.uae.flight
+- Views/menus: Flight ticket currency view extension
+- Crons: None
+- Reports/actions: None
+- Test count: 1; files: hr_uae_flight_currency/tests/test_flight_currency.py
+- Risks: Inferred: depends on current FX availability and rate-date conversion behavior.
+- Source: [../../hr_uae_flight_currency/__manifest__.py](../../hr_uae_flight_currency/__manifest__.py)
+
+## hr_uae_dashboard_currency
+
+- Kind: Custom
+- Purpose: Display custom HR/payroll dashboards in company currency
+- Manifest version: `18.0.1.0.0`
+- Status: installable=True; application=False
+- Owner: HrProject Team
+- Depends: hr_uae_flight_currency, hr_uae_xlsx_io, hr_uae_multicurrency
+- Models defined: None
+- Models extended: HR UAE dashboard/payroll dashboard reporting models
+- Views/menus: Dashboard currency view extensions
+- Crons: None
+- Reports/actions: None
+- Test count: 1; files: hr_uae_dashboard_currency/tests/test_dashboard_currency.py
+- Risks: Inferred: dashboard totals depend on consistent company-currency conversion for flight and salary-adjustment amounts.
+- Source: [../../hr_uae_dashboard_currency/__manifest__.py](../../hr_uae_dashboard_currency/__manifest__.py)
+
 ## hr_uae_backend_theme
 
 - Kind: Custom

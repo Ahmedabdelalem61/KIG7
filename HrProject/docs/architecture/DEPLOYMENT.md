@@ -72,3 +72,20 @@ docker compose exec -T db pg_restore -U ${POSTGRES_USER:-odoo} -d <db> --clean -
 - Module update log has no traceback.
 - FX cron exists and is active.
 - Smoke: login, employee list, contract form Converted tab, payslip compute, dashboard load, access-role blocked apps.
+
+## Windows Two-Stack One-Click Deploy
+
+Windows deployments can run staging and live side by side from the same repository using Compose project names:
+
+| Stack | Compose project | Port | Database source |
+|---|---|---:|---|
+| Staging | `kig7-staging` | `8073` | Restored backup dump and filestore |
+| Live | `kig7-live` | `8074` | Fresh init with `-i hr_uae_app,hr_uae_init_data` |
+
+Entry point: [../../../deploy/windows/Deploy-Kig7.ps1](../../../deploy/windows/Deploy-Kig7.ps1).
+
+The script validates/builds Compose, restores staging from `deploy/windows/artifacts/kig7_db.dump` and `deploy/windows/artifacts/kig7_filestore.tgz`, initializes the live database, starts both nginx proxies, and smoke-tests `/web/login` on both ports. Timestamped logs are written under `deploy/windows/` by default.
+
+Backups remain external to git. Before production use, copy the current database dump and filestore archive to secure storage, keep `POSTGRES_PASSWORD` aligned with [../../../configs/docker.odoo.conf](../../../configs/docker.odoo.conf), and rotate any default KIG7 user passwords.
+
+Rollback is stack-specific: stop the affected project with `docker compose -p <project> --env-file deploy/windows/<env>.env down`, restore the prior dump/filestore for staging or recreate live from a known-good code revision, then rerun the script. Use `down -v` only when intentionally deleting that stack's database and filestore volumes.

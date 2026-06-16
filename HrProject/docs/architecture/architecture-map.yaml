@@ -169,6 +169,36 @@ modules:
     integrations: []
     owner: HrProject Team
     risk: "Inferred: Aggregator app for the KIG7 HR stack"
+  - name: hr_uae_init_data
+    path: ../../hr_uae_init_data
+    kind: Custom
+    depends: [hr_uae_app]
+    models_defined: []
+    models_extended: []
+    crons: []
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Reproducible KIG7 initial master data for fresh database parity"
+  - name: hr_uae_flight_currency
+    path: ../../hr_uae_flight_currency
+    kind: Custom
+    depends: [hr_uae_flights, hr_uae_multicurrency, hr_uae_fx_rate_update]
+    models_defined: []
+    models_extended: [hr.uae.flight]
+    crons: []
+    integrations: [open.er-api.com]
+    owner: HrProject Team
+    risk: "Inferred: Per-ticket currency selection and company-currency flight totals"
+  - name: hr_uae_dashboard_currency
+    path: ../../hr_uae_dashboard_currency
+    kind: Custom
+    depends: [hr_uae_flight_currency, hr_uae_xlsx_io, hr_uae_multicurrency]
+    models_defined: []
+    models_extended: [hr.uae.dashboard, hr.uae.payroll.dashboard, hr.uae.payroll.live.dashboard]
+    crons: []
+    integrations: []
+    owner: HrProject Team
+    risk: "Inferred: Company-currency display and totals for custom dashboards"
   - name: hr_uae_backend_theme
     path: ../../hr_uae_backend_theme
     kind: Custom

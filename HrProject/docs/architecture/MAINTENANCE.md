@@ -22,6 +22,7 @@
 | Cron/API/integration | INTEGRATIONS + OPERATIONS_RUNBOOK |
 | Deployment/config | DEPLOYMENT + UPGRADE_GUIDE |
 | Salary rule/payroll formula | BUSINESS_RULES + TESTING_STRATEGY + payroll tests |
+| Master-data seed/checksum change | DATA_DRIVEN_INIT + checksum run against staging and fresh init DB |
 | Known production/staging fact | KNOWN_GAPS + relevant runbook |
 | Architectural decision | ADR update or new ADR |
 
