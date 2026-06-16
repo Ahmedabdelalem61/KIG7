@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- noupdate: provision/pension salary rules created by the original
+     implementor, plus the custom "Company" rule category they used for
+     employer-side provisions. Reproduced verbatim from the source database so
+     a fresh 'live' install matches staging (see KNOWN_GAPS for the PEN_ER bug
+     reproduced intentionally for parity). -->
+<odoo noupdate="1">
+
+    <!-- Custom category used by the provision rules (empty code, as on source). -->
+    <record id="hr_salary_rule_category_company" model="hr.salary.rule.category">
+        <field name="name">Company</field>
+    </record>
+
+    <!-- Ticket Provision: monthly accrual of the annual flight-ticket benefit. -->
+    <record id="hr_salary_rule_ticket_provision" model="hr.salary.rule">
+        <field name="code">TICPR</field>
+        <field name="name">Ticket Provision</field>
+        <field name="category_id" ref="hr_salary_rule_category_company"/>
+        <field name="sequence">50</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result=contract.annual_ticket_amount/12</field>
+    </record>
+
+    <!-- End Of Service Provision: monthly EOS accrual (21 days &lt;5y, else 30). -->
+    <record id="hr_salary_rule_eos_provision" model="hr.salary.rule">
+        <field name="code">EOSPRo</field>
+        <field name="name">End Of Service Provision</field>
+        <field name="category_id" ref="hr_salary_rule_category_company"/>
+        <field name="sequence">50</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute"># Extract the native date objects directly from the records
+start_date = contract.date_start
+current_date = payslip.date_to
+
+# Calculate service duration in days
+service_days = (current_date - start_date).days
+
+# Determine rate: 21 days for &lt; 5 years, 30 days for &gt; 5 years
+if service_days &lt;= 1825:
+    annual_days = 21
+else:
+    annual_days = 30
+
+# Monthly provision calculation
+result = (categories.BASIC / 365) * annual_days</field>
+    </record>
+
+    <!-- UAE Pension - Employee Share: 11% of capped Basic, deducted. -->
+    <record id="hr_salary_rule_pension_employee" model="hr.salary.rule">
+        <field name="code">PEN_EE</field>
+        <field name="name">UAE Pension - Employee Share</field>
+        <field name="category_id" ref="hr_uae_payroll.hr_salary_rule_category_ded"/>
+        <field name="sequence">105</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="condition_select">python</field>
+        <field name="condition_python">condition = employee.country_id.code == 'AE'</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute"># Apply the statutory private sector cap of 70,000 AED to Basic Salary
+contributable_salary = min(categories.BASIC, 70000)
+
+# 11% Employee deduction (returned as a negative value)
+result = -(contributable_salary * 0.11)</field>
+    </record>
+
+    <!-- UAE Pension - Employer Provision: 15% of capped Basic.
+         Fixed the original 'distributable_salary' typo (undefined variable) to
+         'contributable_salary' so the rule computes. -->
+    <record id="hr_salary_rule_pension_employer" model="hr.salary.rule">
+        <field name="code">PEN_ER</field>
+        <field name="name">UAE Pension - Employer Provision</field>
+        <field name="category_id" ref="hr_salary_rule_category_company"/>
+        <field name="sequence">106</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="condition_select">python</field>
+        <field name="condition_python">condition = employee.country_id.code == 'AE'</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute"># Apply the statutory private sector cap of 70,000 AED to Basic Salary
+contributable_salary = min(categories.BASIC, 70000)
+
+# 15% Employer contribution expense
+result = contributable_salary * 0.15</field>
+    </record>
+
+    <!-- Attach all four rules to the UAE Standard structure. -->
+    <record id="hr_uae_payroll.hr_payroll_structure_uae" model="hr.payroll.structure">
+        <field name="rule_ids" eval="[(4, ref('hr_salary_rule_ticket_provision')),
+                                      (4, ref('hr_salary_rule_eos_provision')),
+                                      (4, ref('hr_salary_rule_pension_employee')),
+                                      (4, ref('hr_salary_rule_pension_employer'))]"/>
+    </record>
+
+</odoo>

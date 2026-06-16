@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form: expose the per-ticket currency, the rate date, the live
+         company-currency total, and a Refresh Rate button before booking. -->
+    <record id="view_hr_uae_flight_form_currency" model="ir.ui.view">
+        <field name="name">hr.uae.flight.form.currency</field>
+        <field name="model">hr.uae.flight</field>
+        <field name="inherit_id" ref="hr_uae_flights.view_hr_uae_flight_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Refresh Rate button: only before booking, only foreign tickets -->
+            <xpath expr="//header/button[@name='action_book']" position="before">
+                <button name="action_refresh_rate" type="object"
+                        string="Refresh Rate"
+                        invisible="booking_state != 'draft' or currency_id == company_currency_id"/>
+            </xpath>
+
+            <!-- Currency becomes a real selector (was an invisible anchor) -->
+            <xpath expr="//field[@name='currency_id']" position="replace">
+                <field name="company_currency_id" invisible="1"/>
+                <field name="currency_id" options="{'no_create': True}"/>
+                <field name="rate_date"/>
+                <field name="total_company"
+                       invisible="currency_id == company_currency_id"/>
+            </xpath>
+
+            <!-- Relabel the cost group now that the currency is dynamic -->
+            <xpath expr="//field[@name='ticket_price']/.." position="attributes">
+                <attribute name="string">Cost</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- List: show the company-currency total alongside the raw total. -->
+    <record id="view_hr_uae_flight_tree_currency" model="ir.ui.view">
+        <field name="name">hr.uae.flight.list.currency</field>
+        <field name="model">hr.uae.flight</field>
+        <field name="inherit_id" ref="hr_uae_flights.view_hr_uae_flight_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='total']" position="after">
+                <field name="company_currency_id" column_invisible="1"/>
+                <field name="total_company" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

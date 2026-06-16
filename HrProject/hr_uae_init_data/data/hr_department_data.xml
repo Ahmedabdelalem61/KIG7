@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- noupdate: org departments created by the original implementor. The default
+     hr 'Administration' department was renamed to 'ABC Project' on the source
+     database; the other three were created by hand. -->
+<odoo noupdate="1">
+
+    <!-- Renamed base department. -->
+    <record id="hr.dep_administration" model="hr.department">
+        <field name="name">ABC Project</field>
+    </record>
+
+    <!-- Manually-created departments (the original "[PRJ-B] Projec" typo has
+         been corrected to "[PRJ-B] Project"). -->
+    <record id="dep_finance" model="hr.department">
+        <field name="name">Finance</field>
+    </record>
+    <record id="dep_prj_a" model="hr.department">
+        <field name="name">[PRJ-A] Project</field>
+    </record>
+    <record id="dep_prj_b" model="hr.department">
+        <field name="name">[PRJ-B] Project</field>
+    </record>
+
+</odoo>

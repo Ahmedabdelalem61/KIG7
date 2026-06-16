@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- noupdate: set once on a fresh install; never overwrite a renamed company. -->
+<odoo noupdate="1">
+
+    <!-- Company name set by the original implementor. -->
+    <record id="base.main_company" model="res.company">
+        <field name="name">Kig7</field>
+    </record>
+
+</odoo>

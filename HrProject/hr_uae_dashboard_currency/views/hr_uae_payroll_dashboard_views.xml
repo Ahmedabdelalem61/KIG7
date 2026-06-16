@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Label the payroll dashboard money columns with the company currency.
+         Values are already company-currency; the monetary widget only adds the
+         currency formatting. -->
+    <record id="view_hr_uae_payroll_dashboard_tree_currency" model="ir.ui.view">
+        <field name="name">hr.uae.payroll.dashboard.list.currency</field>
+        <field name="model">hr.uae.payroll.dashboard</field>
+        <field name="inherit_id"
+               ref="hr_uae_payroll.view_hr_uae_payroll_dashboard_tree"/>
+        <field name="arch" type="xml">
+            <field name="salary" position="before">
+                <field name="company_currency_id" column_invisible="1"/>
+            </field>
+            <field name="salary" position="attributes">
+                <attribute name="widget">monetary</attribute>
+                <attribute name="options">{'currency_field': 'company_currency_id'}</attribute>
+            </field>
+            <field name="extra_payment" position="attributes">
+                <attribute name="widget">monetary</attribute>
+                <attribute name="options">{'currency_field': 'company_currency_id'}</attribute>
+            </field>
+            <field name="bonus" position="attributes">
+                <attribute name="widget">monetary</attribute>
+                <attribute name="options">{'currency_field': 'company_currency_id'}</attribute>
+            </field>
+            <field name="held_amount" position="attributes">
+                <attribute name="widget">monetary</attribute>
+                <attribute name="options">{'currency_field': 'company_currency_id'}</attribute>
+            </field>
+            <field name="deduction" position="attributes">
+                <attribute name="widget">monetary</attribute>
+                <attribute name="options">{'currency_field': 'company_currency_id'}</attribute>
+            </field>
+            <field name="total_to_pay" position="attributes">
+                <attribute name="widget">monetary</attribute>
+                <attribute name="options">{'currency_field': 'company_currency_id'}</attribute>
+            </field>
+        </field>
+    </record>
+
+    <!-- Same labelling for the xlsx_io-added Basic / Net columns. -->
+    <record id="view_hr_uae_payroll_dashboard_tree_xlsx_currency"
+            model="ir.ui.view">
+        <field name="name">hr.uae.payroll.dashboard.list.xlsx.currency</field>
+        <field name="model">hr.uae.payroll.dashboard</field>
+        <field name="inherit_id"
+               ref="hr_uae_xlsx_io.view_hr_uae_payroll_dashboard_tree_xlsx"/>
+        <field name="arch" type="xml">
+            <field name="basic_amount" position="attributes">
+                <attribute name="widget">monetary</attribute>
+                <attribute name="options">{'currency_field': 'company_currency_id'}</attribute>
+            </field>
+            <field name="net_amount" position="attributes">
+                <attribute name="widget">monetary</attribute>
+                <attribute name="options">{'currency_field': 'company_currency_id'}</attribute>
+            </field>
+        </field>
+    </record>
+
+</odoo>
