@@ -100,7 +100,9 @@ function Restore-Staging {
 function Init-Live {
     Compose -ProjectName 'kig7-live' -EnvFile $LiveEnv -Args @('up', '-d', 'db')
     Wait-Postgres -ProjectName 'kig7-live' -EnvFile $LiveEnv
-    Compose -ProjectName 'kig7-live' -EnvFile $LiveEnv -Args @('run', '--rm', '--no-deps', 'web', 'odoo', '-d', '18c_hr_project_test', '-i', 'hr_uae_app,hr_uae_init_data', '--stop-after-init', '--no-http', '--workers=0', '--max-cron-threads=0')
+    # Data module only: hr_uae_init_data depends on the whole project, so this
+    # one install pulls every module plus the master-data seeds.
+    Compose -ProjectName 'kig7-live' -EnvFile $LiveEnv -Args @('run', '--rm', '--no-deps', 'web', 'odoo', '-d', '18c_hr_project_test', '-i', 'hr_uae_init_data', '--stop-after-init', '--no-http', '--workers=0', '--max-cron-threads=0')
     Compose -ProjectName 'kig7-live' -EnvFile $LiveEnv -Args @('up', '-d', 'web', 'proxy')
 }
 
