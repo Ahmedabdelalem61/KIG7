@@ -1,0 +1,83 @@
+============================================================
+  KIG7 - HOW TO INSTALL  (Windows 10 or Windows 11)
+  You do NOT need any coding knowledge. Just follow 5 steps.
+============================================================
+
+WHAT YOU NEED FIRST
+-------------------
+- A Windows 10 or Windows 11 computer.
+- The computer must be connected to the INTERNET.
+- About 30-60 minutes (most of it is automatic waiting).
+- The two backup files from your provider:
+        kig7_db.dump
+        kig7_filestore.tgz
+  (You will put them in the "artifacts" folder - see Step 2.)
+
+
+STEP 1 - COPY THE FOLDER
+------------------------
+Copy this whole project folder onto the computer, for example to:
+        C:\KIG7
+(Do NOT run it from inside a ZIP file. Unzip it first.)
+
+
+STEP 2 - PUT THE TWO BACKUP FILES IN PLACE
+------------------------------------------
+Open the folder:   deploy\windows\artifacts
+Copy these two files your provider gave you INTO that folder:
+        kig7_db.dump
+        kig7_filestore.tgz
+(If you only have the "live" system and no backup, you can skip this -
+ the installer will still set up the Live system.)
+
+
+STEP 3 - START THE INSTALLER
+----------------------------
+Go to the folder:   deploy\windows
+DOUBLE-CLICK the file called:   INSTALL-KIG7   (it has a gear icon)
+
+A blue Windows window will pop up asking for permission.
+        --> Click "YES".
+
+
+STEP 4 - WAIT (this is the important part)
+------------------------------------------
+A black window will open and show messages. This is normal.
+- It will install Docker and other tools. This takes a while.
+- IF it says the computer must RESTART:
+        * Let it restart (or restart it yourself).
+        * Log back in with the SAME user.
+        * The installer CONTINUES BY ITSELF. Just wait.
+- Do not close the black window. Do not turn off the computer
+  while it is working.
+
+
+STEP 5 - DONE
+-------------
+When it finishes, the black window will say "FINISHED" and show
+two web addresses. Open them in your web browser (Chrome/Edge):
+
+        Staging system:   http://localhost:8073
+        Live system:      http://localhost:8074
+
+Log in with the user name and password your provider gave you.
+
+
+------------------------------------------------------------
+IF SOMETHING GOES WRONG
+------------------------------------------------------------
+- Take a PHOTO of the black window and send it to your provider.
+- There is also a log file saved in the deploy\windows folder,
+  named like "Deploy-Kig7-2026....log". Send that file too.
+- Most common fix: restart the computer and double-click
+  INSTALL-KIG7 again. It is safe to run more than once.
+
+------------------------------------------------------------
+WHAT THIS INSTALLS (for your provider's reference)
+------------------------------------------------------------
+- Docker Desktop + WSL2 (the engine that runs the systems)
+- Two separate systems, each its own database:
+    * Staging  (port 8073) - restored from the backup files
+    * Live     (port 8074) - a fresh, clean, data-driven setup
+- Both run automatically every time the computer starts.
+============================================================

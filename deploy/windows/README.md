@@ -1,38 +1,50 @@
 # KIG7 Windows Two-Stack Deploy
 
-This folder contains a Windows PowerShell deployment wrapper for the shared Docker Compose stack at `../../docker-compose.yml`.
+A self-contained, one-click Windows 10/11 installer that sets up **everything**
+(WSL2 + Docker Desktop + both Odoo systems) on a fresh machine, run by a
+**non-technical operator**.
 
-## Prerequisites
+## For the operator (non-technical)
 
-- Windows 10/11 with administrator access.
-- PowerShell 7 or Windows PowerShell.
-- WSL2 and Docker Desktop. The script enables WSL2 features and installs Docker Desktop unless `-SkipDockerInstall` is used.
-- Staging backup artifacts copied to:
-  - `artifacts/kig7_db.dump`
-  - `artifacts/kig7_filestore.tgz`
+See **`READ-ME-FIRST.txt`** in this folder. In short:
 
-Do not commit backup artifacts or real passwords.
+1. Copy the whole project folder to the machine (e.g. `C:\KIG7`).
+2. Put the two backup files in `deploy\windows\artifacts\`:
+   `kig7_db.dump` and `kig7_filestore.tgz`.
+3. **Double-click `INSTALL-KIG7.cmd`** and click **Yes** on the permission pop-up.
+4. Wait. If the computer restarts, log back in — it **continues by itself**
+   (an elevated Scheduled Task auto-resumes the install).
+5. Open `http://localhost:8073` (staging) and `http://localhost:8074` (live).
 
-## Run
+## How it works (for the provider)
 
-From an elevated PowerShell prompt:
+- **`INSTALL-KIG7.cmd`** — double-clickable launcher. Self-elevates via UAC and
+  runs `Deploy-Kig7.ps1` with `-ExecutionPolicy Bypass`.
+- **`Deploy-Kig7.ps1`** — a reboot-surviving **state machine** (stage file
+  `.kig7-stage` + a `KIG7Resume` Scheduled Task that runs **elevated at next
+  logon**, so reboots needed by WSL2/Docker are fully hands-free). It:
+  1. Pre-flight (Windows build, virtualization, disk, RAM) — clear warnings.
+  2. `wsl --install --no-distribution` (+ `wsl --update`).
+  3. Installs Docker Desktop silently (winget, with direct-installer fallback,
+     `--accept-license`), reboots when Windows requires it, auto-resumes.
+  4. Waits for the Docker engine, then builds the image and brings up both
+     stacks. Idempotent — safe to run again; it detects already-initialized DBs.
+
+Manual run (advanced) from an elevated PowerShell:
 
 ```powershell
-Set-Location <repo-root>
-.\deploy\windows\Deploy-Kig7.ps1
-```
-
-Optional ports:
-
-```powershell
-.\deploy\windows\Deploy-Kig7.ps1 -StagingPort 8073 -LivePort 8074 -LogDir .\deploy\windows
+.\deploy\windows\Deploy-Kig7.ps1 -StagingPort 8073 -LivePort 8074
 ```
 
 ## What It Builds
 
-- `kig7-staging`: restored from `artifacts/kig7_db.dump` and `artifacts/kig7_filestore.tgz`, published on port `8073` by default.
-- `kig7-live`: initialized with `-i hr_uae_app,hr_uae_init_data`, published on port `8074` by default.
+- `kig7-staging`: restored from `artifacts/kig7_db.dump` + `kig7_filestore.tgz`, on port `8073`.
+- `kig7-live`: initialized with **`-i hr_uae_init_data`** (the data module depends
+  on the whole project, so this one install pulls every module + master data), on port `8074`.
 - Both stacks reuse the repository Dockerfile, nginx config, Odoo config, and bind-mounted `HrProject` addons.
+- If the staging backup files are absent, staging is skipped and **live still installs**.
+
+Do not commit backup artifacts or real passwords.
 
 ## Logs
 
