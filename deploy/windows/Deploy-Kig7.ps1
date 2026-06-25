@@ -64,11 +64,17 @@ function Write-Ok   { param([string]$m) Write-Log "OK: $m" 'Green' }
 function Write-Warn { param([string]$m) Write-Log "WARNING: $m" 'Yellow' }
 
 function Invoke-Logged {
+    # Run a native command, log stdout+stderr, judge success by EXIT CODE only.
+    # Native tools (docker, pg_restore, wsl) write progress to stderr; under
+    # $ErrorActionPreference='Stop' that would wrongly abort, so relax it here.
     param([Parameter(Mandatory)][string]$FilePath,
           [Parameter(Mandatory)][string[]]$Arguments,
           [int[]]$AllowExit = @(0))
     Write-Log "> $FilePath $($Arguments -join ' ')"
-    & $FilePath @Arguments 2>&1 | ForEach-Object { Write-Log "  $($_)" }
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try { & $FilePath @Arguments 2>&1 | ForEach-Object { Write-Log "  $($_)" } }
+    finally { $ErrorActionPreference = $prev }
     if ($AllowExit -notcontains $LASTEXITCODE) { throw "$FilePath exited with code $LASTEXITCODE" }
     return $LASTEXITCODE
 }
@@ -76,8 +82,11 @@ function Invoke-Tolerant {
     # Run, log, NEVER throw (used for wsl.exe whose exit codes vary).
     param([Parameter(Mandatory)][string]$FilePath, [Parameter(Mandatory)][string[]]$Arguments)
     Write-Log "> $FilePath $($Arguments -join ' ')"
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
     try { & $FilePath @Arguments 2>&1 | ForEach-Object { Write-Log "  $($_)" } }
     catch { Write-Log "  (ignored) $($_.Exception.Message)" }
+    finally { $ErrorActionPreference = $prev }
 }
 function Compose {
     param([Parameter(Mandatory)][string]$ProjectName,
