@@ -238,3 +238,7 @@ CLAUDE.md
 # KIG7 deploy backup artifacts (real HR PII — never commit)
 deploy/windows/artifacts/*.dump
 deploy/windows/artifacts/*.tgz
+
+# KIG7 Windows local backups (real HR PII — never commit)
+deploy/windows/backups/
+deploy/windows/.kig7-stage

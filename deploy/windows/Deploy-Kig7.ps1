@@ -14,6 +14,12 @@
 [CmdletBinding()]
 param(
     [switch]$SkipDockerInstall,
+    # Skip the self-elevation step. Safe ONLY when WSL2 + Docker are already
+    # installed and the Docker engine is running, so no admin-only step remains
+    # (bringing up the compose stacks needs only docker, which runs in user
+    # context). The operator's INSTALL-KIG7.cmd never passes this, so the normal
+    # double-click flow still self-elevates as before.
+    [switch]$SkipElevation,
     [int]$StagingPort = 8073,
     [int]$LivePort = 8074,
     [string]$LogDir = ''
@@ -30,7 +36,7 @@ if (-not $ScriptDir) { $ScriptDir = (Get-Location).Path }
 # --- Self-elevate if not Administrator (wait + propagate the child exit code)--
 $principal = New-Object Security.Principal.WindowsPrincipal(
     [Security.Principal.WindowsIdentity]::GetCurrent())
-if (-not $principal.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)) {
+if (-not $SkipElevation -and -not $principal.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)) {
     # Pass the path as a single array element; Start-Process quotes it if needed.
     $child = Start-Process -FilePath 'powershell.exe' -Verb RunAs -PassThru -Wait -ArgumentList @(
         '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $ScriptPath)
@@ -75,6 +81,13 @@ function Invoke-Logged {
           [Parameter(Mandatory)][string[]]$Arguments,
           [int[]]$AllowExit = @(0))
     Write-Log "> $FilePath $($Arguments -join ' ')"
+    # CRITICAL (PowerShell 5.1): even with *>> redirecting ALL streams to a file,
+    # a native tool writing to stderr (docker build/buildkit, pg_restore, odoo)
+    # is wrapped into an ErrorRecord and, under $ErrorActionPreference='Stop',
+    # raised as a TERMINATING error - aborting before we ever see the exit code.
+    # Demote to 'Continue' for the native call ONLY (function-scoped: the caller's
+    # 'Stop' is untouched). We still judge success purely by the exit code below.
+    $ErrorActionPreference = 'Continue'
     & $FilePath @Arguments *>> $RawLog
     $code = $LASTEXITCODE
     Write-Log "  (exit $code - full output in $(Split-Path -Leaf $RawLog))"
@@ -87,14 +100,16 @@ function Invoke-Tolerant {
     # Run, log to the raw file, NEVER throw (wsl.exe exit codes vary).
     param([Parameter(Mandatory)][string]$FilePath, [Parameter(Mandatory)][string[]]$Arguments)
     Write-Log "> $FilePath $($Arguments -join ' ')"
+    $ErrorActionPreference = 'Continue'  # see Invoke-Logged: don't let native stderr abort us
     try { & $FilePath @Arguments *>> $RawLog } catch { Write-Log "  (ignored) $($_.Exception.Message)" }
 }
 function Compose {
     param([Parameter(Mandatory)][string]$ProjectName,
           [Parameter(Mandatory)][string]$EnvFile,
-          [Parameter(Mandatory)][string[]]$ComposeArgs)
+          [Parameter(Mandatory)][string[]]$ComposeArgs,
+          [int[]]$AllowExit = @(0))
     Invoke-Logged -FilePath 'docker' -Arguments (
-        @('compose', '-p', $ProjectName, '--env-file', $EnvFile) + $ComposeArgs)
+        @('compose', '-p', $ProjectName, '--env-file', $EnvFile) + $ComposeArgs) -AllowExit $AllowExit
 }
 
 # --- Reboot / resume (Scheduled Task = elevated, hands-free) -----------------
@@ -177,7 +192,7 @@ function Test-Preflight {
 }
 
 # --- WSL2 -------------------------------------------------------------------
-function Test-WslReady { wsl.exe --status *> $null; return ($LASTEXITCODE -eq 0) }
+function Test-WslReady { $ErrorActionPreference = 'Continue'; wsl.exe --status *> $null; return ($LASTEXITCODE -eq 0) }
 function Install-Wsl {
     Write-Step 'Installing Windows Subsystem for Linux (WSL2)'
     Invoke-Tolerant -FilePath 'wsl.exe' -Arguments @('--install', '--no-distribution')
@@ -219,6 +234,7 @@ function Start-DockerEngine {
 function Wait-Docker {
     param([int]$TimeoutSeconds = 600)
     Write-Step 'Waiting for the Docker engine (can take a few minutes on first run)'
+    $ErrorActionPreference = 'Continue'  # `docker info` writes to stderr while the engine is starting
     $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
     while ((Get-Date) -lt $deadline) {
         docker info *> $null
@@ -246,6 +262,7 @@ function Test-PortFree {
 }
 function Wait-Postgres {
     param([string]$ProjectName, [string]$EnvFile)
+    $ErrorActionPreference = 'Continue'  # pg_isready / compose write to stderr while db is starting
     for ($i = 0; $i -lt 60; $i++) {
         docker compose -p $ProjectName --env-file $EnvFile exec -T db pg_isready -U odoo -d postgres *> $null
         if ($LASTEXITCODE -eq 0) { return }
@@ -256,6 +273,7 @@ function Wait-Postgres {
 function Test-DbInitialized {
     # True only if the target DB exists AND Odoo has been installed into it.
     param([string]$ProjectName, [string]$EnvFile)
+    $ErrorActionPreference = 'Continue'  # psql/compose write to stderr (e.g. when the db is absent)
     $q = "SELECT 1 FROM pg_database WHERE datname='$DbName'"
     $exists = docker compose -p $ProjectName --env-file $EnvFile exec -T db psql -U odoo -d postgres -tAc $q 2>$null
     if (($exists | Out-String).Trim() -ne '1') { return $false }
@@ -273,7 +291,15 @@ function Restore-Staging {
         Write-Step 'STAGING: restoring the backup'
         Compose 'kig7-staging' $StagingEnv @('cp', $StagingDump, 'db:/tmp/kig7_db.dump')
         Compose 'kig7-staging' $StagingEnv @('exec', '-T', 'db', 'dropdb', '-U', 'odoo', '--if-exists', $DbName)
-        Compose 'kig7-staging' $StagingEnv @('exec', '-T', 'db', 'pg_restore', '-U', 'odoo', '-d', 'postgres', '--create', '--no-owner', '--no-acl', '/tmp/kig7_db.dump')
+        # pg_restore returns exit 1 on IGNORABLE warnings even after a fully
+        # successful restore (the norm with --no-owner/--no-acl). Its exit code is
+        # therefore not a reliable success signal: tolerate 1 and verify the data
+        # actually landed below (a real failure leaves no Odoo tables).
+        Compose 'kig7-staging' $StagingEnv @('exec', '-T', 'db', 'pg_restore', '-U', 'odoo', '-d', 'postgres', '--create', '--no-owner', '--no-acl', '/tmp/kig7_db.dump') -AllowExit @(0, 1)
+        if (-not (Test-DbInitialized 'kig7-staging' $StagingEnv)) {
+            throw "Staging restore failed: '$DbName' has no Odoo tables after pg_restore (see $(Split-Path -Leaf $RawLog))."
+        }
+        Write-Ok 'Staging database restored'
         Compose 'kig7-staging' $StagingEnv @('up', '-d', 'web')
         Start-Sleep -Seconds 5
         Compose 'kig7-staging' $StagingEnv @('cp', $StagingFilestore, 'web:/tmp/kig7_filestore.tgz')
