@@ -50,7 +50,9 @@ $LiveEnv          = Join-Path $ScriptDir 'live.env'
 $StatePath        = Join-Path $ScriptDir '.kig7-stage'
 $TaskName         = 'KIG7Resume'
 $DbName           = '18c_hr_project_test'
+$ScriptVersion    = 'v3 (file-redirect native output)'
 $LogFile          = Join-Path $LogDir ("Deploy-Kig7-{0:yyyyMMdd-HHmmss}.log" -f (Get-Date))
+$RawLog           = Join-Path $LogDir ("Deploy-Kig7-{0:yyyyMMdd-HHmmss}.raw.log" -f (Get-Date))
 
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 try { Start-Transcript -Path $LogFile -Append | Out-Null } catch { }
@@ -64,29 +66,28 @@ function Write-Ok   { param([string]$m) Write-Log "OK: $m" 'Green' }
 function Write-Warn { param([string]$m) Write-Log "WARNING: $m" 'Yellow' }
 
 function Invoke-Logged {
-    # Run a native command, log stdout+stderr, judge success by EXIT CODE only.
-    # Native tools (docker, pg_restore, wsl) write progress to stderr; under
-    # $ErrorActionPreference='Stop' that would wrongly abort, so relax it here.
+    # Run a native command; judge success by EXIT CODE only. Native tools
+    # (docker, pg_restore, wsl) write progress to stderr; in Windows PowerShell
+    # 5.1 piping that via 2>&1 under $ErrorActionPreference='Stop' wrongly
+    # aborts. So redirect ALL streams to a file with *>> (same mechanism as the
+    # working `docker info *> $null`) and never pipe stderr into the console.
     param([Parameter(Mandatory)][string]$FilePath,
           [Parameter(Mandatory)][string[]]$Arguments,
           [int[]]$AllowExit = @(0))
     Write-Log "> $FilePath $($Arguments -join ' ')"
-    $prev = $ErrorActionPreference
-    $ErrorActionPreference = 'Continue'
-    try { & $FilePath @Arguments 2>&1 | ForEach-Object { Write-Log "  $($_)" } }
-    finally { $ErrorActionPreference = $prev }
-    if ($AllowExit -notcontains $LASTEXITCODE) { throw "$FilePath exited with code $LASTEXITCODE" }
-    return $LASTEXITCODE
+    & $FilePath @Arguments *>> $RawLog
+    $code = $LASTEXITCODE
+    Write-Log "  (exit $code - full output in $(Split-Path -Leaf $RawLog))"
+    if ($AllowExit -notcontains $code) {
+        throw "$FilePath exited with code $code (see $(Split-Path -Leaf $RawLog))"
+    }
+    return $code
 }
 function Invoke-Tolerant {
-    # Run, log, NEVER throw (used for wsl.exe whose exit codes vary).
+    # Run, log to the raw file, NEVER throw (wsl.exe exit codes vary).
     param([Parameter(Mandatory)][string]$FilePath, [Parameter(Mandatory)][string[]]$Arguments)
     Write-Log "> $FilePath $($Arguments -join ' ')"
-    $prev = $ErrorActionPreference
-    $ErrorActionPreference = 'Continue'
-    try { & $FilePath @Arguments 2>&1 | ForEach-Object { Write-Log "  $($_)" } }
-    catch { Write-Log "  (ignored) $($_.Exception.Message)" }
-    finally { $ErrorActionPreference = $prev }
+    try { & $FilePath @Arguments *>> $RawLog } catch { Write-Log "  (ignored) $($_.Exception.Message)" }
 }
 function Compose {
     param([Parameter(Mandatory)][string]$ProjectName,
@@ -339,7 +340,7 @@ function Invoke-Stacks {
 # ===========================================================================
 $stage = if (Test-Path $StatePath) { [int](Get-Content $StatePath) } else { 0 }
 if ($stage -gt 0) { Unregister-Resume }   # the resume task fired; remove it so it can't re-trigger
-Write-Log "KIG7 installer starting (stage $stage). Log: $LogFile" 'Cyan'
+Write-Log "KIG7 installer $ScriptVersion starting (stage $stage). Log: $LogFile" 'Cyan'
 
 try {
     if ($stage -le 0) {
