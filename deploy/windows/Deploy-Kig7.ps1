@@ -16,28 +16,38 @@ param(
     [switch]$SkipDockerInstall,
     [int]$StagingPort = 8073,
     [int]$LivePort = 8074,
-    [string]$LogDir = $PSScriptRoot
+    [string]$LogDir = ''
 )
+
+# --- Resolve our own location ROBUSTLY (do NOT rely on $PSScriptRoot, which can
+#     be empty depending on how the script is launched) ----------------------
+$ScriptPath = $PSCommandPath
+if (-not $ScriptPath) { $ScriptPath = $MyInvocation.MyCommand.Path }
+if (-not $ScriptPath) { $ScriptPath = $MyInvocation.MyCommand.Definition }
+$ScriptDir = if ($ScriptPath) { Split-Path -Parent $ScriptPath } else { (Get-Location).Path }
+if (-not $ScriptDir) { $ScriptDir = (Get-Location).Path }
 
 # --- Self-elevate if not Administrator (wait + propagate the child exit code)--
 $principal = New-Object Security.Principal.WindowsPrincipal(
     [Security.Principal.WindowsIdentity]::GetCurrent())
 if (-not $principal.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)) {
+    # Pass the path as a single array element; Start-Process quotes it if needed.
     $child = Start-Process -FilePath 'powershell.exe' -Verb RunAs -PassThru -Wait -ArgumentList @(
-        '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', "`"$PSCommandPath`"")
+        '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $ScriptPath)
     exit $child.ExitCode
 }
-Set-Location $PSScriptRoot
+Set-Location $ScriptDir
 $ErrorActionPreference = 'Stop'
 
 # --- Paths / constants ------------------------------------------------------
-$RepoRoot         = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent)
-$ArtifactsDir     = Join-Path $PSScriptRoot 'artifacts'
+if (-not $LogDir) { $LogDir = $ScriptDir }
+$RepoRoot         = (Split-Path (Split-Path $ScriptDir -Parent) -Parent)
+$ArtifactsDir     = Join-Path $ScriptDir 'artifacts'
 $StagingDump      = Join-Path $ArtifactsDir 'kig7_db.dump'
 $StagingFilestore = Join-Path $ArtifactsDir 'kig7_filestore.tgz'
-$StagingEnv       = Join-Path $PSScriptRoot 'staging.env'
-$LiveEnv          = Join-Path $PSScriptRoot 'live.env'
-$StatePath        = Join-Path $PSScriptRoot '.kig7-stage'
+$StagingEnv       = Join-Path $ScriptDir 'staging.env'
+$LiveEnv          = Join-Path $ScriptDir 'live.env'
+$StatePath        = Join-Path $ScriptDir '.kig7-stage'
 $TaskName         = 'KIG7Resume'
 $DbName           = '18c_hr_project_test'
 $LogFile          = Join-Path $LogDir ("Deploy-Kig7-{0:yyyyMMdd-HHmmss}.log" -f (Get-Date))
@@ -95,7 +105,7 @@ function Set-Resume {
     Set-Content -Path $StatePath -Value $NextStage
     # Re-run elevated, automatically, at the next logon of this user (no UAC).
     $action = New-ScheduledTaskAction -Execute 'powershell.exe' `
-        -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
+        -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$ScriptPath`""
     $trigger = New-ScheduledTaskTrigger -AtLogOn
     $princ = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" `
         -RunLevel Highest -LogonType Interactive
@@ -150,7 +160,7 @@ function Test-Preflight {
     if ($free -lt 10) { Write-Warn "Only $free GB free on C: (need ~10 GB)."; $hardFail = $true }
     else { Write-Ok "$free GB free on C:" }
 
-    if ($PSScriptRoot.StartsWith('\\')) {
+    if ($ScriptDir.StartsWith('\\')) {
         Write-Warn 'Run this from a local folder like C:\KIG7 (not a network path).'
     }
     if ($hardFail) { throw 'This computer is not ready (see WARNINGs above). Fix those, then run INSTALL-KIG7 again.' }
